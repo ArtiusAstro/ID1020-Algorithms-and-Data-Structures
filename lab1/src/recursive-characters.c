@@ -1,31 +1,59 @@
 #include <stdio.h>
 
+void ralloc(char *myString, int *mallocSizePtr, int i){
+  if(i = *mallocSizePtr-1){
+    *mallocSizePtr = *mallocSizePtr * 2;
+    realloc(myString, sizeof(char) * (*mallocSizePtr));
+  }
+}
+
 void recursive(char c){
-  c = getchar();
-  if(c!='\n'){
+  if((c = getchar()) != '\n'){
     recursive(c);
     printf("%c",c);
   }
 }
 
-void iterative(&string str){
-    int n = str.length();
+void iterative(char c){
+  /* Initial memory allocation */
+  int mallocSize = 10;
+  char *myString = (char*) malloc(sizeof(char)*mallocSize);
 
-    // Swap character
-    for (int i = 0; i < n / 2; i++)
-        swap(str[i], str[n - i - 1]);
+  int i = 0; // counter
+
+  /* collect chars, if array limit reached realloc double space */
+  for(;;){
+    c = getchar();
+    if(c = '\n')
+      break;
+    ralloc(myString, &mallocSize, i++);
+    myString[i++] = c;
+  }
+
+  /* Print the string in reverse order */
+  for(i; i > 0; i--){
+    printf("%c",myString[i]);
+  }
+
+  /* Deallocate the memory */
+  free(myString);
+}
+
+void flush(){
+  fflush(stdout);
 }
 
 int main() {
-  printf("Input char: ");
-  fflush(stdout);
-  printf("Reversed: ");
+  printf("Input string: ");
+  flush();
+  printf("Recursively Reversed: ");
   char c;
   recursive(c);
 
-  char *str = scanf("Input char: \n");
-  printf("Reversed: ");
-  iterative(str);
+  printf("\nInput string: ");
+  flush();
+  printf("Iteratively Reversed: ");
+  iterative(c);
 
   return 0;
 }
