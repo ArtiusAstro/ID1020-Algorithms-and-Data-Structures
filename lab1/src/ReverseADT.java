@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Reverse{
+public class ReverseADT {
 
     private static Scanner scanner = new Scanner(System.in);  // Reading from System.in
 
@@ -12,13 +12,18 @@ public class Reverse{
     }
 
     private static void iteration(String s){
-        int stringSize = s.length();
-        for(int i = 0; i < stringSize; i++){
-            System.out.print(s.charAt(stringSize-i-1));
-        }
+
+    }
+
+    private static void initializeCharList(DoubleLinkedList doubleLinkedList){
+
     }
 
     public static void main(String[] args){
+
+        DoubleLinkedList<Character> doubleLinkedList = new DoubleLinkedList<>();
+        initializeCharList(doubleLinkedList);
+
         System.out.print("Enter a string: ");
         String s = scanner.next();
         int x = 0;
@@ -33,4 +38,3 @@ public class Reverse{
         scanner.close();
     }
 }
-
