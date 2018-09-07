@@ -10,13 +10,14 @@ void ralloc(char *myString, int *mallocSizePtr, int i){
 void recursive(char c){
   if((c = getchar()) != '\n'){
     recursive(c);
-    printf("%c",c);
+    putchar(c);
   }
 }
 
 void iterative(char c){
   /* Initial memory allocation */
   int mallocSize = 10;
+  int *mallocSizePtr = &mallocSize;
   char *myString = (char*) malloc(sizeof(char)*mallocSize);
 
   int i = 0; // counter
@@ -26,13 +27,13 @@ void iterative(char c){
     c = getchar();
     if(c = '\n')
       break;
-    ralloc(myString, &mallocSize, i++);
-    myString[i++] = c;
+    myString[i] = c;
+    ralloc(myString, mallocSizePtr, i++);
   }
 
   /* Print the string in reverse order */
   for(i; i > 0; i--){
-    printf("%c",myString[i]);
+    putchar(myString[i]);
   }
 
   /* Deallocate the memory */
@@ -40,7 +41,7 @@ void iterative(char c){
 }
 
 void flush(){
-  fflush(stdout);
+  fflush(stdout); //flushes output buffer of stdout stream
 }
 
 int main() {
