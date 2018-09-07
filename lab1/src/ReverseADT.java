@@ -11,21 +11,19 @@ public class ReverseADT {
         }
     }
 
-    private static void iteration(String s){
+    private static void iteration(DoubleLinkedList doubleLinkedList){
+        for (char c : doubleLinkedList) {
 
-    }
-
-    private static void initializeCharList(DoubleLinkedList doubleLinkedList){
-
+        }
     }
 
     public static void main(String[] args){
 
-        DoubleLinkedList<Character> doubleLinkedList = new DoubleLinkedList<>();
-        initializeCharList(doubleLinkedList);
-
         System.out.print("Enter a string: ");
         String s = scanner.next();
+
+        DoubleLinkedList<Character> doubleLinkedList = new DoubleLinkedList<>(s.toCharArray());
+
         int x = 0;
 
         System.out.print("||RECURSION REVERSAL||: ");

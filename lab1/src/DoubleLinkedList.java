@@ -1,6 +1,6 @@
 import java.util.NoSuchElementException;
 
-public class DoubleLinkedList<E> {
+public class DoubleLinkedList<E> extends Iterable {
     private Node head;
     private Node tail;
     private int size;
@@ -10,10 +10,9 @@ public class DoubleLinkedList<E> {
     }
 
     public DoubleLinkedList(E[] eArray){
-
-        for(char c : charArray){
-            addLast(c);
-        }
+        size = 0;
+        for(E e : eArray)
+            addLast(e);
     }
 
     /**
