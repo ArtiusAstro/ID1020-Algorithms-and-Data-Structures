@@ -1,6 +1,6 @@
 import java.util.NoSuchElementException;
 
-public class DoubleLinkedList<E> extends Iterable {
+public class DoubleLinkedList<E> {
     private Node head;
     private Node tail;
     private int size;
