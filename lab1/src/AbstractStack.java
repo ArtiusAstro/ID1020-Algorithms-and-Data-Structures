@@ -18,14 +18,12 @@
 ##########################################################################*/
 
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 /**
- *  The {@code Stack} class represents a last-in-first-out (LIFO) stack of generic items.
+ *  The {@code Stack} class represents a last-in-top-out (LIFO) stack of generic items.
  *  It supports the usual <em>push</em> and <em>pop</em> operations, along with methods
  *  for peeking at the top item, testing if the stack is empty, getting the number of
  *  items in the stack, and iterating over the items in LIFO order.
@@ -40,7 +38,7 @@ import java.util.Scanner;
 
 public class AbstractStack<Item> implements Iterable<Item> {
     private int n;          // size of the stack
-    private Node first;     // top of stack
+    private Node top;     // top of stack
 
     // helper linked list class
     private class Node {
@@ -52,7 +50,7 @@ public class AbstractStack<Item> implements Iterable<Item> {
      * Initializes an empty stack.
      */
     public AbstractStack() {
-        first = null;
+        top = null;
         n = 0;
     }
 
@@ -62,7 +60,7 @@ public class AbstractStack<Item> implements Iterable<Item> {
      * @return true if this stack is empty; false otherwise
      */
     public boolean isEmpty() {
-        return first == null;
+        return top == null;
     }
 
     /**
@@ -80,10 +78,10 @@ public class AbstractStack<Item> implements Iterable<Item> {
      * @param item the item to add
      */
     public void push(Item item) {
-        Node tmp = first;
-        first = new Node();
-        first.item = item;
-        first.next = tmp;
+        Node tmp = top;
+        top = new Node();
+        top.item = item;
+        top.next = tmp;
         n++;
     }
 
@@ -95,8 +93,8 @@ public class AbstractStack<Item> implements Iterable<Item> {
      */
     public Item pop() {
         if (isEmpty()) throw new NoSuchElementException("Stack underflow");
-        Item item = first.item;        // save item to return
-        first = first.next;            // delete first node
+        Item item = top.item;        // save item to return
+        top = top.next;            // delete top node
         n--;
         return item;                   // return the saved item
     }
@@ -108,9 +106,9 @@ public class AbstractStack<Item> implements Iterable<Item> {
      * @return the item most recently added to this stack
      * @throws NoSuchElementException if this stack is empty
      */
-    public Item top() {
+    public Item getTop() {
         if (isEmpty()) throw new NoSuchElementException("Stack underflow");
-        return first.item;
+        return top.item;
     }
 
     /**
@@ -121,7 +119,12 @@ public class AbstractStack<Item> implements Iterable<Item> {
     public String toString() {
         StringBuilder s = new StringBuilder();
         for (Item item : this) {
-            s.append("[").append(item).append("], ");
+            s.append('[');
+            s.append(item);
+            if(this.size() != 1) {
+                System.out.print(this.size());
+                s.append("], ");
+            }
         }
         return s.toString();
     }
@@ -136,7 +139,7 @@ public class AbstractStack<Item> implements Iterable<Item> {
 
     // an iterator, doesn't implement remove() since it's optional
     private class ListIterator implements Iterator<Item> {
-        private Node current = first;
+        private Node current = top;
         public boolean hasNext()  { return current != null;                     }
         public void remove()      { throw new UnsupportedOperationException();  }
 
@@ -154,12 +157,30 @@ public class AbstractStack<Item> implements Iterable<Item> {
      */
     public static void main(String[] args) throws IOException {
 
-        try (FileReader inputStream = new FileReader("input.txt")) {
-            int c;
-            while ((c = inputStream.read()) != -1) {
-                System.out.print(c);
+        AbstractStack<Character> abstractStack = new AbstractStack<>();
+
+        /* Collect the input from ./input.txt */
+        try (FileReader inputStream = new FileReader("src/input.txt")) {
+            int stream;
+            System.out.print("Input is: ");
+            while ((stream = inputStream.read()) != -1) {
+                System.out.write(stream); // display input
+                abstractStack.push((char)stream); // push chars to stack
             }
         }
+        catch (IOException e){
+            e.printStackTrace();
+        }
 
+        /* String representation */
+        System.out.print("\nmyStack.toString() returns: ");
+        System.out.println(abstractStack.toString());
+
+        /* Print a node's char, pop the node, and continue until stack is empty */
+        System.out.print("\nReversed: ");
+        while(!abstractStack.isEmpty()){
+            System.out.print(abstractStack.getTop());
+            abstractStack.pop();
+        }
     }
 }
