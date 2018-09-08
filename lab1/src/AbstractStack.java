@@ -118,12 +118,11 @@ public class AbstractStack<Item> implements Iterable<Item> {
      */
     public String toString() {
         StringBuilder s = new StringBuilder();
+        int i = this.size()-1;
         for (Item item : this) {
-            s.append('[');
-            s.append(item);
-            if(this.size() != 1) {
-                System.out.print(this.size());
-                s.append("], ");
+            s.append('[').append(item).append(']');
+            if(i-- > 0) {
+                s.append(", ");
             }
         }
         return s.toString();
@@ -173,7 +172,7 @@ public class AbstractStack<Item> implements Iterable<Item> {
         }
 
         /* String representation */
-        System.out.print("\nmyStack.toString() returns: ");
+        System.out.print("\n\nmyStack.toString() returns: ");
         System.out.println(abstractStack.toString());
 
         /* Print a node's char, pop the node, and continue until stack is empty */
