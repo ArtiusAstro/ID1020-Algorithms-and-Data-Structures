@@ -17,6 +17,9 @@
 ⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ##########################################################################*/
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -149,17 +152,14 @@ public class AbstractStack<Item> implements Iterable<Item> {
     /**
      * Unit tests the {@code Stack} data type.
      */
-    public static void main(String[] args) {
-        Scanner sc=new Scanner(System.in);
-        AbstractStack<Character> AbstractStack = new AbstractStack<Character>();
-        char input;
-        int i = 0;
+    public static void main(String[] args) throws IOException {
 
-        while((input = sc.next().charAt(i++)) != '\n'){
-            AbstractStack.push(input);
+        try (FileReader inputStream = new FileReader("input.txt")) {
+            int c;
+            while ((c = inputStream.read()) != -1) {
+                System.out.print(c);
+            }
         }
 
-        for(char item : AbstractStack)
-            System.out.print(item);
     }
 }
