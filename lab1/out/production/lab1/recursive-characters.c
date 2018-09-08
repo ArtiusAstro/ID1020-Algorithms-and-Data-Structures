@@ -1,59 +1,84 @@
+/*###################################################################################
+⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
+⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
+⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: recursive-characters.c
+⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Execution: recursive-characters.c < input.txt
+⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷
+⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿      > Description
+⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      Reverse char input using both
+⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      iterative and recursive methods.
+⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡      In main uncomment the method you'd
+⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿      like to test and comment out the
+⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿      other one.
+⢀⢀⢀⠈⠛⣽⣿⣿⣿⣿⣿⣿⠁⢀⢀⢀⣡⣾⣿⣿⣿⣿⣿⣿
+⢀⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣦⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+####################################################################################*/
+
 #include <stdio.h>
+#include <stdlib.h>
 
-void ralloc(char *myString, int *mallocSizePtr, int i){
-  if(i = *mallocSizePtr-1){
-    *mallocSizePtr = *mallocSizePtr * 2;
-    realloc(myString, sizeof(char) * (*mallocSizePtr));
+void ralloc(char **myStringPtr, int *arraySizePtr){
+  /* If array limit reached malloc new array with double space */
+  char *copy = (char*) realloc(*myStringPtr, *(arraySizePtr) * 2);
+
+  /* stack overflow exception handling */
+  if(copy == NULL){
+    printf("Not enough memory avaialable!");
+    free(*myStringPtr);
   }
-}
 
-void recursive(char c){
-  if((c = getchar()) != '\n'){
-    recursive(c);
-    putchar(c);
+  /* update stuffs */
+  else{
+  *arraySizePtr = *arraySizePtr * 2;
+  *myStringPtr = copy;
   }
 }
 
 void iterative(char c){
   /* Initial memory allocation */
-  int mallocSize = 10;
-  int *mallocSizePtr = &mallocSize;
-  char *myString = (char*) malloc(sizeof(char)*mallocSize);
-
+  int ARRAY_SIZE = 10;
+  char *myString = (char*) malloc(ARRAY_SIZE);
   int i = 0; // counter
 
-  /* collect chars, if array limit reached realloc double space */
-  for(;;){
-    c = getchar();
-    if(c = '\n')
-      break;
-    myString[i] = c;
-    ralloc(myString, mallocSizePtr, i++);
+  while((c = getchar()) != EOF){
+    myString[i++] = c; // add char to string
+
+    if(i == ARRAY_SIZE){
+      /* current char capacity reached, realloc with double current capacity */
+      ralloc(&myString, &ARRAY_SIZE);
+      printf("String size doubled to %d\n", ARRAY_SIZE);
+    }
   }
 
+  printf("\nTotal chars: %d\n\nIteratively Reversed: ", i);
   /* Print the string in reverse order */
-  for(i; i > 0; i--){
+  while(i-- > 0){
     putchar(myString[i]);
   }
 
-  /* Deallocate the memory */
   free(myString);
 }
 
-void flush(){
-  fflush(stdout); //flushes output buffer of stdout stream
+void recursive(char c){
+  /* basic recursion with getchar, chars printed in reverse order */
+  if((c = getchar()) != EOF){
+    recursive(c);
+    putchar(c);
+  }
 }
 
 int main() {
-  printf("Input string: ");
-  flush();
-  printf("Recursively Reversed: ");
   char c;
-  recursive(c);
 
-  printf("\nInput string: ");
-  flush();
-  printf("Iteratively Reversed: ");
+  /* Print the raw input COMMENT OUT OTHERS */
+  //while((c = getchar()) != EOF) putchar(c);
+
+  /* Recursively print the input in reverse COMMENT OUT OTHERS */
+  //printf("Recursively Reversed: "); recursive(c);
+
+  /* Iteratively print the input in reverse COMMENT OUT OTHERS */
   iterative(c);
 
   return 0;

@@ -1,81 +1,68 @@
-/*#########################################################################
+/*###################################################################################
 ⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
 ⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
 ⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: recursive-characters.c
-⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄
-⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      > Description
-⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿
+⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Execution: recursive-characters.c < input.txt
+⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷
+⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿      > Description
 ⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      Reverse char input using both
-⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      iterative and recursive methods
-⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡
-⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿
-⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿
+⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      iterative and recursive methods.
+⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡      In main uncomment the method you'd
+⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿      like to test and comment out the
+⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿      other one.
 ⢀⢀⢀⠈⠛⣽⣿⣿⣿⣿⣿⣿⠁⢀⢀⢀⣡⣾⣿⣿⣿⣿⣿⣿
 ⢀⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣦⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-##########################################################################*/
+####################################################################################*/
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-void ralloc(char *myString, char *myNewString, int *mallocSizePtr){
+void ralloc(char **myStringPtr, int *arraySizePtr){
   /* If array limit reached malloc new array with double space */
-  printf("performing ralloc\n");
-  myNewString = (char*) malloc(sizeof(char) * (*mallocSizePtr) * 2);
-  strncpy(myNewString, myString, *mallocSizePtr);
-  free(myString);
-  myString = myNewString;
-  *mallocSizePtr = *mallocSizePtr * 2;
-}
+  char *copy = (char*) realloc(*myStringPtr, *(arraySizePtr) * 2);
 
-void iterative_malloc(char c){
-  /* Initial memory allocation */
-  int mallocSize = 200;
-  char *myString = (char*) malloc(sizeof(char) * mallocSize);
-  char *myNewString;
-
-  int i = 0; // counter
-  printf("fnxn start\n");
-
-  while((c = getchar()) != EOF){
-    myString[i++] = c;
-    printf("In while loop with char: %c in index %d\n", myString[i], i);
-    if(i = mallocSize){
-      ralloc(myString, myNewString, &mallocSize);
-    }
+  /* stack overflow exception handling */
+  if(copy == NULL){
+    printf("Not enough memory avaialable!");
+    free(*myStringPtr);
   }
 
-  /* Print the string in reverse order */
-  printf("\nIteratively Reversed: ");
-  for(i; i > 0; i--){
-    putchar(myString[i-1]);
+  /* update stuffs */
+  else{
+  *arraySizePtr = *arraySizePtr * 2;
+  *myStringPtr = copy;
   }
-
-  /* Deallocate the memory */
-  free(myString);
-  free(myNewString);
-
 }
 
 void iterative(char c){
   /* Initial memory allocation */
-  char myString[256];
+  int ARRAY_SIZE = 10;
+  char *myString = (char*) malloc(ARRAY_SIZE);
   int i = 0; // counter
 
   while((c = getchar()) != EOF){
-    myString[i++] = c;
+    myString[i++] = c; // add char to string
+
+    if(i == ARRAY_SIZE){
+      /* current char capacity reached, realloc with double current capacity */
+      ralloc(&myString, &ARRAY_SIZE);
+      printf("String size doubled to %d\n", ARRAY_SIZE);
+    }
   }
 
+  printf("\nTotal chars: %d\n\nIteratively Reversed: ", i);
   /* Print the string in reverse order */
-  printf("\nIteratively Reversed: ");
   while(i-- > 0){
     putchar(myString[i]);
   }
+
+  free(myString);
 }
 
 void recursive(char c){
+  /* basic recursion with getchar, chars printed in reverse order */
   if((c = getchar()) != EOF){
     recursive(c);
     putchar(c);
@@ -84,11 +71,14 @@ void recursive(char c){
 
 int main() {
   char c;
-  printf("Input string: ");
 
-  //printf("\nRecursively Reversed: ");
-  //recursive(c);
+  /* Print the raw input COMMENT OUT OTHERS */
+  //while((c = getchar()) != EOF) putchar(c);
 
+  /* Recursively print the input in reverse COMMENT OUT OTHERS */
+  //printf("Recursively Reversed: "); recursive(c);
+
+  /* Iteratively print the input in reverse COMMENT OUT OTHERS */
   iterative(c);
 
   return 0;
