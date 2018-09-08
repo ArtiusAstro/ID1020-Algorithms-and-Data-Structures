@@ -1,3 +1,21 @@
+/*#########################################################################
+⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
+⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
+⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: recursive-characters.c
+⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄
+⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      > Description
+⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿
+⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      Reverse char input using both
+⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      iterative and recursive methods
+⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡
+⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿
+⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿
+⢀⢀⢀⠈⠛⣽⣿⣿⣿⣿⣿⣿⠁⢀⢀⢀⣡⣾⣿⣿⣿⣿⣿⣿
+⢀⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣦⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+##########################################################################*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,7 +48,7 @@ void iterative_malloc(char c){
   }
 
   /* Print the string in reverse order */
-  printf("Iteratively Reversed: ");
+  printf("\nIteratively Reversed: ");
   for(i; i > 0; i--){
     putchar(myString[i-1]);
   }
@@ -43,7 +61,7 @@ void iterative_malloc(char c){
 
 void iterative(char c){
   /* Initial memory allocation */
-  char myString[200];
+  char myString[256];
   int i = 0; // counter
 
   while((c = getchar()) != EOF){
@@ -51,9 +69,9 @@ void iterative(char c){
   }
 
   /* Print the string in reverse order */
-  printf("Iteratively Reversed: ");
-  for(i; i > 0; i--){
-    putchar(myString[i-1]);
+  printf("\nIteratively Reversed: ");
+  while(i-- > 0){
+    putchar(myString[i]);
   }
 }
 
@@ -66,7 +84,7 @@ void recursive(char c){
 
 int main() {
   char c;
-  //printf("\nInput string: ");
+  printf("Input string: ");
 
   //printf("\nRecursively Reversed: ");
   //recursive(c);
