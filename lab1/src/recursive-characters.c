@@ -1,59 +1,76 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-void ralloc(char *myString, int *mallocSizePtr, int i){
-  if(i = *mallocSizePtr-1){
-    *mallocSizePtr = *mallocSizePtr * 2;
-    realloc(myString, sizeof(char) * (*mallocSizePtr));
+void ralloc(char *myString, char *myNewString, int *mallocSizePtr){
+  /* If array limit reached malloc new array with double space */
+  printf("performing ralloc\n");
+  myNewString = (char*) malloc(sizeof(char) * (*mallocSizePtr) * 2);
+  strncpy(myNewString, myString, *mallocSizePtr);
+  free(myString);
+  myString = myNewString;
+  *mallocSizePtr = *mallocSizePtr * 2;
+}
+
+void iterative_malloc(char c){
+  /* Initial memory allocation */
+  int mallocSize = 200;
+  char *myString = (char*) malloc(sizeof(char) * mallocSize);
+  char *myNewString;
+
+  int i = 0; // counter
+  printf("fnxn start\n");
+
+  while((c = getchar()) != EOF){
+    myString[i++] = c;
+    printf("In while loop with char: %c in index %d\n", myString[i], i);
+    if(i = mallocSize){
+      ralloc(myString, myNewString, &mallocSize);
+    }
+  }
+
+  /* Print the string in reverse order */
+  printf("Iteratively Reversed: ");
+  for(i; i > 0; i--){
+    putchar(myString[i-1]);
+  }
+
+  /* Deallocate the memory */
+  free(myString);
+  free(myNewString);
+
+}
+
+void iterative(char c){
+  /* Initial memory allocation */
+  char myString[200];
+  int i = 0; // counter
+
+  while((c = getchar()) != EOF){
+    myString[i++] = c;
+  }
+
+  /* Print the string in reverse order */
+  printf("Iteratively Reversed: ");
+  for(i; i > 0; i--){
+    putchar(myString[i-1]);
   }
 }
 
 void recursive(char c){
-  if((c = getchar()) != '\n'){
+  if((c = getchar()) != EOF){
     recursive(c);
     putchar(c);
   }
 }
 
-void iterative(char c){
-  /* Initial memory allocation */
-  int mallocSize = 10;
-  int *mallocSizePtr = &mallocSize;
-  char *myString = (char*) malloc(sizeof(char)*mallocSize);
-
-  int i = 0; // counter
-
-  /* collect chars, if array limit reached realloc double space */
-  for(;;){
-    c = getchar();
-    if(c = '\n')
-      break;
-    myString[i] = c;
-    ralloc(myString, mallocSizePtr, i++);
-  }
-
-  /* Print the string in reverse order */
-  for(i; i > 0; i--){
-    putchar(myString[i]);
-  }
-
-  /* Deallocate the memory */
-  free(myString);
-}
-
-void flush(){
-  fflush(stdout); //flushes output buffer of stdout stream
-}
-
 int main() {
-  printf("Input string: ");
-  flush();
-  printf("Recursively Reversed: ");
   char c;
-  recursive(c);
+  //printf("\nInput string: ");
 
-  printf("\nInput string: ");
-  flush();
-  printf("Iteratively Reversed: ");
+  //printf("\nRecursively Reversed: ");
+  //recursive(c);
+
   iterative(c);
 
   return 0;
