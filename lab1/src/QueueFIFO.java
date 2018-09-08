@@ -1,12 +1,13 @@
 /*#########################################################################
 ⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
 ⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
-⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: reverse-input-stack.c
-⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄
-⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      > Description
+⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: AbstractStack.java
+⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Compilation: javac AbstractStack.java
+⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      Execution: java AbstractStack < input.txt
+⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷
 ⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿
-⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      Reverse char input using a stack
-⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      with an iterative approach
+⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      > Description
+⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      FIFO Queue based on Dbl linked list
 ⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡
 ⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿
 ⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿
@@ -20,7 +21,30 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Queue;
 
-public class QueueFIFO implements Queue {
+/**
+ *  The {@code Stack} class represents a last-in-top-out (LIFO) stack of generic items.
+ *  It supports the usual <em>push</em> and <em>pop</em> operations, along with methods
+ *  for peeking at the top item, testing if the stack is empty, getting the number of
+ *  items in the stack, and iterating over the items in LIFO order.
+ *  <p>
+ *  This implementation uses a singly-linked list with a nested class for
+ *  linked-list nodes.
+ *  The <em>push</em>, <em>pop</em>, <em>peek</em>, <em>size</em>, and <em>is-empty</em>
+ *  operations all take constant time in the worst case.
+ *
+ *  @author Ayub Atif
+ */
+
+public class QueueFIFO<Item> implements Queue<Item>, Iterable<Item>{
+
+    private int n;          // size of the stack
+    private QueueFIFO.Node top;     // top of stack
+
+    // helper linked list class
+    private class Node {
+        private Item item;
+        private QueueFIFO.Node next;
+    }
 
     @Override
     public int size() {
@@ -38,7 +62,7 @@ public class QueueFIFO implements Queue {
     }
 
     @Override
-    public Iterator iterator() {
+    public Iterator<Item> iterator() {
         return null;
     }
 
@@ -48,8 +72,8 @@ public class QueueFIFO implements Queue {
     }
 
     @Override
-    public Object[] toArray(Object[] a) {
-        return new Object[0];
+    public <T> T[] toArray(T[] a) {
+        return null;
     }
 
     @Override
@@ -93,22 +117,22 @@ public class QueueFIFO implements Queue {
     }
 
     @Override
-    public Object remove() {
+    public Item remove() {
         return null;
     }
 
     @Override
-    public Object poll() {
+    public Item poll() {
         return null;
     }
 
     @Override
-    public Object element() {
+    public Item element() {
         return null;
     }
 
     @Override
-    public Object peek() {
+    public Item peek() {
         return null;
     }
 }

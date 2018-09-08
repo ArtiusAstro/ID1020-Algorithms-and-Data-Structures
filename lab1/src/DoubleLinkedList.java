@@ -1,12 +1,13 @@
-/*#########################################################################
+/*##############################################################################
 ⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
 ⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
-⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: reverse-input-stack.c
-⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄
-⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      > Description
+⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: DoubleLinkedList.java
+⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Compilation: javac DoubleLinkedList.java
+⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      Execution: java DoubleLinkedList < input.txt
+⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷
 ⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿
-⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      Reverse char input using a stack
-⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      with an iterative approach
+⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      > Description
+⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      FIFO Queue based on Dbl linked list
 ⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡
 ⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿
 ⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿
@@ -14,78 +15,86 @@
 ⢀⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣦⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-##########################################################################*/
+###############################################################################*/
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Queue;
 
-public class DoubleLinkedList<E> {
+/**
+ *  The {@code Stack} class represents a last-in-top-out (LIFO) stack of generic items.
+ *  It supports the usual <em>push</em> and <em>pop</em> operations, along with methods
+ *  for peeking at the top item, testing if the stack is empty, getting the number of
+ *  items in the stack, and iterating over the items in LIFO order.
+ *  <p>
+ *  This implementation uses a singly-linked list with a nested class for
+ *  linked-list nodes.
+ *  The <em>push</em>, <em>pop</em>, <em>peek</em>, <em>size</em>, and <em>is-empty</em>
+ *  operations all take constant time in the worst case.
+ *
+ *  @author Ayub Atif
+ */
+
+public class DoubleLinkedList<T> implements Iterable<T> {
     private Node head;
     private Node tail;
     private int size;
 
-    public DoubleLinkedList() {
-        size = 0;
-    }
-
-    public DoubleLinkedList(E[] eArray){
-        size = 0;
-        for(E e : eArray)
-            addLast(e);
-    }
-
     /**
-     * this class keeps track of each element information
-     * @author Ayub Atif
+     * A node holds an item and info on prev or next
      *
+     * @author Ayub Atif
      */
     private class Node {
-        E element;
+        T item;
         Node next;
         Node prev;
 
-        public Node(E element, Node next, Node prev) {
-            this.element = element;
+        Node(T item, Node next, Node prev) {
+            this.item = item;
             this.next = next;
             this.prev = prev;
         }
     }
-    /**
-     * returns the size of the linked list
-     * @return
-     */
-    public int size() { return size; }
 
     /**
-     * return whether the list is empty or not
-     * @return
+     * init empty list
      */
-    public boolean isEmpty() { return size == 0; }
-
-    /**
-     * adds element at the starting of the linked list
-     * @param element
-     */
-    public void addFirst(E element) {
-        Node tmp = new Node(element, head, null);
-        if(head != null ) {head.prev = tmp;}
-        head = tmp;
-        if(tail == null) { tail = tmp;}
-        size++;
-        System.out.println("adding: "+element);
+    public DoubleLinkedList() {
+        size = 0;
     }
 
     /**
-     * adds element at the end of the linked list
-     * @param element
+     * adds item at start of list
+     *
+     * @param item to be added
      */
-    public void addLast(E element) {
+    public void addFirst(T item) {
+        Node tmp = new Node(item, head, null);
+        if(head != null ) {
+            head.prev = tmp;
+        }
+        head = tmp;
+        if(tail == null) {
+            tail = tmp;
+        }
+        size++;
+    }
 
-        Node tmp = new Node(element, null, tail);
+    /**
+     * adds item at end of list
+     *
+     * @param item to be added
+     */
+    public void addLast(T item) {
+
+        Node tmp = new Node(item, null, tail);
         if(tail != null) {tail.next = tmp;}
         tail = tmp;
         if(head == null) { head = tmp;}
         size++;
-        System.out.println("adding: "+element);
+        System.out.println("adding: "+item);
     }
 
     /**
@@ -96,7 +105,7 @@ public class DoubleLinkedList<E> {
         System.out.println("iterating forward..");
         Node tmp = head;
         while(tmp != null){
-            System.out.println(tmp.element);
+            System.out.println(tmp.item);
             tmp = tmp.next;
         }
     }
@@ -109,38 +118,49 @@ public class DoubleLinkedList<E> {
         System.out.println("iterating backword..");
         Node tmp = tail;
         while(tmp != null){
-            System.out.println(tmp.element);
+            System.out.println(tmp.item);
             tmp = tmp.prev;
         }
     }
 
     /**
-     * this method removes element from the start of the linked list
+     * this method removes item from the start of the linked list
      * @return
      */
-    public E removeFirst() {
+    public T removeFirst() {
         if (size == 0) throw new NoSuchElementException();
         Node tmp = head;
         head = head.next;
         head.prev = null;
         size--;
-        System.out.println("deleted: "+tmp.element);
-        return tmp.element;
+        System.out.println("deleted: "+tmp.item);
+        return tmp.item;
     }
 
     /**
-     * this method removes element from the end of the linked list
+     * this method removes item from the end of the linked list
      * @return
      */
-    public E removeLast() {
+    public T removeLast() {
         if (size == 0) throw new NoSuchElementException();
         Node tmp = tail;
         tail = tail.prev;
         tail.next = null;
         size--;
-        System.out.println("deleted: "+tmp.element);
-        return tmp.element;
+        System.out.println("deleted: "+tmp.item);
+        return tmp.item;
     }
+
+    /**
+     *
+     *
+     * @return
+     */
+    @Override
+    public Iterator<T> iterator() {
+        return null;
+    }
+
 
     public static void main(String a[]){
 
