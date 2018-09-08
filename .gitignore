@@ -26,5 +26,5 @@ hs_err_pid*
 .iml
 
 idea/
-src/
+out/
 .exe
