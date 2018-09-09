@@ -7,7 +7,7 @@
 ⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷
 ⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿
 ⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      > Description
-⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      FIFO Queue based on Dbl linked list
+⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      Generic Dbl linked list
 ⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡
 ⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿
 ⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿
@@ -17,10 +17,9 @@
 ⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ###############################################################################*/
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Queue;
+import java.util.Random;
 
 /**
  *  The {@code Stack} class represents a last-in-top-out (LIFO) stack of generic items.
@@ -66,7 +65,25 @@ public class DoubleLinkedList<T> implements Iterable<T> {
     }
 
     /**
-     * adds item at start of list
+     * Returns true if this stack is empty.
+     *
+     * @return true if this stack is empty; false otherwise
+     */
+    public boolean isEmpty() {
+        return head == null && tail == null;
+    }
+
+    /**
+     * Returns the number of items in this list.
+     *
+     * @return the number of items in this list
+     */
+    public int size() {
+        return size;
+    }
+
+    /**
+     * Adds item at start of list
      *
      * @param item to be added
      */
@@ -83,95 +100,143 @@ public class DoubleLinkedList<T> implements Iterable<T> {
     }
 
     /**
-     * adds item at end of list
+     * Adds item at end of list
      *
      * @param item to be added
      */
-    public void addLast(T item) {
-
+    public void enqueue(T item) {
         Node tmp = new Node(item, null, tail);
-        if(tail != null) {tail.next = tmp;}
+        if(tail != null) {
+            tail.next = tmp;
+        }
         tail = tmp;
-        if(head == null) { head = tmp;}
+        if(head == null) {
+            head = tmp;
+        }
         size++;
-        System.out.println("adding: "+item);
     }
 
     /**
-     * this method walks forward through the linked list
+     * Removes item from start of list
      */
-    public void iterateForward(){
-
-        System.out.println("iterating forward..");
-        Node tmp = head;
-        while(tmp != null){
-            System.out.println(tmp.item);
-            tmp = tmp.next;
-        }
-    }
-
-    /**
-     * this method walks backward through the linked list
-     */
-    public void iterateBackward(){
-
-        System.out.println("iterating backword..");
-        Node tmp = tail;
-        while(tmp != null){
-            System.out.println(tmp.item);
-            tmp = tmp.prev;
-        }
-    }
-
-    /**
-     * this method removes item from the start of the linked list
-     * @return
-     */
-    public T removeFirst() {
+    public void dequeue() {
         if (size == 0) throw new NoSuchElementException();
-        Node tmp = head;
-        head = head.next;
-        head.prev = null;
+        if (size == 1){
+            head = tail = null;
+        }
+        else {
+            head = head.next;
+            head.prev = null;
+        }
         size--;
-        System.out.println("deleted: "+tmp.item);
-        return tmp.item;
     }
 
     /**
-     * this method removes item from the end of the linked list
-     * @return
+     * Removes item from end of list
      */
-    public T removeLast() {
+    public void removeLast() {
         if (size == 0) throw new NoSuchElementException();
-        Node tmp = tail;
-        tail = tail.prev;
-        tail.next = null;
+        if (size == 1){
+            head = tail = null;
+        }
+        else {
+            tail = tail.prev;
+            tail.next = null;
+        }
         size--;
-        System.out.println("deleted: "+tmp.item);
-        return tmp.item;
     }
 
     /**
+     *  Gets first item in list
      *
+     * @return first item
+     */
+    public T getFirst(){
+        if (size == 0) throw new NoSuchElementException();
+        return this.head.item;
+    }
+
+    /**
+     * It's your typical iterator
      *
-     * @return
+     * @return iterator that goes from head to tail
      */
     @Override
     public Iterator<T> iterator() {
-        return null;
+        return new ListIterator() {
+        };
+    }
+
+    private class ListIterator implements Iterator<T>{
+        private Node now = head;
+
+        public boolean hasNext() {
+            return now != null;
+        }
+
+        public T next() {
+            if (!hasNext())
+                throw new NoSuchElementException();
+            T item = now.item;
+            now = now.next;
+            return item;
+        }
+    }
+
+    /**
+     * Returns a string representation of this list.
+     *
+     * @return the sequence of items in this list from head to tail
+     */
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        int i = this.size()-1;
+        for (T item : this) {
+            s.append('[').append(item).append(']');
+            if(i-- > 0) {
+                s.append(", ");
+            }
+        }
+        return s.toString();
     }
 
 
-    public static void main(String a[]){
+    public static void main(String a[]) throws NullPointerException{
 
-        DoubleLinkedList<Integer> doubleLinkedList = new DoubleLinkedList<Integer>();
-        doubleLinkedList.addFirst(10);
-        doubleLinkedList.addFirst(34);
-        doubleLinkedList.addLast(56);
-        doubleLinkedList.addLast(364);
-        doubleLinkedList.iterateForward();
-        doubleLinkedList.removeFirst();
+        Random rand = new Random();
+
+        /* General testing */
+        DoubleLinkedList<Integer> doubleLinkedList = new DoubleLinkedList<>();
+        doubleLinkedList.addFirst(31);
+        doubleLinkedList.addFirst(139);
+        System.out.println(doubleLinkedList.toString());
+        doubleLinkedList.enqueue(9);
+        doubleLinkedList.enqueue(99);
+        doubleLinkedList.enqueue(25);
+        System.out.println(doubleLinkedList.toString());
+        doubleLinkedList.dequeue();
+        System.out.println(doubleLinkedList.toString());
         doubleLinkedList.removeLast();
-        doubleLinkedList.iterateBackward();
+        System.out.println(doubleLinkedList.toString());
+        System.out.println("First in list is "+doubleLinkedList.getFirst());
+
+        /* Despite its class being a proper DoubleLinkedList, we can use only FIFO queue methods */
+        DoubleLinkedList<Integer> queueFIFO = new DoubleLinkedList<>();
+        int i;
+        for(i=0; i<3*2; i++){
+            queueFIFO.enqueue(rand.nextInt(50));
+        }
+
+        System.out.println("\nThe Queue: "+queueFIFO.toString());
+        try {
+            for (i=6; i > 0; i--) {
+                int dequeued = queueFIFO.getFirst();
+                queueFIFO.dequeue();
+                System.out.println("Mr." + dequeued + " has left the Queue: " + queueFIFO.toString());
+            }
+        }
+        catch (NullPointerException e){
+            System.out.println(e);
+        }
     }
 }
