@@ -164,42 +164,33 @@ public class CircularList<T> implements Iterable<T> {
     private class ListIterator implements Iterator<T>{
         private Node current;
         private Node post;
-        boolean visitingAgain = false;
+        boolean visitingAgain;
 
         public ListIterator() {
-            if(!isEmpty()) {
-                post = head.next;
+            if (!isEmpty()) {
                 current = head;
+                post = head.next;
+                visitingAgain = false;
             }
         }
 
         @Override
         public boolean hasNext() {
-            if(!isEmpty()) {
-                if (!visitingAgain) {
-                    visitingAgain = true; // once you start iterating change this flag.
-                    return true;
-                }
-                else {
-                    if(current == head) {
-                        return true;
-                    }
-                    return true;
-                }
-            }
-            else {
+
+            if (post == head && visitingAgain){
                 return false;
             }
+            visitingAgain = true; // once you start iterating change this flag.
+            return true;
         }
 
         @Override
         public T next() {
-            if(!hasNext()){
+            if (!hasNext())
                 throw new NoSuchElementException();
-            }
             T item = current.item;
             current = post;
-            post = current.next;
+            post = post.next;
             return item;
         }
     }
@@ -213,7 +204,6 @@ public class CircularList<T> implements Iterable<T> {
         StringBuilder s = new StringBuilder();
         int i = this.size();
         for (T item : this) {
-            System.out.println(item+"string");
             s.append('[').append(item).append(']');
             if(i-- > 0) {
                 s.append(", ");
