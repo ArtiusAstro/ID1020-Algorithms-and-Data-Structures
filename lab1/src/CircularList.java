@@ -1,9 +1,13 @@
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Random;
+
 /*##############################################################################
 ⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
 ⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
-⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: DoubleLinkedList.java
-⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Compilation: javac DoubleLinkedList.java
-⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      Execution: java DoubleLinkedList < input.txt
+⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: CircularList.java
+⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Compilation: javac CircularList.java
+⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      Execution: java CircularList < input.txt
 ⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷
 ⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿
 ⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      > Description
@@ -16,10 +20,6 @@
 ⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ###############################################################################*/
-
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Random;
 
 /**
  *  The {@code Stack} class represents a last-in-top-out (LIFO) stack of generic items.
@@ -35,7 +35,7 @@ import java.util.Random;
  *  @author Ayub Atif
  */
 
-public class DoubleLinkedList<T> implements Iterable<T> {
+public class CircularList<T> implements Iterable<T> {
     private Node head;
     private Node tail;
     private int size;
@@ -60,7 +60,7 @@ public class DoubleLinkedList<T> implements Iterable<T> {
     /**
      * init empty list
      */
-    public DoubleLinkedList() {
+    public CircularList() {
         size = 0;
     }
 
@@ -104,7 +104,7 @@ public class DoubleLinkedList<T> implements Iterable<T> {
      *
      * @param item to be added
      */
-    public void enqueue(T item) {
+    public void addLast(T item) {
         Node tmp = new Node(item, null, tail);
         if(tail != null) {
             tail.next = tmp;
@@ -119,7 +119,7 @@ public class DoubleLinkedList<T> implements Iterable<T> {
     /**
      * Removes item from start of list
      */
-    public void dequeue() {
+    public void removeFirst() {
         if (size == 0) throw new NoSuchElementException();
         if (size == 1){
             head = tail = null;
@@ -206,37 +206,39 @@ public class DoubleLinkedList<T> implements Iterable<T> {
         Random rand = new Random();
 
         /* General testing */
-        DoubleLinkedList<Integer> doubleLinkedList = new DoubleLinkedList<>();
+        CircularList<Integer> doubleLinkedList = new CircularList<>();
         doubleLinkedList.addFirst(31);
         doubleLinkedList.addFirst(139);
         System.out.println(doubleLinkedList.toString());
-        doubleLinkedList.enqueue(9);
-        doubleLinkedList.enqueue(99);
-        doubleLinkedList.enqueue(25);
+        doubleLinkedList.addLast(9);
+        doubleLinkedList.addLast(99);
+        doubleLinkedList.addLast(25);
         System.out.println(doubleLinkedList.toString());
-        doubleLinkedList.dequeue();
+        doubleLinkedList.removeFirst();
         System.out.println(doubleLinkedList.toString());
         doubleLinkedList.removeLast();
         System.out.println(doubleLinkedList.toString());
         System.out.println("First in list is "+doubleLinkedList.getFirst());
 
-        /* Despite its class being a proper DoubleLinkedList, we can use only FIFO queue methods */
-        DoubleLinkedList<Integer> queueFIFO = new DoubleLinkedList<>();
+        /* Despite its class being a proper CircularList, we can use only FIFO queue methods */
+        CircularList<Integer> circularList = new CircularList<>();
         int i;
         for(i=0; i<3*2; i++){
-            queueFIFO.enqueue(rand.nextInt(50));
+            circularList.addLast(rand.nextInt(50));
         }
 
-        System.out.println("\nThe Queue: "+queueFIFO.toString());
+        System.out.println("\nThe Queue: "+circularList.toString());
         try {
             for (; i>0; i--) {
-                int dequeued = queueFIFO.getFirst();
-                queueFIFO.dequeue();
-                System.out.println("Mr." + dequeued + " has left the Queue: " + queueFIFO.toString());
+                int removeFirstd = circularList.getFirst();
+                circularList.removeFirst();
+                System.out.println("Mr." + removeFirstd + " has left the Queue: " + circularList.toString());
             }
         }
         catch (NullPointerException e){
             System.out.println(e);
         }
     }
+}
+ {
 }
