@@ -1,7 +1,3 @@
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Random;
-
 /*##############################################################################
 ⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
 ⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
@@ -20,6 +16,10 @@ import java.util.Random;
 ⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ###############################################################################*/
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Random;
 
 /**
  *  Implement a generic iterable circular linked list which allows
@@ -75,6 +75,7 @@ public class CircularList<T> implements Iterable<T> {
     public int size() {
         return size;
     }
+
     private void circlify(){
         if(!isEmpty()) {
             head.prev = tail;
@@ -88,12 +89,12 @@ public class CircularList<T> implements Iterable<T> {
      * @param item to be added
      */
     public void addFirst(T item) {
-        Node tmp = new Node(item, head, null);
+        Node tmp = new Node(item, head, tail);
         if(head != null ) {
             head.prev = tmp;
         }
         head = tmp;
-        if(tail == null) {
+        if(tail != null) {
             tail = tmp;
         }
         size++;
@@ -157,37 +158,29 @@ public class CircularList<T> implements Iterable<T> {
      */
     @Override
     public Iterator<T> iterator() {
-        return new ListIterator() {
+        return new ListIterator(){
         };
     }
 
     private class ListIterator implements Iterator<T>{
-        private Node current;
-        private Node post;
-        boolean visitingAgain;
-
-        public ListIterator() {
-            if (!isEmpty()) {
-                current = head;
-                post = head.next;
-                visitingAgain = false;
-            }
-        }
+        private Node current = head;
+        private Node post = head.next;
+        boolean visitingAgain = false;
 
         @Override
         public boolean hasNext() {
-
-            if (post == head && visitingAgain){
+            if(visitingAgain && (post == head)){
                 return false;
             }
-            visitingAgain = true; // once you start iterating change this flag.
+            visitingAgain = true;
             return true;
         }
 
         @Override
         public T next() {
-            if (!hasNext())
+            if(!hasNext()){
                 throw new NoSuchElementException();
+            }
             T item = current.item;
             current = post;
             post = post.next;
@@ -202,7 +195,7 @@ public class CircularList<T> implements Iterable<T> {
      */
     public String toString() {
         StringBuilder s = new StringBuilder();
-        int i = this.size();
+        int i = this.size()-1;
         for (T item : this) {
             s.append('[').append(item).append(']');
             if(i-- > 0) {
@@ -216,7 +209,7 @@ public class CircularList<T> implements Iterable<T> {
 
         Random rand = new Random();
 
-        /* General testing */
+        /* General testing
         CircularList<Integer> circularList2 = new CircularList<>();
         circularList2.addFirst(31);
         circularList2.addFirst(139);
@@ -231,15 +224,22 @@ public class CircularList<T> implements Iterable<T> {
         System.out.println(circularList2.toString());//31 , 9, 99
 
         /* Despite its class being a proper CircularList, we can use only FIFO queue methods */
-        //CircularList<Integer> circularList = new CircularList<>();
+        CircularList<Integer> circularList = new CircularList<>();
         int i;
-        /*
-        for(i=0; i<2; i++){
+
+        for(i=0; i<3; i++){
             circularList.addLast(rand.nextInt(50));
         }
 
         System.out.println("\nThe Circle: "+circularList.toString());
-        try {
+        System.out.println("\nThe HEAD: "+circularList.head.item);
+        System.out.println("\nThe TAIL: "+circularList.tail.item);
+
+        System.out.println("\nThe 0: "+circularList.tail.next.item);
+        System.out.println("\nThe 1: "+circularList.head.next.item);
+        System.out.println("\nThe 2: "+circularList.head.prev.item);
+
+        /*try {
             for (; i>0; i--) {
                 circularList.removeFirst();
                 System.out.println(circularList.toString());
@@ -247,8 +247,7 @@ public class CircularList<T> implements Iterable<T> {
         }
         catch (NullPointerException e){
             System.out.println(e);
-        }
+        }*/
 
-        */
     }
 }

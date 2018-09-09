@@ -167,7 +167,7 @@ public class DoubleLinkedList<T> implements Iterable<T> {
         };
     }
 
-    private class ListIterator implements Iterator<T>{
+    private class ListIterator implements Iterator<T> {
         private Node now = head;
 
         public boolean hasNext() {
