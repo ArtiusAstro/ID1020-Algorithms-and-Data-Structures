@@ -27,6 +27,7 @@ void ralloc(char **myStringPtr, int *arraySizePtr){
   if(copy == NULL){
     printf("Not enough memory avaialable!");
     free(*myStringPtr);
+    exit(0);
   }
 
   /* update stuffs */

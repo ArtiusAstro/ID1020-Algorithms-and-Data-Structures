@@ -18,133 +18,126 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-typedef struct {
-    int info;
-} DATA;
+/*
+ *  In a circular list, the next pointer of the last node points to the first node
+ *
+ * Following are the important operations supported by a circular list.
+ * insert − Inserts an element at the start of the list.
+ * delete − Deletes an element from the start of the list.
+ * display − Displays the list.
+ *
+ */
 
-typedef struct node {
-    DATA data;
-    struct node* next;
-} NODE;
+typedef struct  node {
+   int data;
+   struct node *next;
+} Node;
 
-void init(NODE** head) {
-    *head = NULL;
+node *head = NULL;
+node *tail = NULL;
+node *current = NULL;
+
+bool isEmpty() {
+   return head == NULL;
 }
 
-void print_list(NODE* head) {
-    NODE * temp;
-    for (temp = head; temp; temp = temp->next)
-        printf("%5d", temp->data.info);
+int size() {
+   int size = 0;
+
+   if(head == NULL) {
+      return 0;
+   }
+
+   current = head->next;
+
+   while(current != head) {
+      size++;
+      current = current->next;
+   }
+
+   return size;
 }
 
-NODE* add(NODE* node, DATA data) {
-    NODE* temp = (NODE*) malloc(sizeof (NODE));
-    if (temp == NULL) {
-        exit(0); // no memory available
-    }
-    temp->data = data;
-    temp->next = node;
-    node = temp;
-    return node;
+//insert link at the first location
+void addFirst(int data) {
+
+   //create a link
+   Node *link = (Node*) malloc(sizeof(Node));
+   link->data = data;
+
+   if (isEmpty()) {
+      head = link;
+      head->next = head;
+   }
+   else {
+      //point it to old first node
+      link->next = head;
+      //point first to new first node
+      head = link;
+   }
 }
 
-void add_at(NODE* node, DATA data) {
-    NODE* temp = (NODE*) malloc(sizeof (NODE));
-    if (temp == NULL) {
-        exit(EXIT_FAILURE); // no memory available
-    }
-    temp->data = data;
-    temp->next = node->next;
-    node->next = temp;
+//delete first item
+void removeFirst() {
+  if(isEmpty()) {
+    printf("Empty List, try calling addFirst() before removing\n");
+    return;
+  }
+
+   if(head->next == head) {
+     head = NULL;
+   }
+
+   else {
+     head = head->next;
+   }
 }
 
-void remove_node(NODE* head) {
-    NODE* temp = (NODE*) malloc(sizeof (NODE));
-    if (temp == NULL) {
-        exit(EXIT_FAILURE); // no memory available
-    }
-    temp = head->next;
-    head->next = head->next->next;
-    free(temp);
+Node* getFirst() {
+  return head;
 }
 
-NODE * reverse_rec(NODE * ptr, NODE * previous) {
-    NODE * temp;
-    if (ptr->next == NULL) {
-        ptr->next = previous;
-        return ptr;
-    } else {
-        temp = reverse_rec(ptr->next, ptr);
-        ptr->next = previous;
-        return temp;
-    }
+//display the list
+void printList() {
+   Node *ptr = head;
+
+   //start from the beginning
+   if(head != NULL) {
+      while(ptr->next != ptr) {
+        printf("[%d], ",ptr->data);
+        ptr = ptr->next;
+      }
+      printf("[%d",ptr->data);
+   }
+   else{
+     printf("[");
+   }
+
+   printf("]");
 }
 
-NODE * reverse(NODE * node) {
-    NODE * temp;
-    NODE * previous = NULL;
-    while (node != NULL) {
-        temp = node->next;
-        node->next = previous;
-        previous = node;
-        node = temp;
-    }
-    return previous;
-}
+void main() {
+   addFirst(10);
+   addFirst(20);
+   addFirst(30);
+   addFirst(1);
+   addFirst(40);
+   addFirst(56);
 
-NODE *free_list(NODE *head) {
-    NODE *tmpPtr = head;
-    NODE *followPtr;
-    while (tmpPtr != NULL) {
-        followPtr = tmpPtr;
-        tmpPtr = tmpPtr->next;
-        free(followPtr);
-    }
-    return NULL;
-}
+   printf("Original List: ");
 
-NODE *sort_list(NODE *head) {
-    NODE *tmpPtr = head, *tmpNxt = head->next;
-    DATA tmp;
-    while (tmpNxt != NULL) {
-        while (tmpNxt != tmpPtr) {
-            if (tmpNxt->data.info < tmpPtr->data.info) {
-                tmp = tmpPtr->data;
-                tmpPtr->data = tmpNxt->data;
-                tmpNxt->data = tmp;
-            }
-            tmpPtr = tmpPtr->next;
-        }
-        tmpPtr = head;
-        tmpNxt = tmpNxt->next;
-    }
-    return tmpPtr;
-}
+   //print list
+   printList();
 
-int main() {
-    int i;
-    NODE* head;
-    NODE* node;
-    DATA element;
-    printf("Add Elements to List:\n");
-    init(&head);
-    for (i = 53; i <= 63; i++) {
-        element.info = i;
-        printf("Add Element %2d To The List.\n", element.info);
-        head = add(head, element);
-    }
-    printf("\nPrint The List:\n");
-    print_list(head);
-    printf("\nRemove Element From The List:\n");
-    node = head->next->next;
-    remove_node(node);
-    printf("\nAdd Element To The List:\n");
-    node = head->next->next->next;
-    element.info = 2000;
-    add_at(node, element);
-    head = reverse(head); // Revers The List
-    head = sort_list(head); // Sort The List
-    head = free_list(head);
-    return (EXIT_SUCCESS);
+   while(!isEmpty()) {
+      Node *temp = getFirst();
+      removeFirst();
+      printf("\nList after deleting (%d): ",temp->data);
+      printList();
+   }
+
+   printf("\nList after deleting all items: ");
+   printList();
 }
