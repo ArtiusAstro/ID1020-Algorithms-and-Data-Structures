@@ -31,13 +31,12 @@
  */
 
 typedef struct  node {
-   int data;
+   char data;
    struct node *next;
 } Node;
 
-node *head = NULL;
-node *tail = NULL;
-node *current = NULL;
+Node *head = NULL;
+Node *current = NULL;
 
 bool isEmpty() {
    return head == NULL;
@@ -61,7 +60,7 @@ int size() {
 }
 
 //insert link at the first location
-void addFirst(int data) {
+void enqueue(char data) {
 
    //create a link
    Node *link = (Node*) malloc(sizeof(Node));
@@ -80,9 +79,9 @@ void addFirst(int data) {
 }
 
 //delete first item
-void removeFirst() {
+void dequeue() {
   if(isEmpty()) {
-    printf("Empty List, try calling addFirst() before removing\n");
+    printf("Empty List, try calling enqueue() before removing\n");
     return;
   }
 
@@ -100,16 +99,16 @@ Node* getFirst() {
 }
 
 //display the list
-void printList() {
+void print_list() {
    Node *ptr = head;
 
    //start from the beginning
    if(head != NULL) {
       while(ptr->next != ptr) {
-        printf("[%d], ",ptr->data);
+        printf("[%c], ",ptr->data);
         ptr = ptr->next;
       }
-      printf("[%d",ptr->data);
+      printf("[%c",ptr->data);
    }
    else{
      printf("[");
@@ -118,26 +117,48 @@ void printList() {
    printf("]");
 }
 
-void main() {
-   addFirst(10);
-   addFirst(20);
-   addFirst(30);
-   addFirst(1);
-   addFirst(40);
-   addFirst(56);
+//display the list as a sentence
+void print_list_tidy() {
+   Node *ptr = head;
 
-   printf("Original List: ");
-
-   //print list
-   printList();
-
-   while(!isEmpty()) {
-      Node *temp = getFirst();
-      removeFirst();
-      printf("\nList after deleting (%d): ",temp->data);
-      printList();
+   //start from the beginning
+   if(head != NULL) {
+      while(ptr->next != ptr) {
+        printf("%c",ptr->data);
+        ptr = ptr->next;
+      }
+      printf("%c",ptr->data);
    }
+}
 
-   printf("\nList after deleting all items: ");
-   printList();
+void recursive(char c){
+  /* basic recursion with getchar, chars printed in reverse order */
+  if((c = getchar()) != EOF){
+    recursive(c);
+    enqueue(c);
+  }
+}
+
+void main() {
+  char c;
+  recursive(c);
+
+  printf("Original List: ");
+  //print list
+  print_list();
+
+  printf("\n\nOriginal String: ");
+  //print list as a sentence
+  print_list_tidy();
+  printf("\n");
+
+  while(!isEmpty()) {
+    Node *temp = getFirst();
+    dequeue();
+    printf("\nString after deleting (%c): ",temp->data);
+    print_list_tidy();
+  }
+
+  printf("\nList after deleting all items: ");
+  print_list();
 }

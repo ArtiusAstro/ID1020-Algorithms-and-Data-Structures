@@ -153,7 +153,7 @@ public class AbstractStack<Item> implements Iterable<Item> {
 
 
     /**
-     * Unit tests the {@code Stack} data type.
+     * Unit testing the data type.
      */
     public static void main(String[] args) throws IOException {
 
