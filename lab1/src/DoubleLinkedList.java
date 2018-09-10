@@ -63,7 +63,7 @@ public class DoubleLinkedList<T> implements Iterable<T> {
      * @return true if this stack is empty; false otherwise
      */
     public boolean isEmpty() {
-        return head == null && tail == null;
+        return size == 0;
     }
 
     /**
@@ -97,7 +97,7 @@ public class DoubleLinkedList<T> implements Iterable<T> {
      *
      * @param item to be added
      */
-    public void enqueue(T item) {
+    public void addLast(T item) {
         Node tmp = new Node(item, null, tail);
         if(tail != null) {
             tail.next = tmp;
@@ -112,7 +112,7 @@ public class DoubleLinkedList<T> implements Iterable<T> {
     /**
      * Removes item from start of list
      */
-    public void dequeue() {
+    public void removeFirst() {
         if (size == 0){
             throw new NoSuchElementException();
         }
@@ -209,12 +209,12 @@ public class DoubleLinkedList<T> implements Iterable<T> {
         doubleLinkedList.addFirst(31);
         doubleLinkedList.addFirst(139);
         System.out.println("Tested addFirst(): "+doubleLinkedList.toString()); // 139, 31
-        doubleLinkedList.enqueue(9);
-        doubleLinkedList.enqueue(99);
-        doubleLinkedList.enqueue(25);
-        System.out.println("Tested enqueue(): "+doubleLinkedList.toString()); //
-        doubleLinkedList.dequeue();
-        System.out.println("Tested dequeue(): "+doubleLinkedList.toString());
+        doubleLinkedList.addLast(9);
+        doubleLinkedList.addLast(99);
+        doubleLinkedList.addLast(25);
+        System.out.println("Tested addLast(): "+doubleLinkedList.toString()); //
+        doubleLinkedList.removeFirst();
+        System.out.println("Tested removeFirst(): "+doubleLinkedList.toString());
         doubleLinkedList.removeLast();
         System.out.println("Tested removeLast(): "+doubleLinkedList.toString());
         System.out.println("Tested getFirst(): "+doubleLinkedList.getFirst()+"\n");
@@ -228,7 +228,7 @@ public class DoubleLinkedList<T> implements Iterable<T> {
             System.out.print("Input is: ");
             while ((stream = inputStream.read()) != -1) {
                 System.out.write(stream); // display input
-                queueFIFO.enqueue((char)stream); // push chars to stack
+                queueFIFO.addLast((char)stream); // push chars to stack
             }
         }
         catch (IOException e){
@@ -238,13 +238,13 @@ public class DoubleLinkedList<T> implements Iterable<T> {
         System.out.println("\nThe Queue: "+queueFIFO.toString()+"\n");
         try {
             while(!queueFIFO.isEmpty()) {
-                char dequeued = queueFIFO.getFirst();
-                queueFIFO.dequeue();
-                System.out.println("Mr." + dequeued + " has left the Queue: " + queueFIFO.toString());
+                char removed = queueFIFO.getFirst();
+                queueFIFO.removeFirst();
+                System.out.println("Mr." + removed + " has left the Queue: " + queueFIFO.toString());
             }
         }
         catch (NullPointerException e){
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 }

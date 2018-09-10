@@ -28,7 +28,7 @@ import java.util.NoSuchElementException;
  */
 
 public class AbstractStack<Item> implements Iterable<Item> {
-    private int n;          // size of the stack
+    private int size;          // size of the stack
     private Node top;     // top of stack
 
     /**
@@ -46,7 +46,7 @@ public class AbstractStack<Item> implements Iterable<Item> {
      */
     public AbstractStack() {
         top = null;
-        n = 0;
+        size = 0;
     }
 
     /**
@@ -64,7 +64,7 @@ public class AbstractStack<Item> implements Iterable<Item> {
      * @return the number of items in this stack
      */
     public int size() {
-        return n;
+        return size;
     }
 
     /**
@@ -77,7 +77,7 @@ public class AbstractStack<Item> implements Iterable<Item> {
         top = new Node();
         top.item = item;
         top.next = tmp;
-        n++;
+        size++;
     }
 
     /**
@@ -90,7 +90,7 @@ public class AbstractStack<Item> implements Iterable<Item> {
         if (isEmpty()) throw new NoSuchElementException("Stack underflow");
         Item item = top.item;        // save item to return
         top = top.next;            // delete top node
-        n--;
+        size--;
         return item;                   // return the saved item
     }
 

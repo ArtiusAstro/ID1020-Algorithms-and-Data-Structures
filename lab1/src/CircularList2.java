@@ -1,9 +1,9 @@
 /*##############################################################################
 ⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
 ⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
-⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: CircularList.java
-⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Compilation: javac CircularList.java
-⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      Execution: java CircularList < input.txt
+⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: CircularList2.java
+⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Compilation: javac CircularList2.java
+⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      Execution: java CircularList2 < input.txt
 ⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷
 ⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿
 ⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      > Description
@@ -29,9 +29,8 @@ import java.util.Random;
  *  @author Ayub Atif
  */
 
-public class CircularList<T> implements Iterable{
+public class CircularList2<T> implements Iterable{
     private Node head;
-    private Node tail;
     private int size;
 
     /**
@@ -49,7 +48,8 @@ public class CircularList<T> implements Iterable{
         }
     }
 
-    public CircularList(){
+    public CircularList2(){
+        head = null;
         this.size = 0;
     }
 
@@ -201,7 +201,7 @@ public class CircularList<T> implements Iterable{
         Random rand = new Random();
 
         /* General testing */
-        CircularList<Integer> circularList2 = new CircularList<>();
+        CircularList2<Integer> circularList2 = new CircularList2<>();
         circularList2.addFirst(31);
         circularList2.addFirst(139);
         System.out.println(circularList2.toString()); //139, 31
@@ -214,8 +214,8 @@ public class CircularList<T> implements Iterable{
         circularList2.removeLast();
         System.out.println(circularList2.toString());//31 , 9, 99
 
-        /* Despite its class being a proper CircularList, we can use only FIFO queue methods */
-        CircularList<Integer> circularList = new CircularList<>();
+        /* Despite its class being a proper CircularList2, we can use only FIFO queue methods */
+        CircularList2<Integer> circularList = new CircularList2<>();
         int i;
 
         for(i=0; i<6*2; i++){
