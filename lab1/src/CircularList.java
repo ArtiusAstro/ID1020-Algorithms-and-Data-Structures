@@ -152,7 +152,7 @@ public class CircularList<T> implements Iterable<T> {
     }
 
     /**
-     * It's your typical iterator
+     * Iterates starting from head and until you loop back to head
      *
      * @return iterator that goes from head to tail
      */

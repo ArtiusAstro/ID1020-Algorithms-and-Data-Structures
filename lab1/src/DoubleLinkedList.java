@@ -17,20 +17,13 @@
 ⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ###############################################################################*/
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
 /**
- *  The {@code Stack} class represents a last-in-top-out (LIFO) stack of generic items.
- *  It supports the usual <em>push</em> and <em>pop</em> operations, along with methods
- *  for peeking at the top item, testing if the stack is empty, getting the number of
- *  items in the stack, and iterating over the items in LIFO order.
- *  <p>
- *  This implementation uses a singly-linked list with a nested class for
- *  linked-list nodes.
- *  The <em>push</em>, <em>pop</em>, <em>peek</em>, <em>size</em>, and <em>is-empty</em>
- *  operations all take constant time in the worst case.
  *
  *  @author Ayub Atif
  */
@@ -163,7 +156,7 @@ public class DoubleLinkedList<T> implements Iterable<T> {
     }
 
     /**
-     * It's your typical iterator
+     * Iterates from head to tail
      *
      * @return iterator that goes from head to tail
      */
@@ -224,19 +217,28 @@ public class DoubleLinkedList<T> implements Iterable<T> {
         System.out.println("Tested dequeue(): "+doubleLinkedList.toString());
         doubleLinkedList.removeLast();
         System.out.println("Tested removeLast(): "+doubleLinkedList.toString());
-        System.out.println("Tested getFirst(): "+doubleLinkedList.getFirst());
+        System.out.println("Tested getFirst(): "+doubleLinkedList.getFirst()+"\n");
 
         /* Despite its class being a proper DoubleLinkedList, we can use only FIFO queue methods */
-        DoubleLinkedList<Integer> queueFIFO = new DoubleLinkedList<>();
-        int i;
-        for(i=0; i<3*2; i++){
-            queueFIFO.enqueue(rand.nextInt(50));
+        DoubleLinkedList<Character> queueFIFO = new DoubleLinkedList<>();
+
+        /* Collect the input from ./input.txt */
+        try (FileReader inputStream = new FileReader("src/input.txt")) {
+            int stream;
+            System.out.print("Input is: ");
+            while ((stream = inputStream.read()) != -1) {
+                System.out.write(stream); // display input
+                queueFIFO.enqueue((char)stream); // push chars to stack
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
         }
 
-        System.out.println("\nThe Queue: "+queueFIFO.toString());
+        System.out.println("\nThe Queue: "+queueFIFO.toString()+"\n");
         try {
-            for (; i>0; i--) {
-                int dequeued = queueFIFO.getFirst();
+            while(!queueFIFO.isEmpty()) {
+                char dequeued = queueFIFO.getFirst();
                 queueFIFO.dequeue();
                 System.out.println("Mr." + dequeued + " has left the Queue: " + queueFIFO.toString());
             }

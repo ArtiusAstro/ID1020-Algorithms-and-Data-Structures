@@ -23,15 +23,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- *  The {@code Stack} class represents a last-in-top-out (LIFO) stack of generic items.
- *  It supports the usual <em>push</em> and <em>pop</em> operations, along with methods
- *  for peeking at the top item, testing if the stack is empty, getting the number of
- *  items in the stack, and iterating over the items in LIFO order.
- *  <p>
- *  This implementation uses a singly-linked list with a nested class for
- *  linked-list nodes.
- *  The <em>push</em>, <em>pop</em>, <em>peek</em>, <em>size</em>, and <em>is-empty</em>
- *  operations all take constant time in the worst case.
  *
  *  @author Ayub Atif
  */
@@ -40,7 +31,11 @@ public class AbstractStack<Item> implements Iterable<Item> {
     private int n;          // size of the stack
     private Node top;     // top of stack
 
-    // helper linked list class
+    /**
+     * A node holds an item and info on next
+     *
+     * @author Ayub Atif
+     */
     private class Node {
         private Item item;
         private Node next;
@@ -101,9 +96,9 @@ public class AbstractStack<Item> implements Iterable<Item> {
 
 
     /**
-     * Returns (but does not remove) the item most recently added to this stack.
+     * Returns the item at the top of the stack (most recently added)
      *
-     * @return the item most recently added to this stack
+     * @return the item most recently added
      * @throws NoSuchElementException if this stack is empty
      */
     public Item getTop() {
@@ -112,9 +107,9 @@ public class AbstractStack<Item> implements Iterable<Item> {
     }
 
     /**
-     * Returns an iterator to this stack that iterates through the items in LIFO order.
+     * Returns an iterator that LIFO iterates
      *
-     * @return an iterator to this stack that iterates through the items in LIFO order
+     * @return an iterator that LIFO iterates
      */
     public Iterator<Item> iterator()  { return new ListIterator();  }
 
