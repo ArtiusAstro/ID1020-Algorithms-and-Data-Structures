@@ -120,7 +120,9 @@ public class DoubleLinkedList<T> implements Iterable<T> {
      * Removes item from start of list
      */
     public void dequeue() {
-        if (size == 0) throw new NoSuchElementException();
+        if (size == 0){
+            throw new NoSuchElementException();
+        }
         if (size == 1){
             head = tail = null;
         }
@@ -135,7 +137,9 @@ public class DoubleLinkedList<T> implements Iterable<T> {
      * Removes item from end of list
      */
     public void removeLast() {
-        if (size == 0) throw new NoSuchElementException();
+        if (size == 0){
+            throw new NoSuchElementException();
+        }
         if (size == 1){
             head = tail = null;
         }
@@ -152,7 +156,9 @@ public class DoubleLinkedList<T> implements Iterable<T> {
      * @return first item
      */
     public T getFirst(){
-        if (size == 0) throw new NoSuchElementException();
+        if (size == 0){
+            throw new NoSuchElementException();
+        }
         return this.head.item;
     }
 
@@ -168,17 +174,17 @@ public class DoubleLinkedList<T> implements Iterable<T> {
     }
 
     private class ListIterator implements Iterator<T> {
-        private Node now = head;
+        private Node node = head;
 
         public boolean hasNext() {
-            return now != null;
+            return node != null;
         }
 
         public T next() {
             if (!hasNext())
                 throw new NoSuchElementException();
-            T item = now.item;
-            now = now.next;
+            T item = node.item;
+            node = node.next;
             return item;
         }
     }
@@ -209,16 +215,16 @@ public class DoubleLinkedList<T> implements Iterable<T> {
         DoubleLinkedList<Integer> doubleLinkedList = new DoubleLinkedList<>();
         doubleLinkedList.addFirst(31);
         doubleLinkedList.addFirst(139);
-        System.out.println(doubleLinkedList.toString());
+        System.out.println("Tested addFirst(): "+doubleLinkedList.toString()); // 139, 31
         doubleLinkedList.enqueue(9);
         doubleLinkedList.enqueue(99);
         doubleLinkedList.enqueue(25);
-        System.out.println(doubleLinkedList.toString());
+        System.out.println("Tested enqueue(): "+doubleLinkedList.toString()); //
         doubleLinkedList.dequeue();
-        System.out.println(doubleLinkedList.toString());
+        System.out.println("Tested dequeue(): "+doubleLinkedList.toString());
         doubleLinkedList.removeLast();
-        System.out.println(doubleLinkedList.toString());
-        System.out.println("First in list is "+doubleLinkedList.getFirst());
+        System.out.println("Tested removeLast(): "+doubleLinkedList.toString());
+        System.out.println("Tested getFirst(): "+doubleLinkedList.getFirst());
 
         /* Despite its class being a proper DoubleLinkedList, we can use only FIFO queue methods */
         DoubleLinkedList<Integer> queueFIFO = new DoubleLinkedList<>();

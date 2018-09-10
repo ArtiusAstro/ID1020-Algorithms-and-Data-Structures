@@ -7,7 +7,7 @@
 ⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿      > Description
 ⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      char input using recursion
 ⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      is used to generate char single
-⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡      linked list queue
+⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡      nodeed list queue
 ⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿
 ⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿
 ⢀⢀⢀⠈⠛⣽⣿⣿⣿⣿⣿⣿⠁⢀⢀⢀⣡⣾⣿⣿⣿⣿⣿⣿
@@ -33,25 +33,31 @@
 typedef struct  node {
    char data;
    struct node *next;
+   struct node *prev;
 } Node;
 
 Node *head = NULL;
-Node *current = NULL;
+Node *tail = NULL;
 
 bool isEmpty() {
    return head == NULL;
 }
 
+bool isTail(Node *node) {
+  return node == tail;
+}
+
 int size() {
    int size = 0;
+   Node *current = NULL;
 
    if(head == NULL) {
-      return 0;
+      return size;
    }
 
    current = head->next;
 
-   while(current != head) {
+   while(current != NULL) {
       size++;
       current = current->next;
    }
@@ -59,23 +65,26 @@ int size() {
    return size;
 }
 
-//insert link at the first location
+//insert node at start
 void enqueue(char data) {
 
-   //create a link
-   Node *link = (Node*) malloc(sizeof(Node));
-   link->data = data;
+   //create a node
+   Node *node = (Node*) malloc(sizeof(Node));
+   node->data = data;
 
-   if (isEmpty()) {
-      head = link;
-      head->next = head;
+   if(isEmpty()){
+     head = node;
    }
+
    else {
-      //point it to old first node
-      link->next = head;
-      //point first to new first node
-      head = link;
+     //point new node to old tail
+     node->prev = tail;
+     //point old tail to new node
+     tail->next = node;
    }
+
+   //point tail to new node
+   tail = node;
 }
 
 //delete first item
@@ -85,12 +94,13 @@ void dequeue() {
     return;
   }
 
-   if(head->next == head) {
-     head = NULL;
+   if(head == tail) {
+     head = tail = NULL;
    }
 
    else {
      head = head->next;
+     head->prev = NULL;
    }
 }
 
@@ -103,8 +113,8 @@ void print_list() {
    Node *ptr = head;
 
    //start from the beginning
-   if(head != NULL) {
-      while(ptr->next != ptr) {
+   if(!isEmpty()) {
+      while(!isTail(ptr)) {
         printf("[%c], ",ptr->data);
         ptr = ptr->next;
       }
@@ -122,8 +132,8 @@ void print_list_tidy() {
    Node *ptr = head;
 
    //start from the beginning
-   if(head != NULL) {
-      while(ptr->next != ptr) {
+   if(!isEmpty()) {
+      while(!isTail(ptr)) {
         printf("%c",ptr->data);
         ptr = ptr->next;
       }
@@ -131,17 +141,23 @@ void print_list_tidy() {
    }
 }
 
-void recursive(char c){
-  /* basic recursion with getchar, chars printed in reverse order */
-  if((c = getchar()) != EOF){
-    recursive(c);
+int main() {
+  char c;
+  while((c = getchar()) != EOF){
     enqueue(c);
   }
-}
 
-void main() {
-  char c;
-  recursive(c);
+  //base test
+  /*
+  enqueue('a');
+  enqueue('b');
+  enqueue('c');
+
+  printf("HEAD: %c\n", head->data);
+  printf("HEAD->NEXT: %c\n", (head->next)->data);
+  printf("TAIL->PREV: %c\n", (tail->prev)->data);
+  printf("TAIL: %c\n", tail->data);
+  */
 
   printf("Original List: ");
   //print list
@@ -161,4 +177,6 @@ void main() {
 
   printf("\nList after deleting all items: ");
   print_list();
+
+  return 0;
 }
