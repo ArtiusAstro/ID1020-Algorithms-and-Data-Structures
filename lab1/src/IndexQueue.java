@@ -1,3 +1,22 @@
+/*#########################################################################
+⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
+⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
+⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: AbstractStack.java
+⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Compilation: javac AbstractStack.java
+⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      Execution: java AbstractStack < input.txt
+⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷
+⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿
+⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      > Description
+⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      A generic stack implemented with linked
+⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡      list ADT
+⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿
+⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿
+⢀⢀⢀⠈⠛⣽⣿⣿⣿⣿⣿⣿⠁⢀⢀⢀⣡⣾⣿⣿⣿⣿⣿⣿
+⢀⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣦⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+##########################################################################*/
+
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -13,11 +32,17 @@ public class IndexQueue<T> extends AbstractQueue<T> {
             throw new IndexOutOfBoundsException();
         }
 
+        if(index == 1){
+            newNode.setNext(current);
+            this.setHeadNode(newNode);
+        }
+
         for(i=1; i<LIST_SIZE - 1; i++){
-            if(i == index) {
+            if(i == index-1) {
                 newNode.setNext(current.getNext());
                 current.setNext(newNode);
             }
+            current = current.getNext();
         }
 
         this.setSize(this.size()+1);
@@ -32,8 +57,12 @@ public class IndexQueue<T> extends AbstractQueue<T> {
             throw new IndexOutOfBoundsException();
         }
 
+        if(index == 1){
+            this.setHeadNode(current.getNext());
+        }
+
         for (i = 1; i < LIST_SIZE - 1; i++) {
-            if (i == index) {
+            if (i == index-1) {
                 current.setNext(current.getNext().getNext());
             }
             current = current.getNext();
@@ -43,7 +72,7 @@ public class IndexQueue<T> extends AbstractQueue<T> {
     }
     
     public static void main(String[] args){
-        IndexQueue<Character> indexQueue = new IndexQueue();
+        IndexQueue<Character> indexQueue = new IndexQueue<Character>();
 
         /* Collect the input from ./input.txt */
         try (FileReader inputStream = new FileReader("src/input.txt")) {

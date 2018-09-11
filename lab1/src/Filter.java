@@ -1,4 +1,22 @@
-import java.io.FileNotFoundException;
+/*#########################################################################
+⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
+⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
+⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: AbstractStack.java
+⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Compilation: javac AbstractStack.java
+⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      Execution: java AbstractStack < input.txt
+⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷
+⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿
+⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      > Description
+⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      A generic stack implemented with linked
+⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡      list ADT
+⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿
+⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿
+⢀⢀⢀⠈⠛⣽⣿⣿⣿⣿⣿⣿⠁⢀⢀⢀⣡⣾⣿⣿⣿⣿⣿⣿
+⢀⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣦⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+##########################################################################*/
+
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -10,7 +28,7 @@ public class Filter extends IndexQueue<Character> {
         boolean found = false;
 
         /* Collect the input from ./input.txt */
-        try (FileReader inputStream = new FileReader("src/recursive-characters.c")) {
+        try (FileReader inputStream = new FileReader("src/Filter.java")) {
             int stream;
             System.out.print("Input is: ");
             while ((stream = inputStream.read()) != -1) {
@@ -31,10 +49,14 @@ public class Filter extends IndexQueue<Character> {
         }
     }
 
-    public void checkParenthesis() {
+    static String open  = "([<{";
+    static String close = ")]>}";
+
+    private boolean isBalanced() {
         fillParenthesisQueue();
 
-        
+
+        return false;
     }
 
     /**
@@ -44,7 +66,7 @@ public class Filter extends IndexQueue<Character> {
 
         Filter filter = new Filter();
 
-        filter.checkParenthesis();
+        filter.isBalanced();
 
         filter.addLast('X');
 

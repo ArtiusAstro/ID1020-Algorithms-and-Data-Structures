@@ -72,6 +72,10 @@ public class AbstractQueue<Item> implements Iterable<Item> {
         return head;
     }
 
+    public void setHeadNode(Node head){
+        this.head = head;
+    }
+
     /**
      * Returns true if this stack is empty.
      *
