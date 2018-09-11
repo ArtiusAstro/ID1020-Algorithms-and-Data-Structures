@@ -23,13 +23,13 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- *
- *  @author Ayub Atif
+ * @author Ayub Atif
  */
 
-public class AbstractStack<Item> implements Iterable<Item> {
+public class AbstractQueue<Item> implements Iterable<Item> {
     private int size;          // size of the stack
-    private Node top;     // top of stack
+    private Node tail;          // tail of stack
+    private Node head;
 
     /**
      * A node holds an item and info on next
@@ -64,13 +64,12 @@ public class AbstractStack<Item> implements Iterable<Item> {
     /**
      * Initializes an empty stack.
      */
-    public AbstractStack() {
-        top = null;
+    public AbstractQueue() {
         size = 0;
     }
 
-    public Node getTopNode(){
-        return top;
+    public Node getHeadNode(){
+        return head;
     }
 
     /**
@@ -79,7 +78,7 @@ public class AbstractStack<Item> implements Iterable<Item> {
      * @return true if this stack is empty; false otherwise
      */
     public boolean isEmpty() {
-        return top == null;
+        return head == null;
     }
 
     /**
@@ -91,15 +90,29 @@ public class AbstractStack<Item> implements Iterable<Item> {
         return size;
     }
 
+    public void setSize(int size){
+        this.size = size;
+    }
+
     /**
-     * Adds the item to this stack.
+     * Adds the item to this queue.
      *
      * @param item the item to add
      */
-    public void push(Item item) {
-        Node tmp = top;
-        top = new Node(item);
-        top.next = tmp;
+    public void addLast(Item item) {
+        Node tmp = new Node(item);
+
+        if(head == null){
+            head = tmp;
+        }
+        else {
+            if (head == tail) {
+                head.next = tmp;
+            } else {
+                tail.next = tmp;
+            }
+        }
+        tail = tmp;
         size++;
     }
 
@@ -109,24 +122,28 @@ public class AbstractStack<Item> implements Iterable<Item> {
      * @return the item most recently added
      * @throws NoSuchElementException if this stack is empty
      */
-    public Item pop() {
-        if (isEmpty()) throw new NoSuchElementException("Stack underflow");
-        Item item = top.item;        // save item to return
-        top = top.next;            // delete top node
+    public Item removeFirst() {
+        if (isEmpty()) throw new NoSuchElementException("Empty queue");
+        Item item = head.item;        // save item to return
+        head = head.next;            // delete tail node
         size--;
-        return item;                   // return the saved item
+        return item;                 // return the saved item
     }
 
-
     /**
-     * Returns the item at the top of the stack (most recently added)
+     * Returns the item at the tail of the stack (most recently added)
      *
      * @return the item most recently added
      * @throws NoSuchElementException if this stack is empty
      */
-    public Item getTop() {
+    public Item getFirst() {
         if (isEmpty()) throw new NoSuchElementException("Stack underflow");
-        return top.item;
+        return head.item;
+    }
+
+    public Item getLast() {
+        if (isEmpty()) throw new NoSuchElementException("Stack underflow");
+        return tail.item;
     }
 
     /**
@@ -134,10 +151,12 @@ public class AbstractStack<Item> implements Iterable<Item> {
      *
      * @return an iterator that LIFO iterates
      */
-    public Iterator<Item> iterator()  { return new ListIterator();  }
+    public Iterator<Item> iterator() {
+        return new ListIterator();
+    }
 
     private class ListIterator implements Iterator<Item> {
-        private Node current = top;
+        private Node current = head;
 
         public boolean hasNext() {
             return current != null;
@@ -159,23 +178,18 @@ public class AbstractStack<Item> implements Iterable<Item> {
      */
     public String toString() {
         StringBuilder s = new StringBuilder();
-        int i = this.size()-1;
+        int i = this.size() - 1;
         for (Item item : this) {
             s.append('[').append(item).append(']');
-            if(i-- > 0) {
+            if (i-- > 0) {
                 s.append(", ");
             }
         }
         return s.toString();
     }
 
-
-    /**
-     * Unit testing the data type.
-     */
-    public static void main(String[] args) throws IOException {
-
-        AbstractStack<Character> abstractStack = new AbstractStack<>();
+    public static void main(String[] args){
+        AbstractQueue<Character> indexQueue = new AbstractQueue<>();
 
         /* Collect the input from ./input.txt */
         try (FileReader inputStream = new FileReader("src/input.txt")) {
@@ -183,22 +197,25 @@ public class AbstractStack<Item> implements Iterable<Item> {
             System.out.print("Input is: ");
             while ((stream = inputStream.read()) != -1) {
                 System.out.write(stream); // display input
-                abstractStack.push((char)stream); // push chars to stack
+                indexQueue.addLast((char)stream); // push chars to stack
             }
         }
         catch (IOException e){
             e.printStackTrace();
         }
 
-        /* String representation */
-        System.out.print("\n\nmyStack.toString() returns: ");
-        System.out.println(abstractStack.toString());
+        System.out.println("\nThe Queue: "+indexQueue.toString()+"\n");
 
-        /* Print a node's char, pop the node, and continue until stack is empty */
-        System.out.print("\nReversed: ");
-        while(!abstractStack.isEmpty()){
-            System.out.print(abstractStack.getTop());
-            abstractStack.pop();
+        try {
+            while(!indexQueue.isEmpty()) {
+                char removed = indexQueue.getFirst();
+                indexQueue.removeFirst();
+                System.out.println("Mr." + removed + " has left the Queue: " + indexQueue.toString());
+            }
+        }
+        catch (NullPointerException e){
+            e.printStackTrace();
         }
     }
+
 }
