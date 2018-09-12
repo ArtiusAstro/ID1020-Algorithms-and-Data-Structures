@@ -26,8 +26,8 @@ void ralloc(char **myStringPtr, int *arraySizePtr){
 
   /* update stuffs */
   else{
-  *arraySizePtr = *arraySizePtr * 2;
-  *myStringPtr = copy;
+    *arraySizePtr = *arraySizePtr * 2;
+    *myStringPtr = copy;
   }
 }
 
