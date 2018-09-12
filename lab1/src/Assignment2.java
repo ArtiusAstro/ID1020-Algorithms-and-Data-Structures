@@ -1,45 +1,45 @@
 
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
+ * My implementation of a generic iterable stack
+ * The stack is a list of nodes that contain an Item and a reference to the next node
  *
- *  @author Ayub Atif
+ * @param <Item> generic data type
  */
-
-public class AbstractStack<Item> implements Iterable<Item> {
+class AbstractStack<Item> implements Iterable<Item> {
     private int size;          // size of the stack
     private Node top;     // top of stack
 
     /**
-     * A node holds an item and info on next
+     * A node holds an item and info on next node
      *
      * @author Ayub Atif
      */
-    protected class Node {
+    private class Node {
         private Item item;
         private Node next;
 
-        public Node(Item item){
+        Node(Item item){
             this.item = item;
         }
 
-        public Node getNext() {
+        Node getNext() {
             return next;
         }
 
-        public void setNext(Node node){
+        void setNext(Node node){
             this.next = node;
         }
 
-        public Item getItem() {
+        Item getItem() {
             return item;
         }
 
-        public void setItem(Item item) {
+        void setItem(Item item) {
             this.item = item;
         }
     }
@@ -161,7 +161,8 @@ public class AbstractStack<Item> implements Iterable<Item> {
         AbstractStack<Character> abstractStack = new AbstractStack<>();
 
         /* Collect the input from ./input.txt */
-        try (FileReader inputStream = new FileReader("src/input.txt")) {
+        String dir = System.getProperty("user.dir");
+        try (FileReader inputStream = new FileReader(dir+"/input.txt")) {
             int stream;
             System.out.print("Input is: ");
             while ((stream = inputStream.read()) != -1) {
@@ -175,7 +176,7 @@ public class AbstractStack<Item> implements Iterable<Item> {
 
         /* String representation */
         System.out.print("\n\nmyStack.toString() returns: ");
-        System.out.println(abstractStack.toString());
+        System.out.println(abstractStack);
 
         /* Print a node's char, pop the node, and continue until stack is empty */
         System.out.print("\nReversed: ");

@@ -1,21 +1,3 @@
-/*#########################################################################
-⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
-⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
-⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: AbstractStack.java
-⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Compilation: javac AbstractStack.java
-⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      Execution: java AbstractStack < input.txt
-⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷
-⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿
-⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      > Description
-⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      A generic stack implemented with linked
-⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡      list ADT
-⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿
-⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿
-⢀⢀⢀⠈⠛⣽⣿⣿⣿⣿⣿⣿⠁⢀⢀⢀⣡⣾⣿⣿⣿⣿⣿⣿
-⢀⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣦⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-##########################################################################*/
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -23,10 +5,108 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * @author Ayub Atif
+ * An IndexQueue is a generic iterable queue with which you can add or remove a node via an int index
+ *
+ * @param <T> generic data type
  */
+class IndexQueue<T> extends AbstractQueue<T> {
 
-public class AbstractQueue<Item> implements Iterable<Item> {
+    /**
+     * add a node at an index with an item parameter
+     *
+     * @param index the index to be added to. The most recently added element has index 1;
+     * @param item generic item to be added
+     * @throws IndexOutOfBoundsException if index is out of bounds
+     */
+    public void add(int index, T item) throws IndexOutOfBoundsException{
+        int LIST_SIZE = this.size();
+        int i;
+        Node current = this.getHeadNode();
+        Node newNode = new Node(item);
+
+        if(index < 1 || index >= LIST_SIZE){
+            throw new IndexOutOfBoundsException();
+        }
+
+        if(index == 1){
+            newNode.setNext(current);
+            this.setHeadNode(newNode);
+        }
+
+        for(i=1; i<LIST_SIZE - 1; i++){
+            if(i == index-1) {
+                newNode.setNext(current.getNext());
+                current.setNext(newNode);
+            }
+            current = current.getNext();
+        }
+
+        this.setSize(this.size()+1);
+    }
+
+    /**
+     *
+     * @param index of the node to be removed. Most recently added node has index 1
+     * @throws IndexOutOfBoundsException if index is out bounds
+     */
+    public void remove(int index) throws IndexOutOfBoundsException{
+        int LIST_SIZE = this.size();
+        int i;
+        Node current = this.getHeadNode();
+
+        if(index < 1 || index >= LIST_SIZE){
+            throw new IndexOutOfBoundsException();
+        }
+
+        if(index == 1){
+            this.setHeadNode(current.getNext());
+        }
+
+        for (i = 1; i < LIST_SIZE - 1; i++) {
+            if (i == index-1) {
+                current.setNext(current.getNext().getNext());
+            }
+            current = current.getNext();
+        }
+
+        this.setSize(this.size()-1);
+    }
+    
+    public static void main(String[] args){
+        IndexQueue<Character> indexQueue = new IndexQueue<Character>();
+
+        /* Collect the input from input.txt */
+        String dir = System.getProperty("user.dir");
+        try (FileReader inputStream = new FileReader(dir+"/input.txt")) {
+            int stream;
+            System.out.print("Input is: ");
+            while ((stream = inputStream.read()) != -1) {
+                System.out.write(stream); // display input
+                indexQueue.addLast((char)stream); // push chars to stack
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
+        System.out.println("\n\nAdd char x to the queue then remove it");
+        System.out.println("\nThe Queue: "+indexQueue);
+
+        indexQueue.add(1, 'x');
+        System.out.println("\nThe Queue: "+indexQueue);
+
+        indexQueue.remove(1);
+        System.out.println("\nThe Queue: "+indexQueue);
+
+    }
+}
+
+/**
+ * basic queue
+ *
+ * @param <Item> generic data type
+ */
+class AbstractQueue<Item> implements Iterable<Item> {
     private int size;          // size of the stack
     private Node tail;          // tail of stack
     private Node head;
@@ -40,7 +120,7 @@ public class AbstractQueue<Item> implements Iterable<Item> {
         private Item item;
         private Node next;
 
-        public Node(Item item){
+        public Node(Item item) {
             this.item = item;
         }
 
@@ -48,7 +128,7 @@ public class AbstractQueue<Item> implements Iterable<Item> {
             return next;
         }
 
-        public void setNext(Node node){
+        public void setNext(Node node) {
             this.next = node;
         }
 
@@ -68,11 +148,11 @@ public class AbstractQueue<Item> implements Iterable<Item> {
         size = 0;
     }
 
-    public Node getHeadNode(){
+    public Node getHeadNode() {
         return head;
     }
 
-    public void setHeadNode(Node head){
+    public void setHeadNode(Node head) {
         this.head = head;
     }
 
@@ -94,7 +174,7 @@ public class AbstractQueue<Item> implements Iterable<Item> {
         return size;
     }
 
-    public void setSize(int size){
+    public void setSize(int size) {
         this.size = size;
     }
 
@@ -106,10 +186,9 @@ public class AbstractQueue<Item> implements Iterable<Item> {
     public void addLast(Item item) {
         Node tmp = new Node(item);
 
-        if(head == null){
+        if (head == null) {
             head = tmp;
-        }
-        else {
+        } else {
             if (head == tail) {
                 head.next = tmp;
             } else {
@@ -191,35 +270,4 @@ public class AbstractQueue<Item> implements Iterable<Item> {
         }
         return s.toString();
     }
-
-    public static void main(String[] args){
-        AbstractQueue<Character> indexQueue = new AbstractQueue<>();
-
-        /* Collect the input from ./input.txt */
-        try (FileReader inputStream = new FileReader("src/input.txt")) {
-            int stream;
-            System.out.print("Input is: ");
-            while ((stream = inputStream.read()) != -1) {
-                System.out.write(stream); // display input
-                indexQueue.addLast((char)stream); // push chars to stack
-            }
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-
-        System.out.println("\nThe Queue: "+indexQueue.toString()+"\n");
-
-        try {
-            while(!indexQueue.isEmpty()) {
-                char removed = indexQueue.getFirst();
-                indexQueue.removeFirst();
-                System.out.println("Mr." + removed + " has left the Queue: " + indexQueue.toString());
-            }
-        }
-        catch (NullPointerException e){
-            e.printStackTrace();
-        }
-    }
-
 }

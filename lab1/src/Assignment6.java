@@ -1,44 +1,21 @@
-/*#########################################################################
-⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
-⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
-⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: AbstractStack.java
-⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Compilation: javac AbstractStack.java
-⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      Execution: java AbstractStack < input.txt
-⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷
-⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿
-⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      > Description
-⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      A generic stack implemented with linked
-⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡      list ADT
-⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿
-⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿
-⢀⢀⢀⠈⠛⣽⣿⣿⣿⣿⣿⣿⠁⢀⢀⢀⣡⣾⣿⣿⣿⣿⣿⣿
-⢀⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣦⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-##########################################################################*/
-
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 /**
- * f8O3ET
- * QFEF
- * ASD
+ * The filter takes a file called input.txt in working directory and checks if the parenthesis are balanced
  *
  * @author Ayub Atif
  */
-public class Filter {
+class Filter {
 
     /**
      * checks if the parenthesis (square, curly, and regular) are balanced
-     * also prints the cause of non-balance at first encounter
+     * also prints the cause of first error encountered if found
      *
-     * @param fileName
      * @return true if balanced
      */
-    private static boolean isBalanced(String fileName) {
+    private static boolean isBalanced() {
 
         char[] charSet = new char[] {')','(',']','[','}','{'};
         CharMap charMap = new CharMap(charSet);
@@ -47,7 +24,8 @@ public class Filter {
         char inputChar;
 
         /* Collect the input from ./input.txt */
-        try (FileReader inputStream = new FileReader("src/" + fileName)) {
+        String dir = System.getProperty("user.dir");
+        try (FileReader inputStream = new FileReader(dir+"/input.txt")) {
             int stream;
             while ((stream = inputStream.read()) != -1) {
                 inputChar = (char)stream;
@@ -61,12 +39,12 @@ public class Filter {
                             System.out.println("popped " + stack.getTop());
                             stack.pop();
                         } else {
-                            System.out.println("got " + inputChar + " but stack top is " + stack.getTop());
+                            System.out.println("ERROR: got " + inputChar + " but stack top is " + stack.getTop());
                             return false;
                         }
                     }
                     else {
-                        System.out.println("\ngot " + inputChar + " but stack size is "+stack.size());
+                        System.out.println("\nERROR: got " + inputChar + " but stack size is "+stack.size());
                         return false;
                     }
                 }
@@ -80,7 +58,7 @@ public class Filter {
             return true;
         }
         else {
-            System.out.println("terminated search but stack size is "+stack.size());
+            System.out.println("ERROR: terminated search but stack size is "+stack.size());
             return false;
         }
     }
@@ -90,20 +68,26 @@ public class Filter {
      */
     public static void main(String[] args) {
 
-        System.out.println("\n"+Filter.isBalanced("input.txt"));
-
+        System.out.println("\n"+Filter.isBalanced());
     }
 }
 
+/**
+ * My implementation of a Hashmap-like structure that works with chars
+ */
 class CharMap {
     private int size;
-    private char[] charSet;
+    private char[] charSet; // array of keys and values
 
     CharMap(char[] chars){
         this.charSet = chars;
         this.size = chars.length;
     }
 
+    /**
+     *
+     * @return keys
+     */
     private char[] keySet(){
         char[] keys = new char[this.size/2];
         for(int i = 0; i<this.size/2; i++){
@@ -113,6 +97,10 @@ class CharMap {
         return keys;
     }
 
+    /**
+     *
+     * @return values
+     */
     public char[] valueSet(){
         char[] values = new char[this.size/2];
         for(int i = 0; i<this.size/2; i++){
@@ -138,6 +126,11 @@ class CharMap {
         return false;
     }
 
+    /**
+     *
+     * @param key
+     * @return the value for that key, ie, the item in the array after that key
+     */
     char get(char key){
         for(int i = 0; i < this.size; i++){
             if(key == this.charSet[i])

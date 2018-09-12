@@ -1,34 +1,16 @@
-/*##############################################################################
-⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
-⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
-⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: DoubleLinkedList.java
-⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Compilation: javac DoubleLinkedList.java
-⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      Execution: java DoubleLinkedList < input.txt
-⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷
-⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿
-⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      > Description
-⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      Generic Dbl linked list
-⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡
-⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿
-⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿
-⢀⢀⢀⠈⠛⣽⣿⣿⣿⣿⣿⣿⠁⢀⢀⢀⣡⣾⣿⣿⣿⣿⣿⣿
-⢀⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣦⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-###############################################################################*/
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Random;
 
 /**
+ * My implementation of a generic iterable double linked list
+ * Each Node in the list holds a generic item and references to next node and previous node
  *
- *  @author Ayub Atif
+ * @param <T> is the generic data type
  */
-
-public class DoubleLinkedList<T> implements Iterable<T> {
+class DoubleLinkedList<T> implements Iterable<T> {
     private Node head;
     private Node tail;
     private int size;
@@ -199,31 +181,19 @@ public class DoubleLinkedList<T> implements Iterable<T> {
         return s.toString();
     }
 
+    /**
+     *
+     *
+     * @param args first argument should be the input filename
+     */
+    public static void main(String args[]){
 
-    public static void main(String a[]) throws NullPointerException{
-
-        Random rand = new Random();
-
-        /* General testing */
-        DoubleLinkedList<Integer> doubleLinkedList = new DoubleLinkedList<>();
-        doubleLinkedList.addFirst(31);
-        doubleLinkedList.addFirst(139);
-        System.out.println("Tested addFirst(): "+doubleLinkedList.toString()); // 139, 31
-        doubleLinkedList.addLast(9);
-        doubleLinkedList.addLast(99);
-        doubleLinkedList.addLast(25);
-        System.out.println("Tested addLast(): "+doubleLinkedList.toString()); //
-        doubleLinkedList.removeFirst();
-        System.out.println("Tested removeFirst(): "+doubleLinkedList.toString());
-        doubleLinkedList.removeLast();
-        System.out.println("Tested removeLast(): "+doubleLinkedList.toString());
-        System.out.println("Tested getFirst(): "+doubleLinkedList.getFirst()+"\n");
-
-        /* Despite its class being a proper DoubleLinkedList, we can use only FIFO queue methods */
+        /* Despite its class being a proper DoubleLinkedList, queueFIFO tests only FIFO queue methods here */
         DoubleLinkedList<Character> queueFIFO = new DoubleLinkedList<>();
 
-        /* Collect the input from ./input.txt */
-        try (FileReader inputStream = new FileReader("src/input.txt")) {
+        /* Collect the input from input.txt */
+        String dir = System.getProperty("user.dir");
+        try (FileReader inputStream = new FileReader(dir+"/input.txt")) {
             int stream;
             System.out.print("Input is: ");
             while ((stream = inputStream.read()) != -1) {
@@ -235,6 +205,7 @@ public class DoubleLinkedList<T> implements Iterable<T> {
             e.printStackTrace();
         }
 
+        /* Iteratively remove the first element in the queue and print the updated queue */
         System.out.println("\nThe Queue: "+queueFIFO.toString()+"\n");
         try {
             while(!queueFIFO.isEmpty()) {

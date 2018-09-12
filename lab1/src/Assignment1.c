@@ -37,6 +37,7 @@ void iterative(char c){
   char *myString = (char*) malloc(ARRAY_SIZE);
   int i = 0; // counter
 
+  /* get input */
   while((c = getchar()) != EOF){
     myString[i++] = c; // add char to string
 

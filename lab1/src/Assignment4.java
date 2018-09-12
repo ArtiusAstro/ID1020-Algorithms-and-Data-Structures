@@ -1,25 +1,7 @@
-/*##############################################################################
-⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿      @Author: Ayub Atif
-⣿⣿⣿⣿⣿⣿⣿⣿⡇⢀⢀⠍⠙⢿⡟⢿⣿⣿⣿⣿⣿⣿⣿⣿
-⠹⣿⣿⣿⣿⣿⣿⣿⠁⠈⢀⡤⢲⣾⣗⠲⣿⣿⣿⣿⣿⣿⣟⠻      Title: CircularList.java
-⡀⢙⣿⣿⣿⣿⣿⣿⢀⠰⠁⢰⣾⣿⣿⡇⢀⣿⣿⣿⣿⣿⣿⡄      Compilation: javac CircularList.java
-⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷      Execution: java CircularList < input.txt
-⣇⢀⢀⠙⠷⣍⠛⠛⢀⢀⢀⢀⠙⠋⠉⢀⢀⢸⣿⣿⣿⣿⣿⣷
-⡙⠆⢀⣀⠤⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢸⣿⣿⣿⣿⣿⣿
-⣷⣖⠋⠁⢀⢀⢀⢀⢀⢀⣀⣀⣄⢀⢀⢀⢀⢸⠏⣿⣿⣿⢿⣿      > Description
-⣿⣷⡀⢀⢀⢀⢀⢀⡒⠉⠉⢀⢀⢀⢀⢀⢀⢈⣴⣿⣿⡿⢀⡿      Generic circular linked list
-⣿⣿⣷⣄⢀⢀⢀⢀⠐⠄⢀⢀⢀⠈⢀⣀⣴⣿⣿⣿⡿⠁⢀⣡
-⠻⣿⣿⣿⣿⣆⠢⣤⣄⢀⢀⣀⠠⢴⣾⣿⣿⡿⢋⠟⢡⣿⣿⣿
-⢀⠘⠿⣿⣿⣿⣦⣹⣿⣀⣀⣀⣀⠘⠛⠋⠁⡀⣄⣴⣿⣿⣿⣿
-⢀⢀⢀⠈⠛⣽⣿⣿⣿⣿⣿⣿⠁⢀⢀⢀⣡⣾⣿⣿⣿⣿⣿⣿
-⢀⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣦⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-⢀⢀⢀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-###############################################################################*/
-
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Random;
 
 /**
  *  Implement a generic iterable circular linked list which allows
@@ -29,7 +11,7 @@ import java.util.Random;
  *  @author Ayub Atif
  */
 
-public class CircularList<T> implements Iterable{
+class CircularQueue<T> implements Iterable{
     private Node head;
     private Node tail;
     private int size;
@@ -49,7 +31,7 @@ public class CircularList<T> implements Iterable{
         }
     }
 
-    public CircularList(){
+    public CircularQueue(){
         this.size = 0;
     }
 
@@ -180,9 +162,13 @@ public class CircularList<T> implements Iterable{
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
+        int i = this.size-1;
         if(!this.isEmpty()) {
             for (Object item : this) {
-                s.append('[').append(item).append("], ");
+                s.append('[').append(item).append("]");
+                if(i-- > 0) {
+                    s.append(", ");
+                }
             }
         }
         else{
@@ -193,40 +179,35 @@ public class CircularList<T> implements Iterable{
 
     public static void main(String a[]){
 
-        Random rand = new Random();
+        CircularQueue<Character> circularList = new CircularQueue<>();
 
-        /* General testing */
-        CircularList<Integer> circularList2 = new CircularList<>();
-        circularList2.addFirst(31);
-        circularList2.addFirst(139);
-        System.out.println(circularList2.toString()); //139, 31
-        circularList2.addLast(9);
-        circularList2.addLast(99);
-        circularList2.addLast(25);
-        System.out.println(circularList2.toString());// 139, 31 , 9, 99, 25
-        circularList2.removeFirst();
-        System.out.println(circularList2.toString());//31 , 9, 99, 25
-        circularList2.removeLast();
-        System.out.println(circularList2.toString());//31 , 9, 99
-
-        /* Despite its class being a proper CircularList, we can use only FIFO queue methods */
-        CircularList<Integer> circularList = new CircularList<>();
-        int i;
-
-        for(i=0; i<6*2; i++){
-            circularList.addLast(rand.nextInt(50));
+        /* Collect the input from input.txt */
+        String dir = System.getProperty("user.dir");
+        try (FileReader inputStream = new FileReader(dir+"/input.txt")) {
+            int stream;
+            System.out.print("Input is: ");
+            while ((stream = inputStream.read()) != -1) {
+                System.out.write(stream); // display input
+                circularList.addLast((char)stream); // push chars to stack
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
         }
 
-        System.out.println("\nThe Circle: "+circularList.toString());
+        // testing the circularity of the list
+        System.out.println("\nThe Circle: "+circularList);
         System.out.println("The HEAD: "+circularList.head.item);
         System.out.println("The before tail: "+circularList.tail.prev.item);
         System.out.println("The after tail: "+circularList.tail.next.item);
         System.out.println("The TAIL: "+circularList.tail.item+"\n");
 
+        int i;
+        System.out.println("\nIteratively removing first from the list:\n"+circularList);
         try {
-            for (; i>0; i--) {
+            for (i = circularList.size; i>0; i--) {
                 circularList.removeFirst();
-                System.out.println(circularList.toString());
+                System.out.println(circularList);
             }
         }
         catch (NullPointerException e){
