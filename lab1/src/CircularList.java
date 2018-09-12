@@ -116,9 +116,9 @@ public class CircularList<T> implements Iterable{
         }
         else {
             head = head.next;
+            tail.next = head;
+            head.prev = tail;
         }
-        tail.next = head;
-        head.prev = tail;
         size--;
     }
 
@@ -134,9 +134,9 @@ public class CircularList<T> implements Iterable{
         }
         else {
             tail = tail.prev;
+            tail.next = head;
+            head.prev = tail;
         }
-        tail.next = head;
-        head.prev = tail;
         size--;
     }
 
@@ -191,7 +191,7 @@ public class CircularList<T> implements Iterable{
         return s.toString();
     }
 
-    public static void main(String a[]) throws NullPointerException{
+    public static void main(String a[]){
 
         Random rand = new Random();
 
@@ -230,7 +230,7 @@ public class CircularList<T> implements Iterable{
             }
         }
         catch (NullPointerException e){
-            System.out.println(e);
+            e.printStackTrace();
         }
 
     }
