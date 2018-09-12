@@ -197,8 +197,7 @@ public class AbstractStack<Item> implements Iterable<Item> {
         /* Print a node's char, pop the node, and continue until stack is empty */
         System.out.print("\nReversed: ");
         while(!abstractStack.isEmpty()){
-            System.out.print(abstractStack.getTop());
-            abstractStack.pop();
+            System.out.print(abstractStack.pop());
         }
     }
 }

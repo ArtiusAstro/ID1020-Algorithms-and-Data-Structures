@@ -19,44 +19,56 @@
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
-public class Filter extends IndexQueue<Character> {
+public class Filter {
 
-    private void fillParenthesisQueue() {
-        String s = "({[]})";
-        char[] chars = s.toCharArray();
-        boolean found = false;
+    private static boolean isBalanced(String fileName) {
+        HashMap<Character, Character> hashMap = new HashMap<>();
+        hashMap.put(')', '(');
+        hashMap.put(']', '[');
+        hashMap.put('}', '{');
+
+        AbstractStack<Character> stack = new AbstractStack<>();
+        char inputChar;
 
         /* Collect the input from ./input.txt */
-        try (FileReader inputStream = new FileReader("src/Filter.java")) {
+        try (FileReader inputStream = new FileReader("src/" + fileName)) {
             int stream;
-            System.out.print("Input is: ");
             while ((stream = inputStream.read()) != -1) {
-                for(char c : chars){
-                    if(c == (char)stream) {
-                        found = true;
-                        break;
-                    }
+                inputChar = (char)stream;
+                if(hashMap.containsValue(inputChar)){
+                    stack.push(inputChar);
+                    System.out.println("pushed "+inputChar);
                 }
-                if(found){
-                    this.addLast((char)stream); // push chars to stack
-                    found = false;
+                else if(hashMap.containsKey(inputChar)){
+                    if (!stack.isEmpty()) {
+                        if (hashMap.get(inputChar) == stack.getTop()) {
+                            System.out.println("popped " + stack.getTop());
+                            stack.pop();
+                        } else {
+                            System.out.println("got " + inputChar + " but stack top is " + stack.getTop());
+                            return false;
+                        }
+                    }
+                    else {
+                        System.out.println("\ngot " + inputChar + " but stack size is "+stack.size());
+                        return false;
+                    }
                 }
             }
         }
         catch (IOException e){
             e.printStackTrace();
         }
-    }
 
-    static String open  = "([<{";
-    static String close = ")]>}";
-
-    private boolean isBalanced() {
-        fillParenthesisQueue();
-
-
-        return false;
+        if(stack.isEmpty()){
+            return true;
+        }
+        else {
+            System.out.println("terminated search but stack size is "+stack.size());
+            return false;
+        }
     }
 
     /**
@@ -64,15 +76,7 @@ public class Filter extends IndexQueue<Character> {
      */
     public static void main(String[] args) {
 
-        Filter filter = new Filter();
-
-        filter.isBalanced();
-
-        filter.addLast('X');
-
-        /* String representation */
-        System.out.print("\n\nfilter.toString() returns: ");
-        System.out.println(filter.toString());
+        System.out.println("\n"+Filter.isBalanced("input.txt"));
 
     }
 }
