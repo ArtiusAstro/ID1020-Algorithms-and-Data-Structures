@@ -88,11 +88,14 @@ void enqueue(int data) {
 }
 
 //delete first item
-void dequeue() {
+int dequeue() {
+  int item;
   if(isEmpty()) {
     printf("Empty List, try calling enqueue() before removing\n");
-    return;
+    return 0;
   }
+
+  item = head->data;
 
    if(head == tail) {
      head = tail = NULL;
@@ -102,6 +105,8 @@ void dequeue() {
      head = head->next;
      head->prev = NULL;
    }
+
+   return item;
 }
 
 Node* getFirst() {
@@ -134,47 +139,35 @@ void print_list_tidy() {
    //start from the beginning
    if(!isEmpty()) {
       while(!isTail(ptr)) {
-        printf(" %d ",ptr->data);
+        printf("%c ",ptr->data);
         ptr = ptr->next;
       }
-      printf("%d",ptr->data);
+      printf("%c",ptr->data);
    }
 }
 
 int main() {
   char c;
-  /*while((c = getchar()) != EOF){
-    enqueue((int)c);
-  }*/
-
-  //base test
-  enqueue('1');
-  enqueue('5');
-  enqueue('2');
-
-  printf("HEAD: %d\n", head->data);
-  printf("HEAD->NEXT: %d\n", (head->next)->data);
-  printf("TAIL->PREV: %d\n", (tail->prev)->data);
-  printf("TAIL: %d\n", tail->data);
 
   printf("Original List: ");
-  //print list
   print_list();
 
-  printf("\n\nOriginal String: ");
-  //print list as a sentence
-  print_list_tidy();
-  printf("\n");
+  while((c = getchar()) != EOF){
+    if(c != '\n'){
+      enqueue(c);
+      printf("\nList after adding (%c): ",c);
+      print_list();
+    }
+  }
+
+  printf("\n\nOriginal List: ");
+  print_list();
 
   while(!isEmpty()) {
     Node *temp = getFirst();
-    dequeue();
-    printf("\nString after deleting (%d): ",temp->data);
-    print_list_tidy();
+    printf("\nList after deleting (%c): ",dequeue());
+    print_list();
   }
-
-  printf("\nList after deleting all items: ");
-  print_list();
 
   return 0;
 }
