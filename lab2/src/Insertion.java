@@ -15,9 +15,9 @@ public class Insertion
         int swaps = 0;
         StringBuilder stringBuilder = new StringBuilder("");
 
-        for (int i = 0; i < n - 1; i++) {
+        for (int i = 0; i < n-1; i++) {
             for (int j = i+1; j < n; j++) {
-                if(!more(a[j], a[i])) {
+                if(more(a[i], a[j])) {
                     stringBuilder = arrayBuilder(stringBuilder, i, a[i], ", ");
                     stringBuilder = arrayBuilder(stringBuilder, j, a[j], "\n");
                     swaps++;
@@ -31,34 +31,27 @@ public class Insertion
 
     public static int sort(Comparable[] a)
     { // Sort a[] into increasing order.
-        int N = a.length;
+        int n = a.length;
         int swaps = 0;
 
-        for (int i = 1; i < N; i++) {
-            for (int j = i; j > 0; j--) {
-                if(!more(a[j], a[i])) {
-                    swap(a, j, j - 1);
-                    swaps++;
-                }
+        for (int i = 1; i < n; i++)
+        { // Insert a[i] among a[i-1], a[i-2], a[i-3]... ..
+            for (int j = i; j > 0 && less(a[j], a[j-1]); j--) {
+                swap(a, j, j - 1);
+                swaps++;
             }
         }
+
         return swaps;
     }
 
-    public static int reverseSort(Comparable[] a)
-    { // Sort a[] into descending order.
-        int N = a.length;
-        int swaps = 0;
+    public static Comparable[] reverseSortedArray(Comparable[] a) {
+        Comparable[] reverse = new Comparable[a.length];
 
-        for (int i = 1; i < N; i++) {
-            for (int j = i; j > 0; j--) {
-                if(!less(a[j], a[i])) {
-                    swap(a, j, j - 1);
-                    swaps++;
-                }
-            }
-        }
-        return swaps;
+        for(int i = 0; i < a.length; i++)
+            reverse[i] = a[a.length - 1 - i];
+
+        return reverse;
     }
 
     private static boolean less(Comparable v, Comparable w)
@@ -84,7 +77,7 @@ public class Insertion
         return true;
     }
 
-    public static boolean isreverseSorted(Comparable[] a) {
+    public static boolean isReverseSorted(Comparable[] a) {
         // Test whether the array entries are in order.
         for (int i = 1; i < a.length; i++)
             if (more(a[i], a[i-1])) return false;
@@ -121,7 +114,6 @@ public class Insertion
         }
 
         Comparable[] ascending = xClone(input);
-        Comparable[] descending = xClone(input);
 
         System.out.println(printInversions(input)+" inversions\n");
 
@@ -134,10 +126,9 @@ public class Insertion
         System.out.println("Performed "+swaps+" swaps");
 
         System.out.print("Descending: ");
-        swaps = reverseSort(descending);
-        assert isreverseSorted(descending);
-        show(descending);
-        System.out.println("Performed "+swaps+" swaps");
+        ascending = reverseSortedArray(ascending);
+        assert isReverseSorted(ascending);
+        show(ascending);
 
     }
 }
