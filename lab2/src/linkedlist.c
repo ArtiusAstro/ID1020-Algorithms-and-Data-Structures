@@ -30,7 +30,7 @@
  *
  */
 
-typedef struct  node {
+typedef struct node {
    int data;
    struct node *next;
    struct node *prev;
@@ -63,28 +63,37 @@ int size() {
    }
 
    return size;
-}
+ }
+ 
+/* function to insert a new_node in a list. Note that this
+  function expects a pointer to head_ref as this can modify the
+  head of the input linked list (similar to push())*/
+void enqueue(int data){
+    Node *new_node = (Node*) malloc(sizeof(Node));
+    new_node->data = data;
 
-//insert node at start
-void enqueue(int data) {
+    if(isEmpty()){
+      head = tail = new_node;
+    }
 
-   //create a node
-   Node *node = (Node*) malloc(sizeof(Node));
-   node->data = data;
+    if(tail->data<data){
+      tail->next = new_node;
+      tail = new_node;
+    }
 
-   if(isEmpty()){
-     head = node;
-   }
+    if(head->data>=data){
+      new_node->next = head;
+      head = new_node;
+    }
 
-   else {
-     //point new node to old tail
-     node->prev = tail;
-     //point old tail to new node
-     tail->next = node;
-   }
-
-   //point tail to new node
-   tail = node;
+    else{
+        Node *current = head;
+        while (current->next != NULL && current->next->data < new_node->data){
+            current = current->next;
+        }
+        new_node->next = current->next;
+        current->next = new_node;
+    }
 }
 
 //delete first item
