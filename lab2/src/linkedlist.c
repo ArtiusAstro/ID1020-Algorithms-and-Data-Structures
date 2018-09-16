@@ -64,7 +64,7 @@ int size() {
 
    return size;
  }
- 
+
 /* function to insert a new_node in a list. Note that this
   function expects a pointer to head_ref as this can modify the
   head of the input linked list (similar to push())*/
@@ -88,7 +88,7 @@ void enqueue(int data){
 
     else{
         Node *current = head;
-        while (current->next != NULL && current->next->data < new_node->data){
+        while(current->next!=NULL && current->next->data<new_node->data){
             current = current->next;
         }
         new_node->next = current->next;
