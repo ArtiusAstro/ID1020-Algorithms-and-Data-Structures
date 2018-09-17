@@ -1,16 +1,14 @@
 /*
  *
  * >Description
- * Implement a function in C which takes an array
+ * Implemented a function in C which takes an array
  * of integers (both positive and negative) and orders the
  * elements in the array so that all negative elements come
- * before the positive. You are not allowed to sort the
- * array - only collect all negative values first.
- * The algorithm should only use O(1) extra memory
+ * before the positive.
+ * The algorithm uses only O(1) auxillary memory
  *
- * Design a loop invariant which explains
+ * Designed a loop invariant which explains
  * how the method above works
- * (add it as part of the comments in the .c file).
  *
  * @Author: Ayub Atif
  */
@@ -40,9 +38,8 @@ void insertionX(int arr[], int n){
   }
 }
 
-// A utility function to print an array of size n
-void printArray(int arr[], int n)
-{
+/* prints an array of size n */
+void printArray(int arr[], int n){
    int i;
    for (i=0; i < n; i++){
      if(arr[i]<0) printf("%d ", arr[i]);
@@ -51,9 +48,9 @@ void printArray(int arr[], int n)
    printf("\n");
 }
 
-/* Driver program to test insertion sort */
+/* Unit test the insertion sort */
 int main() {
-    int arr[] = {4, -2, 3, -1};
+    int arr[] = {4, -2, 3, -1, -9, 13};
     int n = sizeof(arr)/sizeof(arr[0]);
     printf("Input:  ");
     printArray(arr, n);

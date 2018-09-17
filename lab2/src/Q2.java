@@ -9,11 +9,14 @@ public class Q2 {
 
     public static Comparable[] reverseSortedArray(Comparable[] a) {
         Comparable[] reverse = new Comparable[a.length];
+        Comparable tmp;
 
-        for(int i = 0; i < a.length; i++)
-            reverse[i] = a[a.length - 1 - i];
-
-        return reverse;
+        for(int i = 0; i < a.length/2; i++) {
+            tmp = a[i];
+            a[i] = a[a.length - 1 - i];
+            a[a.length - 1 - i] = tmp;
+        }
+        return a;
     }
 
     public static boolean isReverseSorted(Comparable[] a) {

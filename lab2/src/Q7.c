@@ -3,12 +3,12 @@
 #include <stdbool.h>
 
 /*
- *  In a circular list, the next pointer of the last node points to the first node
+ *  A linked list which holds int elements, it sorts its elements as they're added
  *
- * Following are the important operations supported by a circular list.
- * insert − Inserts an element at the start of the list.
- * delete − Deletes an element from the start of the list.
- * display − Displays the list.
+ * The following are the functions supported by this linked list:
+ * enqueue − Inserts an element at its sorted position in the list.
+ * dequeue − Deletes an element from the start of the list.
+ * print_list − Displays the list.
  *
  */
 
@@ -29,27 +29,7 @@ bool isTail(Node *node) {
   return node == tail;
 }
 
-int size() {
-   int size = 0;
-   Node *current = NULL;
-
-   if(head == NULL) {
-      return size;
-   }
-
-   current = head->next;
-
-   while(current != NULL) {
-      size++;
-      current = current->next;
-   }
-
-   return size;
- }
-
-/* function to insert a new_node in a list. Note that this
-  function expects a pointer to head_ref as this can modify the
-  head of the input linked list (similar to push())*/
+/* Inserts a node at its sorted position according to its int element */
 void enqueue(int data){
     Node *new_node = (Node*) malloc(sizeof(Node));
     new_node->data = data;
@@ -78,7 +58,7 @@ void enqueue(int data){
     }
 }
 
-//delete first item
+/* delete first item */
 int dequeue() {
   int item;
   if(isEmpty()) {
@@ -100,15 +80,10 @@ int dequeue() {
    return item;
 }
 
-Node* getFirst() {
-  return head;
-}
-
-//display the list
+/* displays the list */
 void print_list() {
    Node *ptr = head;
 
-   //start from the beginning
    if(!isEmpty()) {
       while(!isTail(ptr)) {
         printf("[%c], ",ptr->data);
@@ -119,22 +94,7 @@ void print_list() {
    else{
      printf("[");
    }
-
    printf("]");
-}
-
-//display the list as a sentence
-void print_list_tidy() {
-   Node *ptr = head;
-
-   //start from the beginning
-   if(!isEmpty()) {
-      while(!isTail(ptr)) {
-        printf("%c ",ptr->data);
-        ptr = ptr->next;
-      }
-      printf("%c",ptr->data);
-   }
 }
 
 int main() {
@@ -151,14 +111,8 @@ int main() {
     }
   }
 
-  printf("\n\nOriginal List: ");
+  printf("\nFinal List: ");
   print_list();
-
-  while(!isEmpty()) {
-    Node *temp = getFirst();
-    printf("\nList after deleting (%c): ",dequeue());
-    print_list();
-  }
 
   return 0;
 }
