@@ -21,6 +21,7 @@
 void insertionX(int arr[], int n){
   int i, j, tmp;
   /*
+  * Loop invariant:
   * At each step i, for n negative integers in subarray(0,i),
   * the first n elements are negative integers and
   * the last i-n are non-negative integers.
