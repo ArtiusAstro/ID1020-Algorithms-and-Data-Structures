@@ -21,9 +21,9 @@
 void insertionX(int arr[], int n){
   int i, j, tmp;
   /*
-  * At each step, for n negative integers in the array of size x,
-  * the first n integers are negative integers and
-  * the rest are non-negative integers.
+  * At each step i, for n negative integers in subarray(0,i),
+  * the first n elements are negative integers and
+  * the last i-n are non-negative integers.
   *
   */
   for (i = 0; i < n; i++){
