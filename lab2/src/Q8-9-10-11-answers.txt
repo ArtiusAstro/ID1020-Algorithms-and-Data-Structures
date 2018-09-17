@@ -1,0 +1,25 @@
+----------------------------------------------
+Q8
+----------------------------------------------
+2 swaps, 5 with 9 and then 5 with 8. And then 3 comparisons. 
+
+----------------------------------------------
+Q9
+----------------------------------------------
+Insertion sort, 4th iteration. 
+Shell sort, using 5H sorting at i=5.
+Selection sort not possible. 
+
+----------------------------------------------
+Q10
+----------------------------------------------
+Insertion sort, because the list is sorted. So there will be N comparaisons and 0 swaps. 
+Insertion sort, because the list is sorted. So there will be N comparaisons and 0 swaps. 
+Selection sort, because the comparaisons are N^2 for both selection and Insertion sort,
+but there are N swaps in selection sort while Insertion sort moves the element one 
+index at a time to reach its sorted position. 
+
+----------------------------------------------
+Q4
+----------------------------------------------
+Shell sort was used with 2H sorting. This means that the array is 2H sorted.

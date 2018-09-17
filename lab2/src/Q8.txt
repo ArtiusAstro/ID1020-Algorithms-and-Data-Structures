@@ -1,1 +1,0 @@
-2 swaps, 5 with 9 and then 5 with 8. And then 3 comparaisons. 
