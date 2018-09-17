@@ -1,0 +1,1 @@
+Shell sort was used with 2H sorting. This means that the array is 2H sorted.
