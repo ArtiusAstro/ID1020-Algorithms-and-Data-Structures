@@ -1,70 +1,40 @@
 import java.util.Scanner;
 
-public class Q1
-{
-    public static StringBuilder arrayBuilder(StringBuilder stringBuilder, int i, Comparable x, String postScript){
-        stringBuilder.append('[').append(i).append(',').append(x).append(']').append(postScript);
+/**
+ *  Uses insertion sort to sort an array of ints
+ *
+ *  @author Ayub Atif
+ */
+public class Q1 {
 
-        return stringBuilder;
-    }
-
-    public static int printInversions(Comparable[] a) {
-        // prints a list of all inversions on the format [i,a[i]], [j, a[j]]
-        // where i and j are indices and a[i], a[j] are the values of the elements.
-        int n = a.length;
-        int swaps = 0;
-        StringBuilder stringBuilder = new StringBuilder("");
-
-        for (int i = 0; i < n-1; i++) {
-            for (int j = i+1; j < n; j++) {
-                if(more(a[i], a[j])) {
-                    stringBuilder = arrayBuilder(stringBuilder, i, a[i], ", ");
-                    stringBuilder = arrayBuilder(stringBuilder, j, a[j], "\n");
-                    swaps++;
-                }
-            }
-        }
-
-        System.out.print(stringBuilder.toString());
-        return swaps;
-    }
-
-    public static int sort(Comparable[] a)
-    { // Sort a[] into increasing order.
+    /**
+     * insertion sort
+     * @param a comparable array
+     * @return the number of swaps performed
+     */
+    public static int sort(Comparable[] a) {
         int n = a.length;
         int swaps = 0;
 
-        for (int i = 1; i < n; i++)
-        { // Insert a[i] among a[i-1], a[i-2], a[i-3]... ..
+        for (int i = 1; i < n; i++){
             for (int j = i; j > 0 && less(a[j], a[j-1]); j--) {
                 swap(a, j, j - 1);
                 swaps++;
             }
         }
-
         return swaps;
     }
 
-    public static Comparable[] reverseSortedArray(Comparable[] a) {
-        Comparable[] reverse = new Comparable[a.length];
-
-        for(int i = 0; i < a.length; i++)
-            reverse[i] = a[a.length - 1 - i];
-
-        return reverse;
+    private static boolean less(Comparable v, Comparable w){
+        return v.compareTo(w) < 0;
     }
 
-    private static boolean less(Comparable v, Comparable w)
-    { return v.compareTo(w) < 0; }
+    private static void swap(Comparable[] a, int i, int j){
+      Comparable t = a[i]; a[i] = a[j]; a[j] = t;
+    }
 
-    private static boolean more(Comparable v, Comparable w)
-    { return v.compareTo(w) > 0; }
-
-    private static void swap(Comparable[] a, int i, int j)
-    { Comparable t = a[i]; a[i] = a[j]; a[j] = t; }
-
-    private static void show(Comparable[] a)
-    { // Print the array, on a single line.
+    private static void show(Comparable[] a){
+      // Print the array, on a single line.
         for (int i = 0; i < a.length; i++)
             System.out.print(a[i] + " ");
         System.out.println();
@@ -77,13 +47,11 @@ public class Q1
         return true;
     }
 
-    public static boolean isReverseSorted(Comparable[] a) {
-        // Test whether the array entries are in order.
-        for (int i = 1; i < a.length; i++)
-            if (more(a[i], a[i-1])) return false;
-        return true;
-    }
-
+    /**
+     * Clone an array and return a new one
+     * @param original the old one
+     * @return the new one
+     */
     public static Comparable[] xClone(Comparable[] original){
         Comparable[] clone = new Comparable[original.length];
         int i = 0;
@@ -98,7 +66,7 @@ public class Q1
         Comparable[] input;
 
         try (Scanner scanner = new Scanner(System.in)) {
-            System.out.print("State ints: ");
+            System.out.print("No need to define size of input. State ints: ");
             String raw = scanner.next();
 
             input = new Comparable[raw.length()];
@@ -115,20 +83,11 @@ public class Q1
 
         Comparable[] ascending = xClone(input);
 
-        System.out.println(printInversions(input)+" inversions\n");
-
         System.out.print("Input:      ");
         show(ascending);
         System.out.print("Ascending:  ");
         int swaps = sort(ascending);
         assert isSorted(ascending);
         show(ascending);
-        System.out.println("Performed "+swaps+" swaps");
-
-        System.out.print("Descending: ");
-        ascending = reverseSortedArray(ascending);
-        assert isReverseSorted(ascending);
-        show(ascending);
-
     }
 }
