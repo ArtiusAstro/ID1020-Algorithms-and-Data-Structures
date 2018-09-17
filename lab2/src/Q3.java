@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Q1
+public class Q3
 {
     public static StringBuilder arrayBuilder(StringBuilder stringBuilder, int i, Comparable x, String postScript){
         stringBuilder.append('[').append(i).append(',').append(x).append(']').append(postScript);
