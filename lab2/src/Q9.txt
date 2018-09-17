@@ -1,3 +1,3 @@
 Insertion sort, 4th iteration. 
-Shell sort, using 5h sorting at i=5.
+Shell sort, using 4H sorting at i=4.
 Selection sort not possible. 
