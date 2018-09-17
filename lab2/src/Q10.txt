@@ -1,3 +1,5 @@
 Insertion sort, because the list is sorted. So there will be N comparaisons and 0 swaps. 
 Insertion sort, because the list is sorted. So there will be N comparaisons and 0 swaps. 
-Selection sort, because the comparaisons are N^2 for both selection and Insertion sort, but there are less swaps in selection sort as Insertion sort moves the element one index at a time to reach its sorted position. 
+Selection sort, because the comparaisons are N^2 for both selection and Insertion sort,
+but there are less swaps in selection sort as Insertion sort moves the element one 
+index at a time to reach its sorted position. 
