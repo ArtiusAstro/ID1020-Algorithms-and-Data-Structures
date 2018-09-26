@@ -24,6 +24,15 @@ public class Q2{
     }
 }
 
+class WordReader{
+    String text;
+
+    WordReader(String path) throws FileNotFoundException {
+        FileReader fileReader = new FileReader(new File(path));
+        this.text =
+    }
+}
+
 class ST<Key extends Comparable<Key>, Value>
 {
     private Key[] keys;
