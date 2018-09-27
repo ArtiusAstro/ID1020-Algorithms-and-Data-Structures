@@ -31,7 +31,7 @@ int size(FILE *file){
 int main() {
   printf("--------------------\nQ1\n--------------------\n");
   FILE *input = fopen("98-0.txt", "r");
-  FILE *output = fopen("Q1-filtered.txt", "w+");
+  FILE *output = fopen("98-0-filtered.txt", "w+");
 
   filter(input, output);
   printf("Original txt size is: %d\n", size(input));
