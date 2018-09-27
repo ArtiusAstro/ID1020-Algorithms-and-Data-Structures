@@ -11,8 +11,7 @@
 #include <ctype.h>
 
 /* filters */
-int filter(FILE *input, FILE *output){
-  int size = 0;
+void filter(FILE *input, FILE *output){
   int c;
   while((c=fgetc(input)) != EOF){
     if(isalpha(c) || c == '\n')  fputc(c,output);
@@ -20,7 +19,6 @@ int filter(FILE *input, FILE *output){
   }
   rewind(input);
   rewind(output);
-  return size;
 }
 
 int size(FILE *file){
