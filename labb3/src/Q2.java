@@ -1,47 +1,101 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.Scanner;
 
 public class Q2{
 
-    public static void main(String[] args) throws FileNotFoundException {
+    private static void arraySTest() throws FileNotFoundException {
+        ArrayST arrayST = new ArrayST<String>();
+        String word;
 
-        ArrayST arrayST = new ArrayST();
         Scanner sc2 = new Scanner(new File("98-0-filtered.txt"));
         while (sc2.hasNextLine()) {
             Scanner s2 = new Scanner(sc2.nextLine());
             while (s2.hasNext()){
-              if (!arrayST.contains(s2.next()))System.out.println("shsh");// arrayST.put(s2.next(), 1);
-              else arrayST.put(s2.next(), arrayST.get(s2.next()) + 1);
+                word = s2.next();
+                if (!arrayST.contains(word)){
+                    System.out.println("!contains "+word);
+                    arrayST.put(word, 1);
+                }
+                else {
+                    System.out.println("contains " + word);
+                    arrayST.put(word, arrayST.get(word) + 1);
+                }
             }
         }
 
         for(Comparable key : arrayST.keys()){
+            if(null==key) break;
             System.out.println(key+": "+arrayST.get(key));
         }
 
         // Find a key with the highest frequency count.
-        String max = "";
+        Comparable max = "";
         arrayST.put(max, 0);
-        for (String key : (String[])arrayST.keys())
+        for (Comparable key : arrayST.keys()) {
+            if (null == key) break;
             if (arrayST.get(key) > arrayST.get(max)) max = key;
-        StdOut.println(max + " " + arrayST.get(max));
+        }
+        System.out.println("MAX: "+max + " " + arrayST.get(max));
+    }
+
+    private static void BSTest() throws FileNotFoundException {
+        BST bst = new BST();
+        String word;
+
+        Scanner sc2 = new Scanner(new File("98-0-filtered.txt"));
+        while (sc2.hasNextLine()) {
+            Scanner s2 = new Scanner(sc2.nextLine());
+            while (s2.hasNext()){
+                word = s2.next();
+                if (!bst.contains(word)){
+                    System.out.println("!contains "+word);
+                    bst.put(word, 1);
+                }
+                else {
+                    System.out.println("contains " + word);
+                    bst.put(word, bst.get(word) + 1);
+                }
+            }
+        }
+
+        for(Comparable key : bst.keys()){
+            if(null==key) break;
+            System.out.println(key+": "+bst.get(key));
+        }
+
+        // Find a key with the highest frequency count.
+        Comparable max = "";
+        bst.put(max, 0);
+        for (Comparable key : bst.keys()) {
+            if (null == key) break;
+            if (bst.get(key) > bst.get(max)) max = key;
+        }
+        System.out.println("MAX: "+max + " " + bst.get(max));
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
+        long start = System.currentTimeMillis();
+        arraySTest();
+        long time = System.currentTimeMillis() - start;
+        System.out.println("ArrayST time: "+time);
+        start = System.currentTimeMillis();
+        BSTest();
+        time = System.currentTimeMillis() - start;
+        System.out.println("BST time: "+time);
     }
 }
-
-
 
 class ArrayST<Key extends Comparable<Key>>{
     private Key[] keys;
     private int[] vals;
     private int N;
     ArrayST() {
-        keys = (Key[]) new Comparable[200];
-        vals = new int[200];
+        keys = (Key[]) new Comparable[60000];
+        vals = new int[60000];
     }
 
-    public void xDouble(){
+    private void xDouble(){
         Key[] keysClone = (Key[]) new Comparable[keys.length*2];
         int[] valsClone = new int[vals.length*2];
         int i = 0;
@@ -96,21 +150,8 @@ class ArrayST<Key extends Comparable<Key>>{
         if(N==keys.length)    xDouble();
     }
 
-    public void delete(Key key){
-        int i = rank(key);
-        if(i < N && keys[i].compareTo(key) == 0) {
-            // delete i
-        }
-        for (int j = N; j > i; j--) {
-            keys[j] = keys[j-1]; vals[j] = vals[j-1];
-        }
-        N--;
-    }
-
     public boolean contains(Key word) {
-        if (this.size() == 0) return false;
-        if(this.get(word) != -1) return true;
-        else return false;
+        return this.get(word) != -1;
     }
 }
 
@@ -126,8 +167,11 @@ class BST<Key extends Comparable<Key>> {
         private int val; // associated value
         private Node left, right; // links to subtrees
         private int N; // # nodes in subtree rooted here
-        public Node(Key key, int val, int N)
-        { this.key = key; this.val = val; this.N = N; }
+        public Node(Key key, int val, int N) {
+            this.key = key;
+            this.val = val;
+            this.N = N;
+        }
     }
     public int size() {
         return size(root);
@@ -136,9 +180,9 @@ class BST<Key extends Comparable<Key>> {
         if (x == null) return 0;
         else return x.N;
     }
-    /*public Value get(Key key){
-        return;
-    }*/
+    public int get(Key key){
+        return -1;
+    }
     // See page 399.
     public void put(Key key, int val){
 

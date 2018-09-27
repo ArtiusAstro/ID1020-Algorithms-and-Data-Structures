@@ -6,7 +6,7 @@ public class Q3 {
 
     public static void main(String args[]) throws IOException {
 
-        FileReader fr = new FileReader(new File("98-0.txt"));
+        /*FileReader fr = new FileReader(new File("98-0.txt"));
         BufferedReader br = new BufferedReader(fr);
         String text = "";
         String sz = null;
@@ -39,7 +39,7 @@ public class Q3 {
             Integer n = map.get(w);
             n = (n == null) ? 1 : ++n;
             map.put(w, n);
-        }
+        }*/
     }
 }
 
