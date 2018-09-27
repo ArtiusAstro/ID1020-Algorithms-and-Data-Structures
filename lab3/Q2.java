@@ -7,34 +7,24 @@ public class Q2{
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        int ARRAY_SIZE = 0;
+        ArrayST arrayST = new ArrayST();
         Scanner sc2 = new Scanner(new File("98-0-filtered.txt"));
         while (sc2.hasNextLine()) {
             Scanner s2 = new Scanner(sc2.nextLine());
-            while (s2.hasNext())    ARRAY_SIZE++;
-        }
-
-        ArrayST arrayST = new ArrayST(ARRAY_SIZE);
-        String word;
-        sc2 = new Scanner(new File("98-0-filtered.txt"));
-        while (sc2.hasNextLine()) {
-            Scanner s2 = new Scanner(sc2.nextLine());
             while (s2.hasNext()){
-              word = s2.next();
-              if (!arrayST.contains(word)) arrayST.put(word, 1);
-              else arrayST.put(word, arrayST.get(word) + 1);
-                arrayST.put(s2.next(), arrayST.get(s2.next())+1);
+              if (!arrayST.contains(s2.next()))System.out.println("shsh");// arrayST.put(s2.next(), 1);
+              else arrayST.put(s2.next(), arrayST.get(s2.next()) + 1);
             }
         }
 
-        for(Comparable key : ArrayST.keys()){
+        for(Comparable key : arrayST.keys()){
             System.out.println(key+": "+arrayST.get(key));
         }
 
         // Find a key with the highest frequency count.
         String max = "";
         arrayST.put(max, 0);
-        for (String key : arrayST.keys())
+        for (String key : (String[])arrayST.keys())
             if (arrayST.get(key) > arrayST.get(max)) max = key;
         StdOut.println(max + " " + arrayST.get(max));
     }
@@ -46,9 +36,23 @@ class ArrayST<Key extends Comparable<Key>>{
     private Key[] keys;
     private int[] vals;
     private int N;
-    ArrayST(int capacity) {
-        keys = (Key[]) new Comparable[capacity];
-        vals = new int[capacity];
+    ArrayST() {
+        keys = (Key[]) new Comparable[200];
+        vals = new int[200];
+    }
+
+    public void xDouble(){
+        Key[] keysClone = (Key[]) new Comparable[keys.length*2];
+        int[] valsClone = new int[vals.length*2];
+        int i = 0;
+
+        while(i<keys.length){
+            keysClone[i] = keys[i++];
+            valsClone[i] = vals[i++];
+        }
+
+        keys = keysClone;
+        vals = valsClone;
     }
 
     public int size() { return N; }
@@ -89,6 +93,7 @@ class ArrayST<Key extends Comparable<Key>>{
         }
         keys[i] = key; vals[i] = val;
         N++;
+        if(N==keys.length)    xDouble();
     }
 
     public void delete(Key key){
@@ -103,6 +108,7 @@ class ArrayST<Key extends Comparable<Key>>{
     }
 
     public boolean contains(Key word) {
+        if (this.size() == 0) return false;
         if(this.get(word) != -1) return true;
         else return false;
     }
