@@ -6,8 +6,8 @@ import java.util.Scanner;
 
 public class Q3 {
 
-    private static ArrayST<String> fillAST() throws FileNotFoundException {
-        ArrayST<String> ast = new ArrayST<>();
+    private static ArrayST fillAST() throws FileNotFoundException {
+        ArrayST ast = new ArrayST();
         String word;
 
         Scanner sc = new Scanner(new File("98-0-filtered.txt"));
@@ -24,7 +24,7 @@ public class Q3 {
     }
 
     public static void main(String args[]) throws FileNotFoundException {
-        ArrayST<String> ast = fillAST();
+        ArrayST ast = fillAST();
         int n,x;
         try(Scanner sc = new Scanner(System.in)){
             System.out.print("Input [n-x] for nth to n+xth most frequent words (n=1 most frequent): ");
@@ -38,25 +38,29 @@ public class Q3 {
             lst.frequencyRange(n,x);
         }
 
+        for (Integer frequency : lst.keys()){
+            System.out.println(frequency+": "+lst.get(frequency));
+        }
+
     }
 }
 
 class LinkedArrayST{
     private int[] keys;
-    private CircularQueue[] LLCircles;
+    private CircularQueue<String>[] LLCircles;
     private int N;
-    LinkedArrayST(ArrayST<String> ast) {
+    LinkedArrayST(ArrayST ast) {
         keys = new int[20];
         LLCircles = new CircularQueue[20];
         for (String word : ast.keys()) {
             if (null == word) break;
-            put();
+            put(ast.get(word), word);
         }
     }
 
     private void xDouble(){
         int[] keysClone = new int[keys.length*2];
-        CircularQueue[] circlesClone = new CircularQueue[LLCircles.length*2];
+        CircularQueue<String>[] circlesClone = new CircularQueue[LLCircles.length*2];
         int i = 0;
 
         while(i<keys.length){
@@ -92,18 +96,18 @@ class LinkedArrayST{
         else return null;
     }
 
-    public void put(int key, CircularQueue val) {
+    public void put(int key, String word) {
         // Search for key. Update value if found; grow table if new.
         int i = rank(key);
         if (i < N && keys[i]==key) {
-            LLCircles[i] = val;
+            LLCircles[i].addLast(word);
             return;
         }
         for (int j = N; j > i; j--) {
             keys[j] = keys[j-1];
             LLCircles[j] = LLCircles[j-1];
         }
-        keys[i] = key; LLCircles[i] = val;
+        keys[i] = key; LLCircles[i].addLast(word);
         N++;
         if(N==keys.length)    xDouble();
     }
@@ -113,6 +117,7 @@ class LinkedArrayST{
     }
 
     public void frequencyRange(int n, int x) {
+
     }
 }
 
@@ -126,7 +131,6 @@ class LinkedArrayST{
 
 class CircularQueue<T> implements Iterable{
     private Node head;
-    private Node tail;
     private Node current;
     private int size;
 
@@ -154,39 +158,6 @@ class CircularQueue<T> implements Iterable{
     }
 
     /**
-     * add a node at an index with an item parameter
-     *
-     * @param index the index to be added to. The most recently added element has index 1;
-     * @param item generic item to be added
-     * @throws IndexOutOfBoundsException if index is out of bounds
-     */
-    /*public void add(int index, T item) throws IndexOutOfBoundsException{
-        int LIST_SIZE = this.size();
-        int i;
-        Node current = this.getHeadNode();
-        Node newNode = new Node(item);
-
-        if(index < 1 || index >= LIST_SIZE){
-            throw new IndexOutOfBoundsException();
-        }
-
-        if(index == 1){
-            newNode.setNext(current);
-            this.setHeadNode(newNode);
-        }
-
-        for(i=1; i<LIST_SIZE - 1; i++){
-            if(i == index-1) {
-                newNode.setNext(current.getNext());
-                current.setNext(newNode);
-            }
-            current = current.getNext();
-        }
-
-        this.setSize(this.size()+1);
-    }*/
-
-    /**
      * Adds item at end of list
      *
      * @param item to be added
@@ -194,20 +165,9 @@ class CircularQueue<T> implements Iterable{
     public void addLast(T item) {
         Node node = new Node(item);
 
-        if(isEmpty()){
-            head = node;
-            tail = node;
-        }
-        else{
-            if(size == 1){
-                head.next = node;
-            }
-            node.prev = tail;
-            tail.next = node;
-            tail = node;
-        }
-        tail.next = head;
-        head.prev = tail;
+        if(isEmpty()) head = node;
+        else if(size == 1) head.next = node;
+        node.next = head;
         size++;
     }
 

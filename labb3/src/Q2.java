@@ -16,7 +16,7 @@ public class Q2{
     }
 
     private static void arraySTest() throws FileNotFoundException {
-        ArrayST arrayST = new ArrayST<>();
+        ArrayST arrayST = new ArrayST();
         String word;
 
         Scanner sc = new Scanner(new File("98-0-filtered.txt"));
@@ -34,7 +34,7 @@ public class Q2{
         // Find a key with the highest frequency count.
         String max = "";
         arrayST.put(max, 0);
-        for (Comparable key : arrayST.keys()) {
+        for (String key : arrayST.keys()) {
             if (null == key) break;
             System.out.println(key+": "+arrayST.get(key));
             if (arrayST.get(key) > arrayST.get(max)) max = (String)key;
@@ -63,17 +63,17 @@ public class Q2{
     }
 }
 
-class ArrayST<Key extends Comparable<Key>>{
-    private Key[] keys;
+class ArrayST{
+    private String[] keys;
     private int[] vals;
     private int N;
     ArrayST() {
-        keys = (Key[]) new Comparable[24];
+        keys = new String[24];
         vals = new int[24];
     }
 
     private void xDouble(){
-        Key[] keysClone = (Key[]) new Comparable[keys.length*2];
+        String[] keysClone = new String[keys.length*2];
         int[] valsClone = new int[vals.length*2];
         int i = 0;
 
@@ -88,7 +88,7 @@ class ArrayST<Key extends Comparable<Key>>{
 
     public int size() { return N; }
 
-    public int rank(Key key) {
+    public int rank(String key) {
         int lo = 0, hi = N-1;
         while (lo <= hi) {
             int mid = lo + (hi - lo) / 2;
@@ -100,18 +100,18 @@ class ArrayST<Key extends Comparable<Key>>{
         return lo;
     }
 
-    public Key[] keys() {
+    public String[] keys() {
         return this.keys;
     }
 
-    public int get(Key key){
+    public int get(String key){
         if (this.size() == 0) return -1;
         int i = rank(key);
         if (i < N && keys[i].compareTo(key) == 0) return vals[i];
         else return -1;
     }
 
-    public void put(Key key, int val) {
+    public void put(String key, int val) {
         // Search for key. Update value if found; grow table if new.
         int i = rank(key);
         if (i < N && keys[i].compareTo(key) == 0) {
@@ -127,7 +127,7 @@ class ArrayST<Key extends Comparable<Key>>{
         if(N==keys.length)    xDouble();
     }
 
-    public boolean contains(Key word) {
+    public boolean contains(String word) {
         return this.get(word) != -1;
     }
 }
