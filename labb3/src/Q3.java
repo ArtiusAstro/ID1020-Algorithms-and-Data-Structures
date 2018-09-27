@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -18,30 +19,34 @@ public class Q3 {
                 if (!ast.contains(word)) ast.put(word, 1);
                 else ast.put(word, ast.get(word) + 1);
             }
+            sc2.close();
         }
+        sc.close();
 
         return ast;
     }
 
     public static void main(String args[]) throws FileNotFoundException {
         ArrayST ast = fillAST();
-        int n,x;
-        try(Scanner sc = new Scanner(System.in)){
-            System.out.print("Input [n-x] for nth to n+xth most frequent words (n=1 most frequent): ");
-            String input = sc.next();
-            n = Character.getNumericValue(input.charAt(0)); x = Character.getNumericValue(input.charAt(2));
+        int n=0,x=0;
+        /*try(Scanner sc = new Scanner(System.in)){
+            System.out.println("Input n for nth to n+xth most frequent words (n=1 most frequent: ");
+            n = sc.nextInt();
+            System.out.println("Input x: ");
+            x = sc.nextInt();
         }
+        catch (InputMismatchException e){
+            e.printStackTrace();
+        }*/
 
         LinkedArrayST lst = new LinkedArrayST(ast);
-
-        if(n>0 && x>0) {
-            lst.frequencyRange(n,x);
-        }
-
-        for (Integer frequency : lst.keys()){
+        /*for (Integer frequency : lst.keys()){
+            if(frequency==0) break;
             System.out.println(frequency+": "+lst.get(frequency));
-        }
+        }*/
 
+        if(n>0 && x>0)
+            lst.frequencyRange(n,x);
     }
 }
 
@@ -50,8 +55,8 @@ class LinkedArrayST{
     private CircularQueue<String>[] LLCircles;
     private int N;
     LinkedArrayST(ArrayST ast) {
-        keys = new int[20];
-        LLCircles = new CircularQueue[20];
+        keys = new int[3];
+        LLCircles = new CircularQueue[3];
         for (String word : ast.keys()) {
             if (null == word) break;
             put(ast.get(word), word);
@@ -97,19 +102,21 @@ class LinkedArrayST{
     }
 
     public void put(int key, String word) {
-        // Search for key. Update value if found; grow table if new.
+        if(N>=keys.length) return;
         int i = rank(key);
-        if (i < N && keys[i]==key) {
+        if (i < N && keys[i]==key) { // Found
             LLCircles[i].addLast(word);
             return;
         }
-        for (int j = N; j > i; j--) {
+        for (int j = N; j > i; j--) { // New
             keys[j] = keys[j-1];
             LLCircles[j] = LLCircles[j-1];
         }
-        keys[i] = key; LLCircles[i].addLast(word);
+        keys[i] = key; LLCircles[i]=new CircularQueue<>(); LLCircles[i].addLast(word);
         N++;
-        if(N==keys.length)    xDouble();
+
+        for (Integer frequency : keys()) System.out.println(frequency+": "+get(frequency)+'\n');
+        //if(N==keys.length)    xDouble();
     }
 
     public boolean contains(int frequency) {
