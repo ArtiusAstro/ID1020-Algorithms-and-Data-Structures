@@ -40,7 +40,7 @@ public class Q2{
     }
 
     private static void BSTest() throws FileNotFoundException {
-        BST bst = new BST();
+        BST<String,Integer> bst = new BST<String, Integer>();
         String word;
 
         Scanner sc2 = new Scanner(new File("98-0-filtered.txt"));
@@ -155,7 +155,7 @@ class ArrayST<Key extends Comparable<Key>>{
     }
 }
 
-class BST<Key extends Comparable<Key>> {
+class BST<Key extends Comparable<Key>, Value> {
     private Node root; // root of BST
 
     public boolean contains(String word) {
@@ -164,10 +164,10 @@ class BST<Key extends Comparable<Key>> {
 
     private class Node {
         private Key key; // key
-        private int val; // associated value
+        private Value val; // associated value
         private Node left, right; // links to subtrees
         private int N; // # nodes in subtree rooted here
-        public Node(Key key, int val, int N) {
+        public Node(Key key, Value val, int N) {
             this.key = key;
             this.val = val;
             this.N = N;
@@ -180,30 +180,54 @@ class BST<Key extends Comparable<Key>> {
         if (x == null) return 0;
         else return x.N;
     }
-    public int get(Key key){
-        return -1;
-    }
-    // See page 399.
-    public void put(Key key, int val){
 
+    public Value get(Key key) {
+        return get(root, key);
     }
-    public Key min()
-    {
+
+    private Value get(Node x, Key key) {
+        // Return value associated with key in the subtree rooted at x;
+        // return null if key not present in subtree rooted at x.
+        if (x == null) return null;
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) return get(x.left, key);
+        else if (cmp > 0) return get(x.right, key);
+        else return x.val;
+    }
+
+    public void put(Key key, Value val) {
+        // Search for key. Update value if found; grow table if new.
+        root = put(root, key, val);
+    }
+
+    private Node put(Node x, Key key, Value val) {
+        // Change key’s value to val if key in subtree rooted at x.
+        // Otherwise, add new node to subtree associating key with val.
+        if (x == null) return new Node(key, val, 1);
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) x.left = put(x.left, key, val);
+        else if (cmp > 0) x.right = put(x.right, key, val);
+        else x.val = val;
+        x.N = size(x.left) + size(x.right) + 1;
+        return x;
+    }
+
+    public Key min() {
         return min(root).key;
     }
-    private Node min(Node x)
-    {
+
+    private Node min(Node x) {
         if (x.left == null) return x;
         return min(x.left);
     }
-    public Key floor(Key key)
-    {
+
+    public Key floor(Key key) {
         Node x = floor(root, key);
         if (x == null) return null;
         return x.key;
     }
-    private Node floor(Node x, Key key)
-    {
+
+    private Node floor(Node x, Key key) {
         if (x == null) return null;
         int cmp = key.compareTo(x.key);
         if (cmp == 0) return x;
