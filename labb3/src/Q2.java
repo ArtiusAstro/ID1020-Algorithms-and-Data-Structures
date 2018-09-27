@@ -27,7 +27,9 @@ public class Q2{
                 if (!arrayST.contains(word)) arrayST.put(word, 1);
                 else arrayST.put(word, arrayST.get(word) + 1);
             }
+            sc2.close();
         }
+        sc.close();
 
         // Find a key with the highest frequency count.
         String max = "";
@@ -66,8 +68,8 @@ class ArrayST<Key extends Comparable<Key>>{
     private int[] vals;
     private int N;
     ArrayST() {
-        keys = (Key[]) new Comparable[60000];
-        vals = new int[60000];
+        keys = (Key[]) new Comparable[24];
+        vals = new int[24];
     }
 
     private void xDouble(){
@@ -76,7 +78,7 @@ class ArrayST<Key extends Comparable<Key>>{
         int i = 0;
 
         while(i<keys.length){
-            keysClone[i] = keys[i++];
+            keysClone[i] = keys[i];
             valsClone[i] = vals[i++];
         }
 
