@@ -27,7 +27,6 @@ public class Q3 {
     }
 
     public static void main(String args[]) throws FileNotFoundException {
-        ArrayST ast = fillAST();
         int n=0,x=0;
         try(Scanner sc = new Scanner(System.in)){
             System.out.println("Input n for nth to n+xth most frequent words (n=1 most frequent: ");
@@ -39,13 +38,9 @@ public class Q3 {
             e.printStackTrace();
         }
 
+        ArrayST ast = fillAST();
         LinkedArrayST lst = new LinkedArrayST(ast);
-        /*
-        for (Integer frequency : lst.keys()){
-            if(frequency==0) break;
-            System.out.println(frequency+": "+lst.get(frequency));
-        }
-        */
+        //LinkedArrayST lst = fillAST();
 
         if(n>0 && x>0)
             lst.frequencyRange(n,x);
@@ -64,6 +59,11 @@ class LinkedArrayST{
             if (word == null) break;
             put(ast.get(word), word);
         }
+    }
+
+    LinkedArrayST() {
+        keys = new int[24];
+        LLCircles = new CircularQueue[24];
     }
 
     private void xDouble(){
