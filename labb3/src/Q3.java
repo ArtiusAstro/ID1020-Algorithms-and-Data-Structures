@@ -40,10 +40,12 @@ public class Q3 {
         }
 
         LinkedArrayST lst = new LinkedArrayST(ast);
+        /*
         for (Integer frequency : lst.keys()){
             if(frequency==0) break;
             System.out.println(frequency+": "+lst.get(frequency));
         }
+        */
 
         if(n>0 && x>0)
             lst.frequencyRange(n,x);
