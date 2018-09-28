@@ -213,7 +213,7 @@ class BST extends ST{
         return x;
     }
 
-    public Node maxNode(Node root) {
+    Node maxNode(Node root) {
         if (root == null) return new Node(null, 1, 0);
         Node left = new Node(null, 0, 0);
         Node right = new Node(null, 0, 0);

@@ -28,8 +28,7 @@ public class Q4 {
  * Rua Alves Redol 9
  * 1000 - 029 Lisboa
  * Portugal
- */
-
+ *
 class RedBlackTree implements Iterable<E> {
     private static final boolean RED = true;
     private static final boolean BLACK = false;
@@ -278,5 +277,5 @@ class RedBlackTree implements Iterable<E> {
             }
             return result;
         }
-    }*/
-}
+    }
+}*/
