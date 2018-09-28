@@ -40,7 +40,7 @@ public class Q4x {
         long start = System.currentTimeMillis();
         RBBTest(rbb);
         long time = System.currentTimeMillis() - start;
-        System.out.println("ArrayST time: "+time+"ms");
+        System.out.println("RedBlackBST time: "+time+"ms");
         start = System.currentTimeMillis();
         BSTest(bst);
         time = System.currentTimeMillis() - start;
@@ -59,17 +59,50 @@ class RedBlackBST<Key extends Comparable<Key>> extends ST {
 
     @Override
     public int get(String key) {
-        return 2;
+        return get(root, key);
+    }
+
+    private int get(Node x, String key) {
+        // Return value associated with key in the subtree rooted at x;
+        // return null if key not present in subtree rooted at x.
+        if (x == null) return -1;
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) return get(x.left, key);
+        else if (cmp > 0) return get(x.right, key);
+        else return x.val;
+
+        if (x == null) // Do standard insert, with red link to parent.
+            return new Node(key, val, 1, RED);
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) return get(x.left, key);
+        else if (cmp > 0) return  get(x.right, key);
+        return x;
     }
 
     @Override
-    public void put(String key, int val) {
-        int a=2;
+    public void put(Key key, int val) {
+        // Search for key. Update value if found; grow table if new.
+        root = put(root, key, val);
+        root.color = BLACK;
+    }
+
+    private Node put(Node h, Key key, int val) {
+        if (h == null) // Do standard insert, with red link to parent.
+            return new Node(key, val, 1, RED);
+        int cmp = key.compareTo(h.key);
+        if (cmp < 0) h.left = put(h.left, key, val);
+        else if (cmp > 0) h.right = put(h.right, key, val);
+        else h.val = val;
+        if (isRed(h.right) && !isRed(h.left)) h = rotateLeft(h);
+        if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
+        if (isRed(h.left) && isRed(h.right)) flipColors(h);
+        h.N = size(h.left) + size(h.right) + 1;
+        return h;
     }
 
     @Override
-    public boolean contains(String word) {
-        return true;
+    public boolean contains(String key) {
+        return get(key)!=-1;
     }
 
     public class Node {
@@ -128,26 +161,6 @@ class RedBlackBST<Key extends Comparable<Key>> extends ST {
     }
     private int size(Node x) {
         return (x == null) ? 0 : x.N;
-    }
-
-    public void put(Key key, int val) {
-        // Search for key. Update value if found; grow table if new.
-        root = put(root, key, val);
-        root.color = BLACK;
-    }
-
-    private Node put(Node h, Key key, int val) {
-        if (h == null) // Do standard insert, with red link to parent.
-            return new Node(key, val, 1, RED);
-        int cmp = key.compareTo(h.key);
-        if (cmp < 0) h.left = put(h.left, key, val);
-        else if (cmp > 0) h.right = put(h.right, key, val);
-        else h.val = val;
-        if (isRed(h.right) && !isRed(h.left)) h = rotateLeft(h);
-        if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
-        if (isRed(h.left) && isRed(h.right)) flipColors(h);
-        h.N = size(h.left) + size(h.right) + 1;
-        return h;
     }
 
     public Node maxNode(Node root){
