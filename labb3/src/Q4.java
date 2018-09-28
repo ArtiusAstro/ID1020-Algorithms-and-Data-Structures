@@ -30,14 +30,14 @@ public class Q4 {
  * Portugal
  */
 
-class RedBlackTree<E extends Comparable<? super E>> implements Iterable<E> {
+class RedBlackTree implements Iterable<E> {
     private static final boolean RED = true;
     private static final boolean BLACK = false;
 
     public static final RedBlackTree EMPTY = new RedBlackTree(BLACK, null, null, null);
 
     private boolean color;
-    private E elem;
+    private String key;
     private RedBlackTree<E> left;
     private RedBlackTree<E> right;
 
