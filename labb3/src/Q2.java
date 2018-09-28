@@ -50,7 +50,7 @@ public class Q2{
 
     private static void BSTest(BST bst){
         // Find a node with the highest frequency count.
-        System.out.println("MAX: "+bst.getKey(bst.maxNode(bst.getRoot()))+" "+bst.getNodeVal(bst.maxNode(bst.getRoot())));
+        System.out.println("MAX: "+bst.getNodeKey(bst.maxNode(bst.getRoot()))+" "+bst.getNodeVal(bst.maxNode(bst.getRoot())));
     }
 }
 
@@ -148,11 +148,11 @@ class BST extends ST{
     }
 
     public int getNodeVal(Node node){
-        return node.getNodeVal();
+        return node.val;
     }
     
-    public String getKey(Node node){
-        return node.getKey();
+    public String getNodeKey(Node node){
+        return node.key;
     }
 
     private class Node {
@@ -165,13 +165,8 @@ class BST extends ST{
             this.val = val;
             this.N = N;
         }
-        public int getNodeVal(){
-            return this.val;
-        }
-        public String getKey(){
-            return this.key;
-        }
     }
+
     public int size() {
         return size(root);
     }

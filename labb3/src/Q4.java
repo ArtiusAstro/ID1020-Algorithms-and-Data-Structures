@@ -1,281 +1,180 @@
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class Q4 {
+
+    private static ST fillST(ST st) throws FileNotFoundException {
+        String word;
+        Scanner sc = new Scanner(new File("98-0-filtered.txt"));
+        while (sc.hasNextLine()) {
+            Scanner sc2 = new Scanner(sc.nextLine());
+            while (sc2.hasNext()){
+                word = sc2.next();
+                if (!st.contains(word)) st.put(word, 1);
+                else st.put(word, st.get(word) + 1);
+            }
+            sc2.close();
+        }
+        sc.close();
+
+        return st;
+    }
+
+    private static void BSTest(BST bst){
+        // Find a node with the highest frequency count.
+        System.out.println("MAX: "+bst.getNodeKey(bst.maxNode(bst.getRoot()))+" "+bst.getNodeVal(bst.maxNode(bst.getRoot())));
+    }
+
+    private static void RBBTest(RedBlackBST rbb){
+        // Find a key with the highest frequency count.
+        System.out.println("MAX: "+rbb.getNodeKey(rbb.maxNode(rbb.getRoot()))+" "+rbb.getNodeVal(rbb.maxNode(rbb.getRoot())));
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
+        RedBlackBST rbb = new RedBlackBST();
+        BST bst = new BST();
+        rbb = (RedBlackBST) fillST(rbb);
+        bst = (BST) fillST(bst);
+
+        long start = System.currentTimeMillis();
+        RBBTest(rbb);
+        long time = System.currentTimeMillis() - start;
+        System.out.println("RedBlackBST time: "+time+"ms");
+        start = System.currentTimeMillis();
+        BSTest(bst);
+        time = System.currentTimeMillis() - start;
+        System.out.println("BST time: "+time+"ms");
+    }
 }
 
-/*
- * JVSTM: a Java library for Software Transactional Memory
- * Copyright (C) 2005 INESC-ID Software Engineering Group
- * http://www.esw.inesc-id.pt
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * Author's contact:
- * INESC-ID Software Engineering Group
- * Rua Alves Redol 9
- * 1000 - 029 Lisboa
- * Portugal
- *
-class RedBlackTree implements Iterable<E> {
+class RedBlackBST extends ST {
     private static final boolean RED = true;
     private static final boolean BLACK = false;
+    private Node root;
 
-    public static final RedBlackTree EMPTY = new RedBlackTree(BLACK, null, null, null);
+    public Node getRoot() {
+        return root;
+    }
 
-    private boolean color;
-    private String key;
-    private RedBlackTree<E> left;
-    private RedBlackTree<E> right;
+    public int getNodeVal(Node node){
+        return node.val;
+    }
 
+    public String getNodeKey(Node node){
+        return node.key;
+    }
 
-    private RedBlackTree(boolean color, E elem, RedBlackTree<E> left, RedBlackTree<E> right) {
-        this.color = color;
-        this.elem = elem;
-        this.left = left;
-        this.right = right;
+    @Override
+    public int get(String key) {
+        return get(root, key);
+    }
+
+    private int get(Node x, String key) {
+        // Return value associated with key in the subtree rooted at x;
+        // return null if key not present in subtree rooted at x.
+        if (x == null) return -1;
+        int cmp = key.compareTo(x.key);
+        if (cmp < 0) return get(x.left, key);
+        else if (cmp > 0) return get(x.right, key);
+        return x.val;
+    }
+
+    @Override
+    public void put(String key, int val) {
+        // Search for key. Update value if found; grow table if new.
+        root = put(root, key, val);
+        root.color = BLACK;
+    }
+
+    private Node put(Node h, String key, int val) {
+        if (h == null) // Do standard insert, with red link to parent.
+            return new Node(key, val, 1, RED);
+        int cmp = key.compareTo(h.key);
+        if (cmp < 0) h.left = put(h.left, key, val);
+        else if (cmp > 0) h.right = put(h.right, key, val);
+        else h.val = val;
+        if (isRed(h.right) && !isRed(h.left)) h = rotateLeft(h);
+        if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
+        if (isRed(h.left) && isRed(h.right)) flipColors(h);
+        h.N = size(h.left) + size(h.right) + 1;
+        return h;
+    }
+
+    @Override
+    public boolean contains(String key) {
+        return get(key)!=-1;
+    }
+
+    private class Node {
+        String key; // key
+        int val; // associated data
+        Node left, right; // subtrees
+        int N; // # nodes in this subtree
+        boolean color; // color of link from
+        Node(String key, int val, int N, boolean color) {
+            this.key = key;
+            this.val = val;
+            this.N = N;
+            this.color = color;
+        }
+    }
+
+    private boolean isRed(Node x) {
+        if (x == null) return false;
+        return x.color == RED;
+    }
+
+    private Node rotateLeft(Node h) {
+        Node x = h.right;
+        h.right = x.left;
+        x.left = h;
+        x.color = h.color;
+        h.color = RED;
+        x.N = h.N;
+        h.N = 1 + size(h.left)
+                + size(h.right);
+        return x;
+    }
+
+    private Node rotateRight(Node h) {
+        Node x = h.left;
+        h.left = x.right;
+        x.right = h;
+        x.color = h.color;
+        h.color = RED;
+        x.N = h.N;
+        h.N = 1 + size(h.left)
+                + size(h.right);
+        return x;
+    }
+
+    private void flipColors(Node h) {
+        h.color = RED;
+        h.left.color = BLACK;
+        h.right.color = BLACK;
     }
 
     public int size() {
-        if (this == EMPTY) {
-            return 0;
-        } else {
-            return left.size() + right.size() + 1;
-        }
+        return size(root);
+    }
+    private int size(Node x) {
+        return (x == null) ? 0 : x.N;
     }
 
-    public RedBlackTree<E> put(E elem) {
-        RedBlackTree<E> result = buildTree(elem);
-        result.color = BLACK;
-        return result;
+    public Node maxNode(Node root){
+        if (root == null) return new Node(null, 0,0, BLACK);
+        Node left = new Node(null, 0,0, BLACK);
+        Node right = new Node(null, 0,0, BLACK);
+
+        if (root.left != null) left = maxNode(root.left);
+        if (root.right != null) right = maxNode(root.right);
+
+        if (left.val>right.val) {
+            if (left.val>root.val)
+                return left;
+            return root;
+        }
+        return (right.val>root.val) ? right : root;
     }
-
-    public E get(E elem) {
-        RedBlackTree<E> node = getNode(elem);
-        return (node == null) ? null : node.elem;
-    }
-
-    protected RedBlackTree<E> getNode(E elem) {
-        RedBlackTree<E> iter = this;
-
-        while (iter != EMPTY) {
-            int cmp = elem.compareTo(iter.elem);
-            if (cmp < 0) {
-                iter = iter.left;
-            } else if (cmp > 0) {
-                iter = iter.right;
-            } else {
-                return iter;
-            }
-        }
-
-        return null;
-    }
-
-    public boolean contains(E elem) {
-        return getNode(elem) != null;
-    }
-
-    private RedBlackTree<E> buildTree(E elem) {
-        if (this == EMPTY) {
-            return new RedBlackTree<E>(RED, elem, EMPTY, EMPTY);
-        } else {
-            int cmp = elem.compareTo(this.elem);
-            if (cmp < 0) {
-                return lbalance(this.color, this.elem, this.left.buildTree(elem), this.right);
-            } else {
-                return new RedBlackTree<E>(this.color, elem, this.left, this.right);
-            }
-        }
-    }
-
-    private RedBlackTree<E> lbalance(boolean color, E elem, RedBlackTree<E> left, RedBlackTree<E> right) {
-        if (color == BLACK) {
-            if ((left != EMPTY) && (left.color == RED)) {
-                if (left.left.color == RED) {
-                    return new RedBlackTree<E>(RED,
-                            left.elem,
-                            new RedBlackTree<E>(BLACK, left.left.elem, left.left.left, left.left.right),
-                            new RedBlackTree<E>(BLACK, elem, left.right, right));
-                }
-
-                if (left.right.color == RED) {
-                    return new RedBlackTree<E>(RED,
-                            left.right.elem,
-                            new RedBlackTree<E>(BLACK, left.elem, left.left, left.right.left),
-                            new RedBlackTree<E>(BLACK, elem, left.right.right, right));
-                }
-            }
-        }
-
-        return new RedBlackTree<E>(color, elem, left, right);
-    }
-
-    protected RedBlackTree<E> getNodeLowerBound(E elem) {
-        RedBlackTree<E> iter = this;
-        RedBlackTree<E> candidate = null;
-
-        while (iter != EMPTY) {
-            int cmp = elem.compareTo(iter.elem);
-            if (cmp == 0) {
-                return iter;
-            } else if (cmp < 0) {
-                candidate = iter;
-                iter = iter.left;
-            } else {
-                iter = iter.right;
-            }
-        }
-
-        return candidate;
-    }
-
-    protected RedBlackTree<E> getNodeUpperBound(E elem) {
-        RedBlackTree<E> iter = this;
-        RedBlackTree<E> candidate = null;
-
-        while (iter != EMPTY) {
-            int cmp = elem.compareTo(iter.elem);
-            if (cmp == 0) {
-                return iter;
-            } else if (cmp < 0) {
-                iter = iter.left;
-            } else {
-                candidate = iter;
-                iter = iter.right;
-            }
-        }
-
-        return candidate;
-    }
-
-
-    public Iterator<E> iterator() {
-        return null;
-    }
-
-    private static final Iterator EMPTY_ITERATOR = new Iterator() {
-        public boolean hasNext() {
-            return false;
-        }
-
-        public Object next() {
-            throw new NoSuchElementException();
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    };
-
-    public Iterator<E> iterator(E from, E to) {
-        RedBlackTree<E> lower = getNodeLowerBound(from);
-        RedBlackTree<E> upper = getNodeUpperBound(to);
-
-        if ((lower == upper) || (lower == null) || (upper == null) || (lower.elem.compareTo(upper.elem) > 0)) {
-            return EMPTY_ITERATOR;
-        }
-
-        return null;
-    }
-
-    /*static class RBTIterator<T extends Comparable<? super T>> implements Iterator<T> {
-        protected Cons<RedBlackTree<T>> path;
-        protected RedBlackTree<T> next;
-
-        RBTIterator() {
-            this.path = Cons.empty();
-        }
-
-        RBTIterator(RedBlackTree<T> root) {
-            this();
-            if (root != EMPTY) {
-                findLeftmost(root);
-            }
-        }
-
-        private void findLeftmost(RedBlackTree<T> node) {
-            while (node.left != EMPTY) {
-                path = path.cons(node);
-                node = node.left;
-            }
-            this.next = node;
-        }
-
-        public boolean hasNext() {
-            return next != null;
-        }
-
-        public T next() {
-            if (next == null) {
-                throw new NoSuchElementException();
-            } else {
-                T result = next.elem;
-
-                if (next.right != EMPTY) {
-                    findLeftmost(next.right);
-                } else {
-                    // no elements to the right, so climb up the tree
-                    if (path == Cons.EMPTY) {
-                        next = null;
-                    } else {
-                        next = path.first;
-                        path = path.rest;
-                    }
-                }
-
-                return result;
-            }
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    static class BoundedRBTIterator<T extends Comparable<? super T>> extends RBTIterator<T> {
-        private RedBlackTree<T> last;
-
-
-        BoundedRBTIterator(RedBlackTree<T> root, RedBlackTree<T> from, RedBlackTree<T> to) {
-            super();
-            this.last = to;
-
-            findStart(root, from);
-        }
-
-        private void findStart(RedBlackTree<T> node, RedBlackTree<T> target) {
-            while (node != target) {
-                path = path.cons(node);
-                int cmp = target.elem.compareTo(node.elem);
-                if (cmp < 0) {
-                    node = node.left;
-                } else {
-                    node = node.right;
-                }
-            }
-            this.next = node;
-        }
-
-        public T next() {
-            RedBlackTree<T> current = next;
-            T result = super.next();
-            if (current == last) {
-                next = null;
-            }
-            return result;
-        }
-    }
-}*/
+}
