@@ -40,7 +40,6 @@ public class Q3 {
 
         ArrayST ast = fillAST();
         LinkedArrayST lst = new LinkedArrayST(ast);
-        //LinkedArrayST lst = fillAST();
 
         if(n>0 && x>0)
             lst.frequencyRange(n,x);
