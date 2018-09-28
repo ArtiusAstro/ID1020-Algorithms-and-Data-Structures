@@ -1,6 +1,6 @@
 /*
  * >Description
- * A filter which replaces non-alphabeticals or \n with a blank
+ * A filter which replaces non-alphabeticals except \n with a blank
  * Uses the isalhpa() function to handle most of the work
  * The algorithm uses O(N) time complexity
  *
@@ -30,8 +30,8 @@ int size(FILE *file){
 /* Unit test */
 int main() {
   printf("--------------------\nQ1\n--------------------\n");
-  FILE *input = fopen("98-0.txt", "r");
-  FILE *output = fopen("98-0-filtered.txt", "w+");
+  FILE *input = fopen("../98-0.txt", "r");
+  FILE *output = fopen("../98-0-filtered.txt", "w+");
 
   filter(input, output);
   printf("Original txt size is: %d\n", size(input));
