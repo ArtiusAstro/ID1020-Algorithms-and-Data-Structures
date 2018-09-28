@@ -5,65 +5,65 @@ import java.util.Scanner;
 public class Q2{
 
     public static void main(String[] args) throws FileNotFoundException {
+        ArrayST ast = new ArrayST();
+        BST bst = new BST();
+        ast = (ArrayST) fillST(ast);
+        bst = (BST) fillST(bst);
+
         long start = System.currentTimeMillis();
-        arraySTest();
+        arraySTest(ast);
         long time = System.currentTimeMillis() - start;
         System.out.println("ArrayST time: "+time+"ms");
         start = System.currentTimeMillis();
-        BSTest();
+        BSTest(bst);
         time = System.currentTimeMillis() - start;
         System.out.println("BST time: "+time+"ms");
     }
 
-    private static void arraySTest() throws FileNotFoundException {
-        ArrayST arrayST = new ArrayST();
+    private static ST fillST(ST st) throws FileNotFoundException {
         String word;
-
         Scanner sc = new Scanner(new File("98-0-filtered.txt"));
         while (sc.hasNextLine()) {
             Scanner sc2 = new Scanner(sc.nextLine());
             while (sc2.hasNext()){
                 word = sc2.next();
-                if (!arrayST.contains(word)) arrayST.put(word, 1);
-                else arrayST.put(word, arrayST.get(word) + 1);
+                if (!st.contains(word)) st.put(word, 1);
+                else st.put(word, st.get(word) + 1);
             }
             sc2.close();
         }
         sc.close();
 
-        // Find a key with the highest frequency count.
-        String max = "";
-        arrayST.put(max, 0);
-        for (String key : arrayST.keys()) {
-            if (null == key) break;
-            System.out.println(key+": "+arrayST.get(key));
-            if (arrayST.get(key) > arrayST.get(max)) max = (String)key;
-        }
-        System.out.println("MAX: "+max + " " + arrayST.get(max));
+        return st;
     }
 
-    private static void BSTest() throws FileNotFoundException {
-        BST<String> bst = new BST<>();
-        String word;
-
-        Scanner sc = new Scanner(new File("98-0-filtered.txt"));
-        while (sc.hasNextLine()) {
-            Scanner sc2 = new Scanner(sc.nextLine());
-            while (sc2.hasNext()){
-                word = sc2.next();
-                if (!bst.contains(word)) bst.put(word, 1);
-                else bst.put(word, bst.get(word) + 1);
-            }
-            sc2.close();
+    private static void arraySTest(ArrayST ast){
+        // Find a key with the highest frequency count.
+        String max = "";
+        ast.put(max, 0);
+        for (String key : ast.keys()) {
+            if (null == key) break;
+            if (ast.get(key) > ast.get(max)) max = key;
         }
-        sc.close();
+        System.out.println("MAX: "+max + " " + ast.get(max));
+    }
 
+    private static void BSTest(BST bst){
         // Find a node with the highest frequency count.
-        System.out.println("MAX: "+bst.getKey(bst.maxNode(bst.getRoot()))+" "+bst.getVal(bst.maxNode(bst.getRoot())));
+        System.out.println("MAX: "+bst.getKey(bst.maxNode(bst.getRoot()))+" "+bst.getNodeVal(bst.maxNode(bst.getRoot())));
     }
 }
 
-class ArrayST{
+abstract class ST{
+
+    public abstract int get(String key);
+
+    public abstract void put(String key, int val);
+
+    public abstract boolean contains(String word);
+}
+
+class ArrayST extends ST{
     private String[] keys;
     private int[] vals;
     private int N;
@@ -104,6 +104,7 @@ class ArrayST{
         return this.keys;
     }
 
+    @Override
     public int get(String key){
         if (this.size() == 0) return -1;
         int i = rank(key);
@@ -111,6 +112,7 @@ class ArrayST{
         else return -1;
     }
 
+    @Override
     public void put(String key, int val) {
         // Search for key. Update value if found; grow table if new.
         int i = rank(key);
@@ -127,44 +129,46 @@ class ArrayST{
         if(N==keys.length)    xDouble();
     }
 
-    public boolean contains(String word) {
-        return this.get(word) != -1;
+    @Override
+    public boolean contains(String key) {
+        return this.get(key) != -1;
     }
 }
 
-class BST<Key extends Comparable<Key>> {
+class BST extends ST{
     private Node root; // root of BST
 
     public Node getRoot(){
         return root;
     }
 
-    public boolean contains(Key key) {
+    @Override
+    public boolean contains(String key) {
         return get(key)!=-1;
     }
 
-    public int getVal(Node node){
-        return node.getVal();
+    public int getNodeVal(Node node){
+        return node.getNodeVal();
     }
-
-    public Key getKey(Node node){
+    
+    public String getKey(Node node){
         return node.getKey();
     }
 
     private class Node {
-        private Key key; // key
+        private String key; // key
         private int val; // associated value
         private Node left, right; // links to subtrees
         private int N; // # nodes in subtree rooted here
-        public Node(Key key, int val, int N) {
+        public Node(String key, int val, int N) {
             this.key = key;
             this.val = val;
             this.N = N;
         }
-        public int getVal(){
+        public int getNodeVal(){
             return this.val;
         }
-        public Key getKey(){
+        public String getKey(){
             return this.key;
         }
     }
@@ -176,11 +180,12 @@ class BST<Key extends Comparable<Key>> {
         else return node.N;
     }
 
-    public int get(Key key) {
+    @Override
+    public int get(String key) {
         return get(root, key);
     }
 
-    private int get(Node x, Key key) {
+    private int get(Node x, String key) {
         // Return value associated with key in the subtree rooted at x;
         // return null if key not present in subtree rooted at x.
         if (x == null) return -1;
@@ -190,12 +195,13 @@ class BST<Key extends Comparable<Key>> {
         else return x.val;
     }
 
-    public void put(Key key, int val) {
+    @Override
+    public void put(String key, int val) {
         // Search for key. Update value if found; grow table if new.
         root = put(root, key, val);
     }
 
-    private Node put(Node x, Key key, int val) {
+    private Node put(Node x, String key, int val) {
         // Change key’s value to val if key in subtree rooted at x.
         // Otherwise, add new node to subtree associating key with val.
         if (x == null) return new Node(key, val, 1);
@@ -226,13 +232,13 @@ class BST<Key extends Comparable<Key>> {
         return root;
     }
 
-    public Key floor(Key key) {
+    public String floor(String key) {
         Node x = floor(root, key);
         if (x == null) return null;
         return x.key;
     }
 
-    private Node floor(Node x, Key key) {
+    private Node floor(Node x, String key) {
         if (x == null) return null;
         int cmp = key.compareTo(x.key);
         if (cmp == 0) return x;
