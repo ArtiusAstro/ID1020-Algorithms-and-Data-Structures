@@ -29,7 +29,7 @@ public class Q3 {
     public static void main(String args[]) throws FileNotFoundException {
         ArrayST ast = fillAST();
         int n=0,x=0;
-        /*try(Scanner sc = new Scanner(System.in)){
+        try(Scanner sc = new Scanner(System.in)){
             System.out.println("Input n for nth to n+xth most frequent words (n=1 most frequent: ");
             n = sc.nextInt();
             System.out.println("Input x: ");
@@ -37,13 +37,13 @@ public class Q3 {
         }
         catch (InputMismatchException e){
             e.printStackTrace();
-        }*/
+        }
 
         LinkedArrayST lst = new LinkedArrayST(ast);
-        /*for (Integer frequency : lst.keys()){
+        for (Integer frequency : lst.keys()){
             if(frequency==0) break;
             System.out.println(frequency+": "+lst.get(frequency));
-        }*/
+        }
 
         if(n>0 && x>0)
             lst.frequencyRange(n,x);
@@ -55,10 +55,11 @@ class LinkedArrayST{
     private CircularQueue<String>[] LLCircles;
     private int N;
     LinkedArrayST(ArrayST ast) {
-        keys = new int[3];
-        LLCircles = new CircularQueue[3];
+        keys = new int[24];
+        LLCircles = new CircularQueue[24];
+        N=0;
         for (String word : ast.keys()) {
-            if (null == word) break;
+            if (word == null) break;
             put(ast.get(word), word);
         }
     }
@@ -97,26 +98,23 @@ class LinkedArrayST{
     public CircularQueue get(int key){
         if (this.size() == 0) return null;
         int i = rank(key);
-        if (i < N && keys[i]==key) return LLCircles[i];
+        if ((i < N) && (keys[i]==key)) return LLCircles[i];
         else return null;
     }
 
     public void put(int key, String word) {
-        if(N>=keys.length) return;
         int i = rank(key);
-        if (i < N && keys[i]==key) { // Found
-            LLCircles[i].addLast(word);
+        if (i<N && keys[i]==key) { // Found
+            LLCircles[i].addFirst(word);
             return;
         }
         for (int j = N; j > i; j--) { // New
             keys[j] = keys[j-1];
             LLCircles[j] = LLCircles[j-1];
         }
-        keys[i] = key; LLCircles[i]=new CircularQueue<>(); LLCircles[i].addLast(word);
+        keys[i] = key; LLCircles[i]=new CircularQueue<>(); LLCircles[i].addFirst(word);
         N++;
-
-        for (Integer frequency : keys()) System.out.println(frequency+": "+get(frequency)+'\n');
-        //if(N==keys.length)    xDouble();
+        if(N==keys.length)    xDouble();
     }
 
     public boolean contains(int frequency) {
@@ -124,7 +122,9 @@ class LinkedArrayST{
     }
 
     public void frequencyRange(int n, int x) {
-
+        int i=0;
+        while(i<=x)
+            System.out.println(n+i+": "+LLCircles[N-n-i++]);
     }
 }
 
@@ -138,7 +138,6 @@ class LinkedArrayST{
 
 class CircularQueue<T> implements Iterable{
     private Node head;
-    private Node current;
     private int size;
 
     /**
@@ -149,7 +148,6 @@ class CircularQueue<T> implements Iterable{
     private class Node {
         T item;
         Node next;
-        Node prev;
 
         Node(T item) {
             this.item = item;
@@ -169,12 +167,11 @@ class CircularQueue<T> implements Iterable{
      *
      * @param item to be added
      */
-    public void addLast(T item) {
+    public void addFirst(T item) {
         Node node = new Node(item);
 
-        if(isEmpty()) head = node;
-        else if(size == 1) head.next = node;
         node.next = head;
+        head = node;
         size++;
     }
 
