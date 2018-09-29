@@ -8,12 +8,18 @@ import java.util.Scanner;
 public class Q6 {
     public static void main(String args[]) throws FileNotFoundException {
         RBSString rbst = fillRBSString();
+        int i=0;
 
         try(Scanner sc = new Scanner(System.in)){
             System.out.print("Input word x: ");
             LIFOQueue lifoQueue = rbst.get(sc.next());
-            for(Object location : lifoQueue)
-                System.out.print(location+", ");
+            if (null!=lifoQueue) {
+                for (Object location : lifoQueue) {
+                    System.out.print(location + ", ");
+                    if (i++ % 5 == 0) System.out.println();
+                }
+            }
+            else System.out.println("Selected word isn't in the txt");
         }
         catch (InputMismatchException e){
             e.printStackTrace();
@@ -193,12 +199,9 @@ class LIFOQueue implements Iterable{
     public void Queue(int location) {
         Node node = new Node(location);
 
-        if(isEmpty()) {
-            tail = head = node;
-        }
+        if(isEmpty()) tail = head = node;
         else {
-            if(size==1)
-                head.next = node;
+            if(size==1) head.next = node;
             tail.next = node;
             tail = node;
         }
@@ -207,9 +210,9 @@ class LIFOQueue implements Iterable{
 
     public Node Dequeue(){
         if(isEmpty()) return null;
-        size--;
         Node tmp = head;
         head = (size==1) ? null : head.next;
+        size--;
         return tmp;
     }
 
@@ -243,26 +246,5 @@ class LIFOQueue implements Iterable{
             i++;
             return location;
         }
-    }
-
-    /**
-     * Returns a string representation of this list.
-     *
-     * @return the sequence of items in this list from head to tail
-     */
-    @Override
-    public String toString() {
-        StringBuilder s = new StringBuilder();
-        int i = this.size-1;
-        if(!this.isEmpty()) {
-            for (Object item : this) {
-                s.append('[').append(item).append("]");
-                if(i-- > 0) {
-                    s.append(", ");
-                }
-            }
-        }
-        else  s.append("[ ]");
-        return s.toString();
     }
 }
