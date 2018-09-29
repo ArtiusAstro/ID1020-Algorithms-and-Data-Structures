@@ -6,6 +6,8 @@ import java.util.NoSuchElementException;
 public class Q7{
 
     public static void main(String[] args) throws FileNotFoundException {
+        System.out.println("--------------------\nQ7\n--------------------");
+
         SeparateChainingHashST separateChainingHashST = (SeparateChainingHashST) ST.fillST(new SeparateChainingHashST());
         LinearProbingHashST linearProbingHashST = (LinearProbingHashST) ST.fillST(new LinearProbingHashST());
 

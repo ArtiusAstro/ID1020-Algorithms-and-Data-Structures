@@ -5,6 +5,8 @@ import java.util.Scanner;
 public class Q2{
 
     public static void main(String[] args) throws FileNotFoundException {
+        System.out.println("--------------------\nQ2\n--------------------");
+
         ArrayST ast = (ArrayST) ST.fillST(new ArrayST());
         BST bst = (BST) ST.fillST(new BST());
 

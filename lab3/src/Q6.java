@@ -7,6 +7,8 @@ import java.util.Scanner;
 
 public class Q6 {
     public static void main(String args[]) throws FileNotFoundException {
+        System.out.println("--------------------\nQ6\n--------------------");
+
         RBST rbst = RBST.fillRBST();
         int i=0;
 

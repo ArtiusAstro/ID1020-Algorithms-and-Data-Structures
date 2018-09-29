@@ -7,6 +7,8 @@ import java.util.Scanner;
 public class Q3 {
 
     public static void main(String args[]) throws FileNotFoundException {
+        System.out.println("--------------------\nQ3\n--------------------");
+
         int n=0,x=0;
         try(Scanner sc = new Scanner(System.in)){
             System.out.println("Input n for nth to n+xth most frequent words (n=1 most frequent): ");

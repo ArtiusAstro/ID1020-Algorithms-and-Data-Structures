@@ -3,6 +3,8 @@ import java.io.FileNotFoundException;
 public class Q4 {
 
     public static void main(String[] args) throws FileNotFoundException {
+        System.out.println("--------------------\nQ4\n--------------------");
+
         RedBlackBST rbb = (RedBlackBST) ST.fillST(new RedBlackBST());
         BST bst =  (BST) ST.fillST(new BST());
 

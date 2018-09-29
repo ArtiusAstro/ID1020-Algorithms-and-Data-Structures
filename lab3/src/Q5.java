@@ -10,8 +10,9 @@ import java.util.NoSuchElementException;
 public class Q5{
 
     public static void main(String[] args) throws FileNotFoundException {
-        HastST hashST = (HastST) ST.fillST(new HastST());
+        System.out.println("--------------------\nQ5\n--------------------");
 
+        HastST hashST = (HastST) ST.fillST(new HastST());
         int m = hashST.getM();
         int n = hashST.getN();
         int totalCollisions = (n<m) ? 0 : n-m;
@@ -25,7 +26,7 @@ public class Q5{
             hashCollision = st[i].getSize()-1;
             hashes[i]=i; collisions[i]=hashCollision;
             System.out.print(i+": "+hashCollision+", ");
-            if (i%3==0) System.out.println();
+            if (i%8==0) System.out.println();
         }
 
         XYChart chart = QuickChart.getChart("Hash function spread", "Hash", "Collisions", "spread", hashes, collisions); // Create Chart

@@ -1,0 +1,61 @@
+--------------------
+Q1
+--------------------
+Original txt size is: 788060
+Filtered txt size is: 788060
+--------------------
+Q2
+--------------------
+MAX: the 7577
+ArrayST time: 75ms
+MAX: the 7577
+BST time: 5ms
+--------------------
+Q3
+--------------------
+Input n for nth to n+xth most frequent words (n=1 most frequent):
+2
+Input x:
+5
+2: [and] 4921
+3: [of] 4102
+4: [to] 3601
+5: [a] 2864
+--------------------
+Q4
+--------------------
+MAX: the 7577
+RedBlackBST time: 69ms
+MAX: the 7577
+BST time: 12ms
+--------------------
+Q5
+--------------------
+141491 key-value pairs and 140494 collisions
+LEGEND = Hash: Collisions
+--------------------
+Q6
+--------------------
+Input word x to get where it occurs: Project
+--------------------
+Q7
+--------------------
+MAX: the 7577
+SeperateChaining time: 135ms
+MAX: the 7577
+LinearProbing time: 10ms
+--------------------
+Q8
+--------------------
+MAX: the 7577
+SeperateChaining time: 135ms
+MAX: the 7577
+LinearProbing time: 10ms
+--------------------
+Q9
+--------------------
+MAX: the 7577
+SeperateChaining time: 135ms
+MAX: the 7577
+LinearProbing time: 10ms
+
