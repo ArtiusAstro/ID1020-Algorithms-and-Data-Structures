@@ -3,9 +3,11 @@ import org.knowm.xchart.QuickChart;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 public class Q5{
 
@@ -170,5 +172,31 @@ class SequentialSearchST implements Iterable{
             current = current.next;
             return key;
         }
+    }
+}
+
+abstract class ST{
+
+    public abstract int get(String key);
+
+    public abstract void put(String key, int val);
+
+    public abstract boolean contains(String word);
+
+    public static ST fillST(ST st) throws FileNotFoundException {
+        String word;
+        Scanner sc = new Scanner(new File("98-0-filtered.txt"));
+        while (sc.hasNextLine()) {
+            Scanner sc2 = new Scanner(sc.nextLine());
+            while (sc2.hasNext()){
+                word = sc2.next();
+                if (!st.contains(word)) st.put(word, 1);
+                else st.put(word, st.get(word) + 1);
+            }
+            sc2.close();
+        }
+        sc.close();
+
+        return st;
     }
 }

@@ -1,7 +1,9 @@
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 public class Q7{
 
@@ -177,5 +179,96 @@ class LinearProbingHashST extends ST {
                 maxIndex = i;
 
         return keys[maxIndex];
+    }
+}
+
+class SequentialSearchST implements Iterable{
+    private Node head; // first node in the linked list
+    private int size;
+    private class Node { // linked-list node
+        String key;
+        int val;
+        Node next;
+        public Node(String key, int val, Node next) {
+            this.key = key;
+            this.val = val;
+            this.next = next;
+        }
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public int get(String key) {
+        // Search for key, return associated value.
+        for (Node x = head; x != null; x = x.next)
+            if (key.equals(x.key))
+                return x.val; // search hit
+        return -1; // search miss
+    }
+
+    public void put(String key, int val) {
+        // Search for key. Update value if found; grow table if new.
+        for (Node x = head; x != null; x = x.next)
+            if (key.equals(x.key))
+            { x.val = val; return; } // Search hit: update val.
+        head = new Node(key, val, head); // Search miss: add new node.
+        size++;
+    }
+
+    /**
+     * Iterates from head to tail
+     *
+     * @return iterator that goes from head to tail
+     */
+    @Override
+    public Iterator iterator() {
+        return new SeqSTIterator() {
+        };
+    }
+
+    private class SeqSTIterator implements Iterator {
+        Node current = head;
+
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        @Override
+        public String next() {
+            if (!hasNext())
+                throw new NoSuchElementException();
+            String key = current.key;
+            current = current.next;
+            return key;
+        }
+    }
+}
+
+abstract class ST{
+
+    public abstract int get(String key);
+
+    public abstract void put(String key, int val);
+
+    public abstract boolean contains(String word);
+
+    public static ST fillST(ST st) throws FileNotFoundException {
+        String word;
+        Scanner sc = new Scanner(new File("98-0-filtered.txt"));
+        while (sc.hasNextLine()) {
+            Scanner sc2 = new Scanner(sc.nextLine());
+            while (sc2.hasNext()){
+                word = sc2.next();
+                if (!st.contains(word)) st.put(word, 1);
+                else st.put(word, st.get(word) + 1);
+            }
+            sc2.close();
+        }
+        sc.close();
+
+        return st;
     }
 }

@@ -16,7 +16,7 @@ Q3
 Input n for nth to n+xth most frequent words (n=1 most frequent):
 2
 Input x:
-5
+3
 2: [and] 4921
 3: [of] 4102
 4: [to] 3601
