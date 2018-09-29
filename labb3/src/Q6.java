@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Q6 {
     public static void main(String args[]) throws FileNotFoundException {
-        RBSString rbst = fillRBSString();
+        RBST rbst = RBST.fillRBST();
         int i=0;
 
         try(Scanner sc = new Scanner(System.in)){
@@ -25,41 +25,33 @@ public class Q6 {
             e.printStackTrace();
         }
     }
-
-    private static RBSString fillRBSString() throws FileNotFoundException {
-        RBSString rbst = new RBSString();
-        String word;
-        int WORD_LOCATION = 0;
-
-        Scanner sc = new Scanner(new File("98-0-filtered.txt"));
-        while (sc.hasNextLine()) {
-            Scanner sc2 = new Scanner(sc.nextLine());
-            while (sc2.hasNext()){
-                word = sc2.next();
-                rbst.put(word, WORD_LOCATION++);
-                WORD_LOCATION += word.length();
-            }
-            sc2.close();
-        }
-        sc.close();
-
-        return rbst;
-    }
 }
 
-class RBSString {
+class RBST {
     private static final boolean RED = true;
     private static final boolean BLACK = false;
     private Node root;
+
+    private class Node {
+        String key; // key
+        LIFOQueue val; // associated data
+        Node left, right; // subtrees
+        int N; // # nodes in this subtree
+        boolean color; // color of link from
+        Node(String key, LIFOQueue val, int N, boolean color) {
+            this.key = key;
+            this.val = val;
+            this.N = N;
+            this.color = color;
+        }
+    }
     
     public Node getRoot() {
         return root;
     }
-
     public LIFOQueue getNodeVal(Node node){
         return node.val;
     }
-
     public String getNodeKey(Node node){
         return node.key;
     }
@@ -102,20 +94,6 @@ class RBSString {
         return get(key)!=null;
     }
 
-    private class Node {
-        String key; // key
-        LIFOQueue val; // associated data
-        Node left, right; // subtrees
-        int N; // # nodes in this subtree
-        boolean color; // color of link from
-        Node(String key, LIFOQueue val, int N, boolean color) {
-            this.key = key;
-            this.val = val;
-            this.N = N;
-            this.color = color;
-        }
-    }
-
     private boolean isRed(Node x) {
         if (x == null) return false;
         return x.color == RED;
@@ -156,6 +134,26 @@ class RBSString {
     }
     private int size(Node x) {
         return (x == null) ? 0 : x.N;
+    }
+
+    public static RBST fillRBST() throws FileNotFoundException {
+        RBST rbst = new RBST();
+        String word;
+        int WORD_LOCATION = 0;
+
+        Scanner sc = new Scanner(new File("98-0-filtered.txt"));
+        while (sc.hasNextLine()) {
+            Scanner sc2 = new Scanner(sc.nextLine());
+            while (sc2.hasNext()){
+                word = sc2.next();
+                rbst.put(word, WORD_LOCATION++);
+                WORD_LOCATION += word.length();
+            }
+            sc2.close();
+        }
+        sc.close();
+
+        return rbst;
     }
 }
 

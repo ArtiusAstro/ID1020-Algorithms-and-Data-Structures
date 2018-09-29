@@ -7,25 +7,6 @@ import java.util.Scanner;
 
 public class Q3 {
 
-    private static ArrayST fillAST() throws FileNotFoundException {
-        ArrayST ast = new ArrayST();
-        String word;
-
-        Scanner sc = new Scanner(new File("98-0-filtered.txt"));
-        while (sc.hasNextLine()) {
-            Scanner sc2 = new Scanner(sc.nextLine());
-            while (sc2.hasNext()){
-                word = sc2.next();
-                if (!ast.contains(word)) ast.put(word, 1);
-                else ast.put(word, ast.get(word) + 1);
-            }
-            sc2.close();
-        }
-        sc.close();
-
-        return ast;
-    }
-
     public static void main(String args[]) throws FileNotFoundException {
         int n=0,x=0;
         try(Scanner sc = new Scanner(System.in)){
@@ -38,15 +19,14 @@ public class Q3 {
             e.printStackTrace();
         }
 
-        ArrayST ast = fillAST();
-        LinkedArrayST lst = new LinkedArrayST(ast);
+        LinkedArrayST lst = new LinkedArrayST(ArrayST.fullAST());
 
         if(n>0 && x>0)
             lst.frequencyRange(n,x);
     }
 }
 
-class LinkedArrayST{
+class LinkedArrayST {
     private int[] keys;
     private FIQueue<String>[] LLCircles;
     private int N;

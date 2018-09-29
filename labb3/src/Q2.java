@@ -5,10 +5,8 @@ import java.util.Scanner;
 public class Q2{
 
     public static void main(String[] args) throws FileNotFoundException {
-        ArrayST ast = new ArrayST();
-        BST bst = new BST();
-        ast = (ArrayST) fillST(ast);
-        bst = (BST) fillST(bst);
+        ArrayST ast = (ArrayST) ST.fillST(new ArrayST());
+        BST bst = (BST) ST.fillST(new BST());
 
         long start = System.currentTimeMillis();
         arraySTest(ast);
@@ -18,23 +16,6 @@ public class Q2{
         BSTest(bst);
         time = System.currentTimeMillis() - start;
         System.out.println("BST time: "+time+"ms");
-    }
-
-    private static ST fillST(ST st) throws FileNotFoundException {
-        String word;
-        Scanner sc = new Scanner(new File("98-0-filtered.txt"));
-        while (sc.hasNextLine()) {
-            Scanner sc2 = new Scanner(sc.nextLine());
-            while (sc2.hasNext()){
-                word = sc2.next();
-                if (!st.contains(word)) st.put(word, 1);
-                else st.put(word, st.get(word) + 1);
-            }
-            sc2.close();
-        }
-        sc.close();
-
-        return st;
     }
 
     private static void arraySTest(ArrayST ast){
@@ -62,6 +43,23 @@ abstract class ST{
     public abstract void put(String key, int val);
 
     public abstract boolean contains(String word);
+
+    public static ST fillST(ST st) throws FileNotFoundException {
+        String word;
+        Scanner sc = new Scanner(new File("98-0-filtered.txt"));
+        while (sc.hasNextLine()) {
+            Scanner sc2 = new Scanner(sc.nextLine());
+            while (sc2.hasNext()){
+                word = sc2.next();
+                if (!st.contains(word)) st.put(word, 1);
+                else st.put(word, st.get(word) + 1);
+            }
+            sc2.close();
+        }
+        sc.close();
+
+        return st;
+    }
 }
 
 class ArrayST extends ST{
@@ -133,6 +131,25 @@ class ArrayST extends ST{
     @Override
     public boolean contains(String key) {
         return this.get(key) != -1;
+    }
+
+    public static ArrayST fullAST() throws FileNotFoundException {
+        ArrayST ast = new ArrayST();
+        String word;
+
+        Scanner sc = new Scanner(new File("98-0-filtered.txt"));
+        while (sc.hasNextLine()) {
+            Scanner sc2 = new Scanner(sc.nextLine());
+            while (sc2.hasNext()){
+                word = sc2.next();
+                if (!ast.contains(word)) ast.put(word, 1);
+                else ast.put(word, ast.get(word) + 1);
+            }
+            sc2.close();
+        }
+        sc.close();
+
+        return ast;
     }
 }
 

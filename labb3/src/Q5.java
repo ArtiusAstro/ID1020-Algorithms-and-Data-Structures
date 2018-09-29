@@ -3,7 +3,6 @@ import org.knowm.xchart.QuickChart;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -12,58 +11,39 @@ import java.util.Scanner;
 public class Q5{
 
     public static void main(String[] args) throws FileNotFoundException {
-        SeparateChainingHashST separateChainingHashST = new SeparateChainingHashST();
-        separateChainingHashST = (SeparateChainingHashST) fillST(separateChainingHashST);
+        HastST hashST = (HastST) ST.fillST(new HastST());
 
-        int m = separateChainingHashST.getM();
-        double[] index = new double[m];
+        int m = hashST.getM();
+        double[] hashes = new double[m];
         double[] frequencies = new double[m];
-        SequentialSearchST[] st = separateChainingHashST.getSt();
+        SequentialSearchST[] st = hashST.getSt();
 
         //Fill Chart
         for(int i=0;i<m;i++){
-            index[i]=(double)i; frequencies[i]=(double)st[i].getSize();
+            hashes[i]=(double)i; frequencies[i]=(double)st[i].getSize();
             System.out.print(i+": "+st[i].getSize()+", "); //display spread
             if (i%3==0) System.out.println();
         }
         // Create Chart
-        XYChart chart = QuickChart.getChart("Hash function spread", "Hashes", "Occupants", "stuff", index, frequencies);
+        XYChart chart = QuickChart.getChart("Hash function spread", "Hashes", "Occupants", "stuff", hashes, frequencies);
         // Show it
         new SwingWrapper(chart).displayChart();
     }
-
-    private static ST fillST(ST st) throws FileNotFoundException {
-        String word;
-        Scanner sc = new Scanner(new File("98-0-filtered.txt"));
-        while (sc.hasNextLine()) {
-            Scanner sc2 = new Scanner(sc.nextLine());
-            while (sc2.hasNext()){
-                word = sc2.next();
-                if (!st.contains(word)) st.put(word, 1);
-                else st.put(word, st.get(word) + 1);
-            }
-            sc2.close();
-        }
-        sc.close();
-
-        return st;
-    }
 }
 
-class SeparateChainingHashST extends  ST implements Iterable{
+class HastST extends ST implements Iterable{
     private int N; // number of key-value pairs
     private int M; // hash table size
+    private SequentialSearchST[] st; // array of ST objects
 
     public int getM() {
         return M;
     }
 
-    private SequentialSearchST[] st; // array of ST objects
-    public SeparateChainingHashST() {
+    public HastST() {
         this(997);
     }
-
-    public SeparateChainingHashST(int M) {
+    public HastST(int M) {
         this.M = M; // Create M linked lists.
         st = new SequentialSearchST[M];
         for (int i = 0; i < M; i++)

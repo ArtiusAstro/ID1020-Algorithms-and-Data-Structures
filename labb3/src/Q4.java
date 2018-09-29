@@ -4,23 +4,6 @@ import java.util.Scanner;
 
 public class Q4 {
 
-    private static ST fillST(ST st) throws FileNotFoundException {
-        String word;
-        Scanner sc = new Scanner(new File("98-0-filtered.txt"));
-        while (sc.hasNextLine()) {
-            Scanner sc2 = new Scanner(sc.nextLine());
-            while (sc2.hasNext()){
-                word = sc2.next();
-                if (!st.contains(word)) st.put(word, 1);
-                else st.put(word, st.get(word) + 1);
-            }
-            sc2.close();
-        }
-        sc.close();
-
-        return st;
-    }
-
     private static void BSTest(BST bst){
         // Find a node with the highest frequency count.
         System.out.println("MAX: "+bst.getNodeKey(bst.maxNode(bst.getRoot()))+" "+bst.getNodeVal(bst.maxNode(bst.getRoot())));
@@ -32,10 +15,8 @@ public class Q4 {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        RedBlackBST rbb = new RedBlackBST();
-        BST bst = new BST();
-        rbb = (RedBlackBST) fillST(rbb);
-        bst = (BST) fillST(bst);
+        RedBlackBST rbb = (RedBlackBST) ST.fillST(new RedBlackBST());
+        BST bst =  (BST) ST.fillST(new BST());
 
         long start = System.currentTimeMillis();
         RBBTest(rbb);
