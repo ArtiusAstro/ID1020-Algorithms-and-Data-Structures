@@ -11,7 +11,7 @@ public class Q6 {
         int i=0;
 
         try(Scanner sc = new Scanner(System.in)){
-            System.out.print("Input word x: ");
+            System.out.print("Input word x to get where it occurs: ");
             LIFOQueue lifoQueue = rbst.get(sc.next());
             if (null!=lifoQueue) {
                 for (Object location : lifoQueue) {
@@ -19,7 +19,7 @@ public class Q6 {
                     if (i++ % 5 == 0) System.out.println();
                 }
             }
-            else System.out.println("Selected word isn't in the txt");
+            else System.out.println("\nSelected word isn't in the txt");
         }
         catch (InputMismatchException e){
             e.printStackTrace();

@@ -1,11 +1,5 @@
 
-import org.knowm.xchart.Histogram;
-import org.knowm.xchart.QuickChart;
-import org.knowm.xchart.SwingWrapper;
-import org.knowm.xchart.XYChart;
-
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -15,72 +9,30 @@ public class Q7{
         SeparateChainingHashST separateChainingHashST = (SeparateChainingHashST) ST.fillST(new SeparateChainingHashST());
         LinearProbingHashST linearProbingHashST = (LinearProbingHashST) ST.fillST(new LinearProbingHashST());
 
-        //Fill Chain Chart
-        int m = separateChainingHashST.getM();
-        SequentialSearchST[] st = separateChainingHashST.getSt();
-
-        ArrayList<Integer> hashes = new ArrayList<>();
-        ArrayList<Integer> frequencies = new ArrayList<>();
-
-        for(int i=0;i<m;i++){
-            hashes.add(i); frequencies.add(st[i].getSize());
-            System.out.print(i+": "+st[i].getSize()+", "); //display spread
-            if (i%3==0) System.out.println();
-        }
-        // Create Chart
-        Histogram histogram = new Histogram(frequencies, 10, 0, m);
-        XYChart chart = QuickChart.getChart("Hash function spread", "Hashes", "Occupants", "spread", hashes, frequencies);
-        // Show it
-        new SwingWrapper(chart).displayChart();
-
-        //Fill Probing Chart
-        m = linearProbingHashST.getM();
-        st = linearProbingHashST.getSt();
-
-        hashes = new ArrayList<>();
-        frequencies = new ArrayList<>();
-
-        for(int i=0;i<m;i++){
-            hashes.add(i); frequencies.add(st[i].getSize());
-            System.out.print(i+": "+st[i].getSize()+", "); //display spread
-            if (i%3==0) System.out.println();
-        }
-        // Create Chart
-        histogram = new Histogram(frequencies, 10, 0, m);
-        chart = QuickChart.getChart("Hash function spread", "Hashes", "Occupants", "spread", hashes, frequencies);
-        // Show it
-        new SwingWrapper(chart).displayChart();
-    }
-
-    /*
         // Test is to find the key with the highest frequency count.
         long start = System.currentTimeMillis();
         SeperateChainingTest(separateChainingHashST);
         long time = System.currentTimeMillis() - start;
-        System.out.println("RedBlackBST time: "+time+"ms");
+        System.out.println("SeperateChaining time: "+time+"ms");
         start = System.currentTimeMillis();
         LinearProbingTest(linearProbingHashST);
         time = System.currentTimeMillis() - start;
-        System.out.println("BST time: "+time+"ms");
+        System.out.println("LinearProbing time: "+time+"ms");
     }
 
     private static void SeperateChainingTest(SeparateChainingHashST separateChainingHashST){
-        System.out.println("MAX: "+separateChainingHashST.getNodeKey(separateChainingHashST.maxNode(separateChainingHashST.getRoot()))+" "+separateChainingHashST.getNodeVal(separateChainingHashST.maxNode(separateChainingHashST.getRoot())));
+        System.out.println("MAX: "+separateChainingHashST.getMaxKey()+" "+separateChainingHashST.get(separateChainingHashST.getMaxKey()));
     }
 
     private static void LinearProbingTest(LinearProbingHashST linearProbingHashST){
-        System.out.println("MAX: "+linearProbingHashST.getNodeKey(linearProbingHashST.maxNode(linearProbingHashST.getRoot()))+" "+linearProbingHashST.getNodeVal(linearProbingHashST.maxNode(linearProbingHashST.getRoot())));
+        System.out.println("MAX: "+linearProbingHashST.getMaxKey()+" "+ linearProbingHashST.get(linearProbingHashST.getMaxKey()));
     }
-    */
+
 }
 
 class SeparateChainingHashST extends  ST implements Iterable{
     private int N; // number of key-value pairs
     private int M; // hash table size
-
-    public int getM() {
-        return this.M;
-    }
 
     private SequentialSearchST[] st; // array of ST objects
     public SeparateChainingHashST() {
@@ -92,10 +44,6 @@ class SeparateChainingHashST extends  ST implements Iterable{
         st = new SequentialSearchST[M];
         for (int i = 0; i < M; i++)
             st[i] = new SequentialSearchST();
-    }
-
-    public SequentialSearchST[] getSt() {
-        return st;
     }
 
     int hash(String key) {
@@ -110,6 +58,7 @@ class SeparateChainingHashST extends  ST implements Iterable{
     @Override
     public void put(String key, int val) {
         st[hash(key)].put(key, val);
+        N++;
     }
 
     @Override
@@ -141,20 +90,37 @@ class SeparateChainingHashST extends  ST implements Iterable{
             return null;
         }
     }
+
+    public String getMaxKey(){
+        String maxKey = null;
+        int maxValue = 0;
+        int val;
+
+        for(SequentialSearchST st : st)
+            for (Object key : st)
+                if ((val=st.get((String) key)) > maxValue){
+                    maxKey = (String) key;
+                    maxValue = val;
+                }
+
+        return maxKey;
+    }
 }
 
 class LinearProbingHashST extends ST {
     private int N; // number of key-value pairs in the table
     private int M = 16; // size of linear-probing table
     private String[] keys; // the keys
-    private SequentialSearchST[] st; // the values
+    private int[] vals; // the values
     public LinearProbingHashST() {
-        this(16);
+        keys = new String[M];
+        vals = new int[M];
     }
 
     public LinearProbingHashST(int cap) {
         keys = new String[cap];
-        st = new SequentialSearchST[cap];
+        vals = new int[cap];
+        M = cap;
     }
 
     public int getM() {
@@ -164,14 +130,15 @@ class LinearProbingHashST extends ST {
     private int hash(String key) {
         return (key.hashCode() & 0x7fffffff) % M;
     }
+
     private void resize(int cap) {
         LinearProbingHashST t;
         t = new LinearProbingHashST(cap);
         for (int i = 0; i < M; i++)
             if (keys[i] != null)
-                t.put(keys[i], st[i].getSize());
+                t.put(keys[i], vals[i]);
         keys = t.keys;
-        st = t.st;
+        vals = t.vals;
         M = t.M;
     }
 
@@ -180,10 +147,9 @@ class LinearProbingHashST extends ST {
         if (N >= M/2) resize(2*M); // double M (see text)
         int i;
         for (i = hash(key); keys[i] != null; i = (i + 1) % M)
-            if (keys[i].equals(key)) { st[i].put(key, val); return; }
+            if (keys[i].equals(key)) { vals[i] = val; return; }
         keys[i] = key;
-        st[i] = new SequentialSearchST();
-        st[i].put(key, val);
+        vals[i] = val;
         N++;
     }
 
@@ -191,7 +157,7 @@ class LinearProbingHashST extends ST {
     public int get(String key) {
         for (int i = hash(key); keys[i] != null; i = (i + 1) % M)
             if (keys[i].equals(key))
-                return st[i].getSize();
+                return vals[i];
         return -1;
     }
 
@@ -200,7 +166,14 @@ class LinearProbingHashST extends ST {
         return get(word)!=-1;
     }
 
-    public SequentialSearchST[] getSt() {
-        return this.st;
+    public String getMaxKey() {
+        if (N==0) throw new NoSuchElementException();
+        int maxIndex = 0;
+
+        for(int i=0;i<M;i++)
+            if (vals[i] > vals[maxIndex])
+                maxIndex = i;
+
+        return keys[maxIndex];
     }
 }

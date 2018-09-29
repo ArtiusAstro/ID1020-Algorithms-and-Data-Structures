@@ -1,18 +1,6 @@
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
 
 public class Q4 {
-
-    private static void BSTest(BST bst){
-        // Find a node with the highest frequency count.
-        System.out.println("MAX: "+bst.getNodeKey(bst.maxNode(bst.getRoot()))+" "+bst.getNodeVal(bst.maxNode(bst.getRoot())));
-    }
-
-    private static void RBBTest(RedBlackBST rbb){
-        // Find a key with the highest frequency count.
-        System.out.println("MAX: "+rbb.getNodeKey(rbb.maxNode(rbb.getRoot()))+" "+rbb.getNodeVal(rbb.maxNode(rbb.getRoot())));
-    }
 
     public static void main(String[] args) throws FileNotFoundException {
         RedBlackBST rbb = (RedBlackBST) ST.fillST(new RedBlackBST());
@@ -26,6 +14,16 @@ public class Q4 {
         BSTest(bst);
         time = System.currentTimeMillis() - start;
         System.out.println("BST time: "+time+"ms");
+    }
+
+    private static void BSTest(BST bst){
+        // Find a node with the highest frequency count.
+        System.out.println("MAX: "+bst.getNodeKey(bst.maxNode(bst.getRoot()))+" "+bst.getNodeVal(bst.maxNode(bst.getRoot())));
+    }
+
+    private static void RBBTest(RedBlackBST rbb){
+        // Find a key with the highest frequency count.
+        System.out.println("MAX: "+rbb.getNodeKey(rbb.maxNode(rbb.getRoot()))+" "+rbb.getNodeVal(rbb.maxNode(rbb.getRoot())));
     }
 }
 

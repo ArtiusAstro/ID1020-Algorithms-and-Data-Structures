@@ -6,7 +6,6 @@ import org.knowm.xchart.XYChart;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 public class Q5{
 
@@ -14,20 +13,23 @@ public class Q5{
         HastST hashST = (HastST) ST.fillST(new HastST());
 
         int m = hashST.getM();
+        int n = hashST.getN();
+        int totalCollisions = (n<m) ? 0 : n-m;
         double[] hashes = new double[m];
-        double[] frequencies = new double[m];
+        int hashCollision;
+        double[] collisions = new double[m];
         SequentialSearchST[] st = hashST.getSt();
 
-        //Fill Chart
-        for(int i=0;i<m;i++){
-            hashes[i]=(double)i; frequencies[i]=(double)st[i].getSize();
-            System.out.print(i+": "+st[i].getSize()+", "); //display spread
+        System.out.println(n+" key-value pairs and "+totalCollisions+" collisions\nLEGEND = Hash: Collisions");
+        for(int i=0;i<m;i++){ //Fill Chart and print spread
+            hashCollision = st[i].getSize()-1;
+            hashes[i]=i; collisions[i]=hashCollision;
+            System.out.print(i+": "+hashCollision+", ");
             if (i%3==0) System.out.println();
         }
-        // Create Chart
-        XYChart chart = QuickChart.getChart("Hash function spread", "Hashes", "Occupants", "stuff", hashes, frequencies);
-        // Show it
-        new SwingWrapper(chart).displayChart();
+
+        XYChart chart = QuickChart.getChart("Hash function spread", "Hash", "Collisions", "spread", hashes, collisions); // Create Chart
+        new SwingWrapper(chart).displayChart(); // Show it
     }
 }
 
@@ -39,6 +41,7 @@ class HastST extends ST implements Iterable{
     public int getM() {
         return M;
     }
+    public int getN() { return N; }
 
     public HastST() {
         this(997);
@@ -66,6 +69,7 @@ class HastST extends ST implements Iterable{
     @Override
     public void put(String key, int val) {
         st[hash(key)].put(key, val);
+        N++;
     }
 
     @Override
@@ -103,8 +107,8 @@ class HastST extends ST implements Iterable{
     }
 }
 
-class SequentialSearchST {
-    private Node first; // first node in the linked list
+class SequentialSearchST implements Iterable{
+    private Node head; // first node in the linked list
     private int size;
     private class Node { // linked-list node
         String key;
@@ -123,7 +127,7 @@ class SequentialSearchST {
 
     public int get(String key) {
         // Search for key, return associated value.
-        for (Node x = first; x != null; x = x.next)
+        for (Node x = head; x != null; x = x.next)
             if (key.equals(x.key))
                 return x.val; // search hit
         return -1; // search miss
@@ -131,10 +135,39 @@ class SequentialSearchST {
 
     public void put(String key, int val) {
         // Search for key. Update value if found; grow table if new.
-        for (Node x = first; x != null; x = x.next)
+        for (Node x = head; x != null; x = x.next)
             if (key.equals(x.key))
             { x.val = val; return; } // Search hit: update val.
-        first = new Node(key, val, first); // Search miss: add new node.
+        head = new Node(key, val, head); // Search miss: add new node.
         size++;
+    }
+
+    /**
+     * Iterates from head to tail
+     *
+     * @return iterator that goes from head to tail
+     */
+    @Override
+    public Iterator iterator() {
+        return new SeqSTIterator() {
+        };
+    }
+
+    private class SeqSTIterator implements Iterator {
+        Node current = head;
+
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        @Override
+        public String next() {
+            if (!hasNext())
+                throw new NoSuchElementException();
+            String key = current.key;
+            current = current.next;
+            return key;
+        }
     }
 }

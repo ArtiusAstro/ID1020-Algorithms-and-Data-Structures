@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.InputMismatchException;
 import java.util.Iterator;
@@ -10,7 +9,7 @@ public class Q3 {
     public static void main(String args[]) throws FileNotFoundException {
         int n=0,x=0;
         try(Scanner sc = new Scanner(System.in)){
-            System.out.println("Input n for nth to n+xth most frequent words (n=1 most frequent: ");
+            System.out.println("Input n for nth to n+xth most frequent words (n=1 most frequent): ");
             n = sc.nextInt();
             System.out.println("Input x: ");
             x = sc.nextInt();
@@ -33,7 +32,6 @@ class LinkedArrayST {
     LinkedArrayST(ArrayST ast) {
         keys = new int[24];
         LLCircles = new FIQueue[24];
-        N=0;
         for (String word : ast.keys()) {
             if (word == null) break;
             put(ast.get(word), word);
@@ -104,8 +102,8 @@ class LinkedArrayST {
 
     public void frequencyRange(int n, int x) {
         int i=0;
-        while(i<=x)
-            System.out.println(n+i+": "+LLCircles[N-n-i++]);
+        while(i<=x-n)
+            System.out.println(n+i+": "+LLCircles[N-n-i]+" "+keys[N-n-i++]);
     }
 }
 
