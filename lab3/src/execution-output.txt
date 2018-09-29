@@ -1,5 +1,0 @@
---------------------
-Q1
---------------------
-Original txt size is: 788060
-Filtered txt size is: 788060
