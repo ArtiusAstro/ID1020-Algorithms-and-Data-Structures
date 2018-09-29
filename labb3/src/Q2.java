@@ -38,6 +38,7 @@ public class Q2{
     }
 
     private static void arraySTest(ArrayST ast){
+
         // Find a key with the highest frequency count.
         String max = "";
         ast.put(max, 0);

@@ -48,11 +48,11 @@ public class Q3 {
 
 class LinkedArrayST{
     private int[] keys;
-    private CircularQueue<String>[] LLCircles;
+    private FIQueue<String>[] LLCircles;
     private int N;
     LinkedArrayST(ArrayST ast) {
         keys = new int[24];
-        LLCircles = new CircularQueue[24];
+        LLCircles = new FIQueue[24];
         N=0;
         for (String word : ast.keys()) {
             if (word == null) break;
@@ -62,12 +62,12 @@ class LinkedArrayST{
 
     LinkedArrayST() {
         keys = new int[24];
-        LLCircles = new CircularQueue[24];
+        LLCircles = new FIQueue[24];
     }
 
     private void xDouble(){
         int[] keysClone = new int[keys.length*2];
-        CircularQueue<String>[] circlesClone = new CircularQueue[LLCircles.length*2];
+        FIQueue<String>[] circlesClone = new FIQueue[LLCircles.length*2];
         int i = 0;
 
         while(i<keys.length){
@@ -96,7 +96,7 @@ class LinkedArrayST{
         return this.keys;
     }
 
-    public CircularQueue get(int key){
+    public FIQueue get(int key){
         if (this.size() == 0) return null;
         int i = rank(key);
         if ((i < N) && (keys[i]==key)) return LLCircles[i];
@@ -113,7 +113,7 @@ class LinkedArrayST{
             keys[j] = keys[j-1];
             LLCircles[j] = LLCircles[j-1];
         }
-        keys[i] = key; LLCircles[i]=new CircularQueue<>(); LLCircles[i].addFirst(word);
+        keys[i] = key; LLCircles[i]=new FIQueue<>(); LLCircles[i].addFirst(word);
         N++;
         if(N==keys.length)    xDouble();
     }
@@ -137,7 +137,7 @@ class LinkedArrayST{
  *  @author Ayub Atif
  */
 
-class CircularQueue<T> implements Iterable{
+class FIQueue<T> implements Iterable{
     private Node head;
     private int size;
 
@@ -155,7 +155,7 @@ class CircularQueue<T> implements Iterable{
         }
     }
 
-    public CircularQueue(){
+    public FIQueue(){
         this.size = 0;
     }
 

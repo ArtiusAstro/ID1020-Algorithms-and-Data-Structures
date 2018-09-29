@@ -23,7 +23,7 @@ public class Q5{
         //Fill Chart
         for(int i=0;i<m;i++){
             index[i]=(double)i; frequencies[i]=(double)st[i].getSize();
-            System.out.print(i+": "+separateChainingHashST.getSt()[i].getSize()+", "); //display spread
+            System.out.print(i+": "+st[i].getSize()+", "); //display spread
             if (i%3==0) System.out.println();
         }
         // Create Chart
