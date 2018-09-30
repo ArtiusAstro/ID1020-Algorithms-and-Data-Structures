@@ -31,6 +31,11 @@ public class Q4 {
     }
 }
 
+/**
+ * Red Black tree implementation
+ *
+ * @author Ayub Atif
+ */
 class RedBlackBST extends ST {
     private static final boolean RED = true;
     private static final boolean BLACK = false;
@@ -162,6 +167,11 @@ class RedBlackBST extends ST {
     }
 }
 
+/**
+ * a list of methods used by all ST that use <String,Integer>
+ *
+ * @author Ayub Atif
+ */
 abstract class ST{
 
     public abstract int get(String key);

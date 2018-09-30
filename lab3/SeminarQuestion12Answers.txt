@@ -1,0 +1,31 @@
+--------------------
+Q1
+--------------------
+Show how a binary search tree and a red-black tree is built when the following sequence of keys are inserted: H O C E A L W
+
+BST:
+H           H               H                   H               H               H               H
+                O       C       O           C       O       C       O         C     O         C    O
+                                              E           A   E             A  E   L        A  E  L  W
+RBT:
+H           H               H                   H              CH               CH               H
+                O       C       O           CE      O       AE      O        AE    LO         C     O
+                                                                                            AE    LW
+--------------------
+Q2
+--------------------
+Explain which of the following could be good (or poor) choices for the initial size of an array used to implement a hash table assuming approx.
+2000 individual integer value keys and modular hashing: 3014, 4711, 4712, 4713
+
+If our keys share a common factor x, we will get a partially filled table with n buckets occupied and m-n buckets empty.
+Where n = m/gcf(m,x). In order to maximize n, we must ensure that gcf(m,x) = 1 ie, m and x must be coprime.
+Since we don't know the keys(random selection), we can set m to be a prime to ensure that m and x are coprime.
+None of the choices are prime, but lets check factorization to get the next best thing:
+A balance of the least amount of factors (to reduce likely hood of x is a factor of m)
+and the smallest greatest common factor.
+
+4711 is best, 4713 is also good.
+2014 is not as good, and 4712 is poor.
+
+Prime factorization:
+4711(7,673), 4713(3,1571), 3014(2,11,137), 4712(2,4,8,19,152,31)

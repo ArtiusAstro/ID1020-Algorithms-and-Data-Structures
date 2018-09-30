@@ -38,6 +38,11 @@ public class Q2{
     }
 }
 
+/**
+ * a list of methods used by all ST that use <String,Integer>
+ *
+ * @author Ayub Atif
+ */
 abstract class ST{
 
     public abstract int get(String key);
@@ -64,6 +69,11 @@ abstract class ST{
     }
 }
 
+/**
+ * Array that implements binary search
+ *
+ * @author Ayub Atif
+ */
 class ArrayST extends ST{
     private String[] keys;
     private int[] vals;
@@ -155,6 +165,11 @@ class ArrayST extends ST{
     }
 }
 
+/**
+ * Binary search tree
+ *
+ * @author Ayub Atif
+ */
 class BST extends ST{
     private Node root; // root of BST
 

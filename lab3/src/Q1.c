@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
-/* filters */
+/* filters out non-alphas */
 void filter(FILE *input, FILE *output){
   int c;
   while((c=fgetc(input)) != EOF){
@@ -21,6 +21,7 @@ void filter(FILE *input, FILE *output){
   rewind(output);
 }
 
+/* return char count of file */
 int size(FILE *file){
   int size = 0;
   while(fgetc(file) != EOF)  size++;

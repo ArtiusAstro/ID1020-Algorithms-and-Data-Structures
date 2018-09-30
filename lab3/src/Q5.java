@@ -36,6 +36,11 @@ public class Q5{
     }
 }
 
+/**
+ * Hash table that uses seperate chaining to handle collisions
+ *
+ * @author Ayub Atif
+ */
 class HastST extends ST implements Iterable{
     private int N; // number of key-value pairs
     private int M; // hash table size
@@ -110,6 +115,12 @@ class HastST extends ST implements Iterable{
     }
 }
 
+/**
+ * ST that uses Sequential Search
+ * holds Key value pairs for the hash table
+ *
+ * @author Ayub Atif
+ */
 class SequentialSearchST implements Iterable{
     private Node head; // first node in the linked list
     private int size;
@@ -175,6 +186,11 @@ class SequentialSearchST implements Iterable{
     }
 }
 
+/**
+ * a list of methods used by all ST that use <String,Integer>
+ *
+ * @author Ayub Atif
+ */
 abstract class ST{
 
     public abstract int get(String key);

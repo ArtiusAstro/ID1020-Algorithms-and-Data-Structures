@@ -34,6 +34,11 @@ public class Q7{
 
 }
 
+/**
+ * Hash table that uses separate chaining to handle collisions
+ *
+ * @author Ayub Atif
+ */
 class SeparateChainingHashST extends  ST implements Iterable{
     private int N; // number of key-value pairs
     private int M; // hash table size
@@ -111,6 +116,11 @@ class SeparateChainingHashST extends  ST implements Iterable{
     }
 }
 
+/**
+ * Hash table that uses linear probing to handle collisions
+ *
+ * @author Ayub Atif
+ */
 class LinearProbingHashST extends ST {
     private int N; // number of key-value pairs in the table
     private int M = 16; // size of linear-probing table
@@ -182,6 +192,12 @@ class LinearProbingHashST extends ST {
     }
 }
 
+/**
+ * ST that uses Sequential Search
+ * holds Key value pairs for the hash table
+ *
+ * @author Ayub Atif
+ */
 class SequentialSearchST implements Iterable{
     private Node head; // first node in the linked list
     private int size;
@@ -247,6 +263,11 @@ class SequentialSearchST implements Iterable{
     }
 }
 
+/**
+ * a list of methods used by all ST that use <String,Integer>
+ *
+ * @author Ayub Atif
+ */
 abstract class ST{
 
     public abstract int get(String key);

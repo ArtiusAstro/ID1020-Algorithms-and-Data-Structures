@@ -29,6 +29,11 @@ public class Q6 {
     }
 }
 
+/**
+ * Red black tree that holds <String, Linked List>
+ *
+ * @author Ayub Atif
+ */
 class RBST {
     private static final boolean RED = true;
     private static final boolean BLACK = false;
@@ -159,6 +164,11 @@ class RBST {
     }
 }
 
+/**
+ * Generic Linked List Queue
+ *
+ * @author Ayub Atif
+ */
 class LIFOQueue implements Iterable{
     private Node head;
     private Node tail;

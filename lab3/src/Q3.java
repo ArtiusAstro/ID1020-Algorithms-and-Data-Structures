@@ -28,6 +28,11 @@ public class Q3 {
     }
 }
 
+/**
+ * An ArrayST where the values are Linked Lists
+ *
+ * @author Ayub Atif
+ */
 class LinkedArrayST {
     private int[] keys;
     private FIQueue<String>[] LLCircles;
@@ -46,6 +51,9 @@ class LinkedArrayST {
         LLCircles = new FIQueue[24];
     }
 
+    /**
+     * Double key and value arrays
+     */
     private void xDouble(){
         int[] keysClone = new int[keys.length*2];
         FIQueue<String>[] circlesClone = new FIQueue[LLCircles.length*2];
@@ -211,6 +219,11 @@ class FIQueue<T> implements Iterable{
     }
 }
 
+/**
+ * a list of methods used by all ST that use <String,Integer>
+ *
+ * @author Ayub Atif
+ */
 abstract class ST{
 
     public abstract int get(String key);
@@ -237,6 +250,12 @@ abstract class ST{
     }
 }
 
+/**
+ * Array that implements binary search
+ * Used to fill the Linked Array ST
+ *
+ * @author Ayub Atif
+ */
 class ArrayST extends ST{
     private String[] keys;
     private int[] vals;
