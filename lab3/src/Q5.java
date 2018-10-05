@@ -9,6 +9,12 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/**
+ * implementation of a Hash table and checking the efficiency of the hashing
+ * which means that the results are displayed so as to check the distribution of items accross buckets
+ *
+ * @author Ayub Atif
+ */
 public class Q5{
 
     public static void main(String[] args) throws FileNotFoundException {

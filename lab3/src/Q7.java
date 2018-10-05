@@ -5,6 +5,11 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/**
+ * Compare the runtime of seperate chaining to lienar probing for hash tables
+ *
+ * @author Ayub Atif
+ */
 public class Q7{
 
     public static void main(String[] args) throws FileNotFoundException {

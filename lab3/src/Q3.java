@@ -5,6 +5,11 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/*
+ * Queries the user on a list of elements based on their frequency
+ *
+ * @Author: Ayub Atif
+ */
 public class Q3 {
 
     public static void main(String args[]) throws FileNotFoundException {

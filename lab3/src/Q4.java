@@ -2,6 +2,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+/**
+ * implementation of a Red Black tree and comparing its runtime to a BST
+ *
+ * @author Ayub Atif
+ */
 public class Q4 {
 
     public static void main(String[] args) throws FileNotFoundException {

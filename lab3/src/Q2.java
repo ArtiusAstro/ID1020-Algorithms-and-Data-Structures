@@ -2,6 +2,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+/*
+ * Use words from a text file to compare the execution times
+ * of an array ST and a binary search tree
+ *
+ * @Author: Ayub Atif
+ */
 public class Q2{
 
     public static void main(String[] args) throws FileNotFoundException {

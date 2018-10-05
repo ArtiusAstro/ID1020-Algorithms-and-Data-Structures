@@ -5,6 +5,11 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/**
+ * Identifies how many chars from the start of the file a word occurs in the text file
+ *
+ * @author Ayub Atif
+ */
 public class Q6 {
     public static void main(String args[]) throws FileNotFoundException {
         System.out.println("--------------------\nQ6\n--------------------");
