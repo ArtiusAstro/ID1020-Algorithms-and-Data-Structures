@@ -33,6 +33,7 @@ public class Q3 {
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
-        grX.BFShortsetWeighted("CA","NY");
+        grX.setShortest("CA");
+        System.out.println(grX.getShortestPath("CA","NY").UnDiPath());
     }
 }

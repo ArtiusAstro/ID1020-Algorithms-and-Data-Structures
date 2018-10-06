@@ -1,10 +1,13 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.PriorityQueue;
 
 public class GraphX<Key extends Comparable> {
     private int N;
     private int E;
     private HashMapX<Key, HashMapX<Key, Integer>> adjacencyLists = new HashMapX<>();
+    private HashMapX<Key, HashMapX<Key, Integer>> shortestDistance = new HashMapX<>();
+    private HashMapX<Key, HashMapX<Key, Key>> parents = new HashMapX<>();
 
     GraphX(){
         N=E=0;
@@ -19,9 +22,10 @@ public class GraphX<Key extends Comparable> {
         return this.adjacencyLists.get(state);
     }
     public void addVertex(Key state) {
-        if (this.adjacencyLists.containsKey(state)) {
+        if (this.adjacencyLists.containsKey(state))
             return;
-        }
+        shortestDistance.put(state, new HashMapX<>());
+        parents.put(state, new HashMapX<>());
         this.adjacencyLists.put(state, new HashMapX<>());
         N++;
     }
@@ -73,7 +77,7 @@ public class GraphX<Key extends Comparable> {
         }
     }
 
-    public boolean BFShortsetNoWeight(Key start, Key goal){
+    public LIFOQueue<Key> BFShortsetNoWeight(Key start, Key goal){
         System.out.println("BFS:");
         boolean connected = false;
         FIFOQueue<Key> toDoList = new FIFOQueue<>();
@@ -114,69 +118,64 @@ public class GraphX<Key extends Comparable> {
                 path.push(pre.get(goal));
                 goal = pre.get(goal);
             }
-            System.out.println("Path: "+path.UnDiPath());
-            return true;
+            return path;
         }
         else {
             System.out.println("Given src and dst are not connected");
-            return false;
+            return new LIFOQueue<Key>();
         }
     }
 
-    public boolean BFShortsetWeighted(Key start, Key goal) {
+    public void setShortest(Key start) {
         System.out.println("Dijkstra:");
-        boolean connected = false;
-        FIFOQueue<Key> toDoList = new FIFOQueue<>();
-        Bag<Key> visited = new Bag<>();
-        HashMapX<Key, Integer> distance = new HashMapX<>();
-        for (Key key : adjacencyLists.getKeySet())
-            distance.put(key, Integer.MAX_VALUE);
-        HashMapX<Key, Key> pre = new HashMapX<>();
-        FIFOQueue<Key> unsettled = new FIFOQueue<>();
-        Key min = null;
+        for (Key key : adjacencyLists.getKeySet()) {
+            shortestDistance.get(start).put(key, Integer.MAX_VALUE);
+        }
 
+        //implement a priority queue
+        PriorityQueue<Key> queue = new PriorityQueue<>();
+        HashMapX<Key,Integer> edges = getEdges(start);
+        HashMapX<Key,Integer> srcDistances = shortestDistance.get(start);
 
-        toDoList.enqueue(start);
-        visited.add(start);
-        distance.put(start,0);
-        int i=0;
-        
-        while(!toDoList.isEmpty()){
-            start = toDoList.dequeue();
-            System.out.println("visit #"+(++i)+": "+start);
-            try {
-                for(Key key : getEdges(start).getKeySet())
-                    unsettled.enqueue(key);
-                while (!unsettled.isEmpty()) {
-                    min = unsettled.getMin();
-                    if (!visited.contains(min)) {
-                        visited.add(min);
-                        pre.put(min, start);
-                        distance.put(min, distance.get(start) + 1);
-                    }
-                    unsettled.remove(min);
+        queue.add(start);
+        srcDistances.put(start,0);
+
+        int i = 0;
+        while(!queue.isEmpty()){
+            System.out.println("i "+i++);
+            Key u = queue.poll();
+            System.out.println(u);
+
+			/*visit the adjacencies, starting from
+			the nearest node(smallest shortestDistance)*/
+
+            int j = 0;
+            System.out.println(getEdges(u).getKeySet());
+            for(Key e: edges.getKeySet()){
+                System.out.println("j "+j++);
+                int distanceFromU = srcDistances.get(u)+edges.get(e);;
+                if(distanceFromU<srcDistances.get(e)){
+                    
+					/*remove v from queue for updating
+					the shortestDistance value*/
+                    queue.remove(e);
+                    srcDistances.put(e, distanceFromU);
+                    parents.get(start).put(e,u);
+                    queue.add(e);
+
                 }
-            } catch (NullPointerException e) { break; }
+            }
+        }
+    }
 
-            if(start.equals(goal)){
-                connected=true;
-            }
+    public LIFOQueue<Key> getShortestPath(Key start, Key goal){
+        //trace path from target to source
+        LIFOQueue<Key> path = new LIFOQueue<>();
+        for(Key end = goal; end!=null; end = parents.get(start).get(end)){
+            path.push(end);
         }
-        if(connected) {
-            System.out.println("Shortest Distance: "+distance.get(goal));
-            LIFOQueue<Key> path = new LIFOQueue<>();
-            path.push(goal);
-            while (pre.get(goal) != null) {
-                path.push(pre.get(goal));
-                goal = pre.get(goal);
-            }
-            System.out.println("Path: "+path.UnDiPath());
-            return true;
-        }
-        else {
-            System.out.println("Given src and dst are not connected");
-            return false;
-        }
+
+        return path;
     }
 }
 
@@ -187,11 +186,7 @@ class HashMapX<Key extends Comparable, Value> {
     private SequentialSearchST[] st; // array of ST objects
 
     public HashMapX() {
-        this(67);
-    }
-
-    public HashMapX(int M) {
-        this.M = M; // Create M linked lists.
+        this.M = 67; // Create M linked lists.
         st = new SequentialSearchST[M];
         for (int i = 0; i < M; i++) {
             st[i] = new SequentialSearchST();
@@ -207,8 +202,8 @@ class HashMapX<Key extends Comparable, Value> {
     }
 
     public void put(Key key, Value val) {
-        st[hash(key)].put(key, val);
         keySet.enqueue(key);
+        st[hash(key)].put(key, val);
         N++;
     }
 
