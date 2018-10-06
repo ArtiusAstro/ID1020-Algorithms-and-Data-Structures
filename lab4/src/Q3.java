@@ -4,13 +4,13 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
- * Find shortest path between two graph vertices using DFS
+ * Find shortest path between two graph vertices using BFS
  *
  * @author Ayub Atif
  */
-public class Q1 {
+public class Q3 {
     public static void main(String[] args) throws FileNotFoundException {
-        System.out.println("--------------------\nQ1\n--------------------");
+        System.out.println("--------------------\nQ3\n--------------------");
 
         GraphX<String> grX = new GraphX<>();
         String src; String dst;
@@ -33,7 +33,6 @@ public class Q1 {
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
-        grX.DFShortsetNoWeight("CA","NY");
+        grX.BFShortsetWeighted("CA","NY");
     }
 }
-

@@ -3,9 +3,14 @@ import java.io.FileNotFoundException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class ShortestPath {
+/**
+ * Find shortest path between two graph vertices using BFS
+ *
+ * @author Ayub Atif
+ */
+public class Q2 {
     public static void main(String[] args) throws FileNotFoundException {
-        System.out.println("--------------------\nQ1\n--------------------");
+        System.out.println("--------------------\nQ2\n--------------------");
 
         GraphX<String> grX = new GraphX<>();
         String src; String dst;
@@ -25,9 +30,10 @@ public class ShortestPath {
         }
 
         grX.printGraph();
-        System.out.println("\nN: "+grX.getN());
+        System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
-
+        grX.BFShortsetNoWeight("CA","NY");
     }
 }
+
