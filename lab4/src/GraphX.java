@@ -1,12 +1,12 @@
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 
-public abstract class GraphX<Key extends Comparable<Key>> {
+abstract class GraphX<Key extends Comparable<Key>> {
     int N;
     int E;
-    HashMapX<Key, Bag<Edge>> adjacencyLists = new HashMapX<>();
-    HashMapX<Key, HashMapX<Key, Integer>> shortestDistance = new HashMapX<>();
+    final HashMapX<Key, Bag<Edge>> adjacencyLists = new HashMapX<>();
+    final HashMapX<Key, HashMapX<Key, Integer>> shortestDistance = new HashMapX<>();
     HashMapX<Key, HashMapX<Key, Key>> parents = new HashMapX<>(); // for disjkrtas shortest path
     LIFOQueue<Edge> edgeSet = new LIFOQueue<>();
 
@@ -14,37 +14,33 @@ public abstract class GraphX<Key extends Comparable<Key>> {
         private final Key src; // one vertex
         private final Key dst; // the other vertex
         private final int weight; // edge weight
-        public Edge(Key src, Key dst, int weight) {
+        Edge(Key src, Key dst, int weight) {
             this.src = src;
             this.dst = dst;
             this.weight = weight;
         }
-        public Key getDst() { return dst; }
+        Key getDst() { return dst; }
         public Key getSrc() { return src; }
-        public int getWeight() { return weight; }
-        public Key either() {
+        int getWeight() { return weight; }
+        Key either() {
             return src;
         }
-        public Key other(Key vertex) {
+        Key other(Key vertex) {
             if (vertex == src) return dst;
             else if (vertex == dst) return src;
             else throw new RuntimeException("Inconsistent edge");
         }
-
-        @Override
-        public int compareTo(Edge that) {
-            if (this.getWeight() < that.getWeight()) return -1;
-            else if (this.getWeight() > that.getWeight()) return +1;
-            else return 0;
+        public boolean equals(Edge edge){
+            return edge.compareTo(this)==0 && edge.src.compareTo(src)==0
+                    && edge.dst.compareTo(dst)==0;
         }
         @Override
-        public boolean equals(Object edge){
-            return ((Edge)edge).compareTo(this)==0 && ((Edge)edge).src.compareTo(src)==0
-                    && ((Edge)edge).dst.compareTo(dst)==0;
+        public int compareTo(Edge that) {
+            return Integer.compare(this.getWeight(), that.getWeight());
         }
         @Override
         public String toString() {
-            return new StringBuilder().append(src).append("-"+dst+": ").append(weight).toString();
+            return String.valueOf(src) + "-" + dst + ": " + weight;
         }
     }
 
@@ -57,10 +53,10 @@ public abstract class GraphX<Key extends Comparable<Key>> {
     public int getE() {
         return E;
     }
-    public Bag<Edge> getEdges(Key state) {
+    Bag<Edge> getEdges(Key state) {
         return this.adjacencyLists.get(state);
     }
-    public void addVertex(Key state) {
+    void addVertex(Key state) {
         if (this.adjacencyLists.containsKey(state))
             return;
         shortestDistance.put(state, new HashMapX<>());
@@ -68,7 +64,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
         this.adjacencyLists.put(state, new Bag<>());
         N++;
     }
-    public void addEdge(Key src, Key dst) {
+    void addEdge(Key src, Key dst) {
         if (!this.adjacencyLists.containsKey(src) || !this.adjacencyLists.containsKey(dst))
             throw new NoSuchElementException();
         if (isEdge(src, dst))
@@ -77,7 +73,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
         edgeSet.push(new Edge(src, dst, E));
         this.adjacencyLists.get(src).add(edgeSet.peek());
     }
-    public boolean isEdge(Key src, Key dst) {
+    boolean isEdge(Key src, Key dst) {
         if (!this.adjacencyLists.containsKey(src) || !this.adjacencyLists.containsKey(dst))
             throw new NoSuchElementException();
         return this.adjacencyLists.get(src).contains(new Edge(src, dst, 0));
@@ -89,6 +85,24 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             for(Edge edge : this.getEdges(state))
                 System.out.print(edge.dst+" "+edge.weight+'\n');
             System.out.println();
+        }
+    }
+
+    public void fillGraph(String path) throws FileNotFoundException {
+        try(Scanner sc = new Scanner(new File(path))) {
+            Key src; Key dst;
+            while(sc.hasNext()){
+                src = (Key) sc.next();
+                dst = (Key) sc.next();
+                sc.nextLine();
+
+                this.addVertex(src);
+                this.addVertex(dst);
+                this.addEdge(src, dst);
+            }
+        }
+        catch(InputMismatchException e) {
+            e.printStackTrace();
         }
     }
 }
@@ -119,15 +133,21 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
     }
 
     public LIFOQueue<Key> DFShortsetNoWeight(Key start, Key goal){
+        System.out.println("|"+start+"->"+goal+"|");
+        boolean connected = false;
         Bag<Key> visited = new Bag<>();
         LIFOQueue<Key> stack = new LIFOQueue<>();
+        HashMapX<Key, Integer> distance = new HashMapX<>();
+        for (Key key : adjacencyLists.getKeySet())
+            distance.put(key, Integer.MAX_VALUE);
+        
         stack.push(start);
         int i=0;
 
         while (!stack.isEmpty() && !start.equals(goal)){
-            start = stack.pop();
-            if(!visited.contains(start))
-            {
+            if((start = stack.pop()).equals(goal))
+                connected = true;
+            if(!visited.contains(start)) {
                 System.out.println("visit #"+(++i)+": "+start);
                 visited.add(start);
             }
@@ -137,7 +157,20 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
                     stack.push(edge.getDst());
             }
         }
-        return null;
+        if(connected) {
+            System.out.print("Shortest Distance: "+distance.get(goal)+"\nShortest Path: ");
+            LIFOQueue<Key> path = new LIFOQueue<>();
+            path.push(goal);
+            while (pre.get(goal) != null) {
+                path.push(pre.get(goal));
+                goal = pre.get(goal);
+            }
+            return path;
+        }
+        else {
+            System.out.println("Disconnected src & dst");
+            return new LIFOQueue<>();
+        }
     }
 
     public LIFOQueue<Key> BFShortsetNoWeight(Key start, Key goal){
@@ -291,7 +324,7 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
         private final HashMapX<Key, Key> components = new HashMapX<>();
         private final HashMapX<Key, Integer> treeSizes = new HashMapX<>();
 
-        public WQUF(Key[] components) {
+        WQUF(Key[] components) {
             for (Key component : components) {
                 this.components.put(component, component);
                 this.treeSizes.put(component, 1);
@@ -302,15 +335,11 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
             return treeSizes.get(component);
         }
 
-        public void union(Key leftComponent, Key rightComponent) {
-            Objects.requireNonNull(leftComponent);
-            Objects.requireNonNull(rightComponent);
-
+        void union(Key leftComponent, Key rightComponent) {
             Key leftComponentTree = find(leftComponent);
             Key rightComponentTree = find(rightComponent);
 
-            if (leftComponentTree == rightComponentTree)
-                return;     // Already connected
+            if (leftComponentTree == rightComponentTree) return;
 
             int leftTreeSize = getTreeSize(leftComponentTree);
             int rightTreeSize = getTreeSize(rightComponentTree);
@@ -323,53 +352,40 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
             }
         }
 
-        private Key find(Key c) {
+        private Key find(Key component) {
             // Lookup with path compression
-            for (Key parent, grandparent; (parent = components.get(c)) != c; c = grandparent) {
-                components.put(c, grandparent = components.get(parent));
-            }
-            return c;
+            for (Key u, v; (u = components.get(component)) != component; component = v)
+                components.put(component, v = components.get(u));
+            return component;
         }
 
-        /*
-       private Key find(Key component) {
-           while (!component.equals(components.get(component))) {
-               components.put(component, components.get(components.get(component))); // Path compression
-               component = components.get(component);
-           }
-           return component;
-       }
-       */
-        public boolean connected(Key leftComponent, Key rightComponent) {
-            Objects.requireNonNull(leftComponent);
-            Objects.requireNonNull(rightComponent);
-            return find(leftComponent).equals(find(rightComponent));
+        boolean connected(Key leftComponent, Key rightComponent) {
+            return find(leftComponent) == find(rightComponent);
         }
-        // */
 
     }
 }
 
 class HashMapX<Key extends Comparable<Key>, Value> {
     private int N; // number of key-value pairs
-    private int M; // hash table size
-    private FIFOQueue<Key> keySet = new FIFOQueue<>();
-    private SequentialSearchST[] st; // array of ST objects
+    private final int M; // hash table size
+    private final FIFOQueue<Key> keySet = new FIFOQueue<>();
+    private SequentialSearchST<Key, Value>[] st; // array of ST objects
 
     public HashMapX() {
         this.M = 67; // Create M linked lists.
         st = new SequentialSearchST[M];
         for (int i = 0; i < M; i++) {
-            st[i] = new SequentialSearchST();
+            st[i] = new SequentialSearchST<>();
         }
     }
 
-    int hash(Key key) {
+    private int hash(Key key) {
         return (key.hashCode() & 0x7fffffff) % M;
     }
 
     public Value get(Key key) {
-        return (Value) st[hash(key)].get(key);
+        return st[hash(key)].get(key);
     }
 
     public void put(Key key, Value val) {
@@ -397,10 +413,10 @@ class SequentialSearchST<Key, Value> implements Iterable{
     private Node head; // first node in the linked list
     private int size;
     private class Node { // linked-list node
-        Key key;
+        final Key key;
         Value val;
         Node next;
-        public Node(Key key, Value val, Node next) {
+        Node(Key key, Value val, Node next) {
             this.key = key;
             this.val = val;
             this.next = next;
@@ -465,10 +481,10 @@ class Bag<Item> implements Iterable<Item> {
     }
 
     private class Node {
-        Item item;
+        final Item item;
         Node next;
 
-        public Node(Item item) {
+        Node(Item item) {
             this.item = item;
         }
     }
@@ -511,7 +527,7 @@ class LIFOQueue<Item> implements Iterable<Item> {
      * @author Ayub Atif
      */
     private class Node {
-        private Item item;
+        private final Item item;
         private Node next;
 
         Node(Item item){
@@ -541,7 +557,7 @@ class LIFOQueue<Item> implements Iterable<Item> {
      *
      * @return the number of items in this stack
      */
-    public int size() {
+    int size() {
         return size;
     }
 
@@ -684,11 +700,11 @@ class FIFOQueue<Item extends Comparable<Item>> implements Iterable<Item> {
      *
      * @author Ayub Atif
      */
-    protected class Node {
-        private Item item;
+    class Node {
+        private final Item item;
         private Node next;
 
-        public Node(Item item) {
+        Node(Item item) {
             this.item = item;
         }
     }
@@ -714,7 +730,7 @@ class FIFOQueue<Item extends Comparable<Item>> implements Iterable<Item> {
      *
      * @return the number of items in this stack
      */
-    public int size() {
+    int size() {
         return size;
     }
 
@@ -915,8 +931,7 @@ class MinPQX<T extends Comparable> implements Iterable<T> {
     public MinPQX(T[] t) {
         n = t.length;
         pq = (T[]) new Comparable[n + 1];
-        for (int i = 0; i < n; i++)
-            pq[i+1] = t[i];
+        System.arraycopy(t, 0, pq, 1, n);
         for (int k = n/2; k >= 1; k--)
             sink(k);
         assert isMinHeap();
@@ -926,7 +941,7 @@ class MinPQX<T extends Comparable> implements Iterable<T> {
         return n == 0;
     }
 
-    public int size() {
+    private int size() {
         return n;
     }
 
@@ -937,9 +952,7 @@ class MinPQX<T extends Comparable> implements Iterable<T> {
 
     private void xSize(int newSize){
         T[] temp = (T[]) new Comparable[newSize];
-        for (int i = 1; i <= n; i++) {
-            temp[i] = pq[i];
-        }
+        System.arraycopy(pq, 1, temp, 1, n);
         pq = temp;
     }
 
@@ -1010,12 +1023,12 @@ class MinPQX<T extends Comparable> implements Iterable<T> {
 
     private class HeapIterator implements Iterator<T> {
         // create a new pq
-        private MinPQX<T> copy;
+        private final MinPQX<T> copy;
 
         // add all items to copy of heap
         // takes linear time since already in heap order so no keys move
-        public HeapIterator() {
-            copy = new MinPQX<T>(size());
+        HeapIterator() {
+            copy = new MinPQX<>(size());
             for (int i = 1; i <= n; i++)
                 copy.insert(pq[i]);
         }

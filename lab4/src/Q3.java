@@ -1,33 +1,16 @@
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.InputMismatchException;
-import java.util.Scanner;
 
 /**
  * Find shortest path between two weighted graph vertices using Dijkstra
  *
  * @author Ayub Atif
  */
-public class Q3 {
+class Q3 {
     public static void main(String[] args) throws FileNotFoundException {
         System.out.println("--------------------\nQ3\n--------------------");
 
         UnDiGraph<String> grX = new UnDiGraph<>();
-        String src; String dst;
-        try(Scanner sc = new Scanner(new File("contiguous-usa.txt"))) {
-            while(sc.hasNext()){
-                src = sc.next();
-                dst = sc.next();
-                sc.nextLine();
-
-                grX.addVertex(src);
-                grX.addVertex(dst);
-                grX.addEdge(src, dst);
-            }
-        }
-        catch(InputMismatchException e) {
-            e.printStackTrace();
-        }
+        grX.fillGraph("contiguous-usa.txt");
 
         //grX.printGraph();
         System.out.println("N: "+grX.getN());
