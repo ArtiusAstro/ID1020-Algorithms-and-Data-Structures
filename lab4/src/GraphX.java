@@ -45,8 +45,8 @@ public abstract class GraphX<Key extends Comparable<Key>> {
     public void printGraph(){
         for(Key state : adjacencyLists.getKeySet()){
             System.out.println(state+":");
-            for(Key edge : this.getEdges(state).getKeySet())
-                System.out.print(edge+" "+adjacencyLists.get(state).get(edge)+'\n');
+            for(Edge edge : this.getEdges(state))
+                System.out.print(edge.dst+" "+edge.weight+'\n');
             System.out.println();
         }
     }
@@ -65,9 +65,9 @@ public abstract class GraphX<Key extends Comparable<Key>> {
                 visited.add(start);
             }
 
-            for (Key edge : getEdges(start).getKeySet()) {
-                if (!visited.contains(edge))
-                    stack.push(edge);
+            for (Edge edge : getEdges(start)) {
+                if (!visited.contains(edge.dst))
+                    stack.push(edge.dst);
             }
         }
         return null;
@@ -92,12 +92,12 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             start = toDoList.dequeue();
             //System.out.println("visit #"+(++i)+": "+start);
             try {
-                for (Key edge : getEdges(start).getKeySet())
-                    if (!visited.contains(edge)) {
-                        toDoList.enqueue(edge);
-                        visited.add(edge);
-                        pre.put(edge, start);
-                        distance.put(edge,distance.get(start)+1);
+                for (Edge edge : getEdges(start))
+                    if (!visited.contains(edge.dst)) {
+                        toDoList.enqueue(edge.dst);
+                        visited.add(edge.dst);
+                        pre.put(edge.dst, start);
+                        distance.put(edge.dst,distance.get(start)+1);
                     }
             } catch (NullPointerException e) { break; }
 
@@ -137,13 +137,13 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             while (!priorityQueue.isEmpty()) {
                 priorityQueue.sort();
                 Key a = priorityQueue.dequeue();
-                for (Key b : getEdges(a).getKeySet()) {
-                    int distFromA = srcDistances.get(a) + getEdges(a).get(b);
-                    if (distFromA < srcDistances.get(b)) {
-                        priorityQueue.remove(b);
-                        srcDistances.put(b, distFromA);
-                        parents.get(start).put(b, a);
-                        priorityQueue.enqueue(b);
+                for (Edge b : getEdges(a)) {
+                    int distFromA = srcDistances.get(a) + b.weight;
+                    if (distFromA < srcDistances.get(b.dst)) {
+                        priorityQueue.remove(b.dst);
+                        srcDistances.put(b.dst, distFromA);
+                        parents.get(start).put(b.dst, a);
+                        priorityQueue.enqueue(b.dst);
                     }
                 }
             }
@@ -155,7 +155,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
 
         for (Key key : adjacencyLists.getKeySet())
             shortestDistance.get(start).put(key, Integer.MAX_VALUE);
-        FIFOQueue<Key> priorityQueue = new FIFOQueue<>(); //implemented priority queue
+        FIFOQueue<Key> priorityQueue = new FIFOQueue<>(); //FIFOQueue implemented priority queue
         HashMapX<Key, Integer> srcDistances = shortestDistance.get(start);
 
         priorityQueue.enqueue(start);
@@ -164,13 +164,13 @@ public abstract class GraphX<Key extends Comparable<Key>> {
         while (!priorityQueue.isEmpty()) {
             priorityQueue.sort();
             Key a = priorityQueue.dequeue();
-            for (Key b : getEdges(a).getKeySet()) {
-                int distFromA = srcDistances.get(a) + getEdges(a).get(b);
-                if (distFromA < srcDistances.get(b)) {
-                    priorityQueue.remove(b);
-                    srcDistances.put(b, distFromA);
-                    parents.get(start).put(b, a);
-                    priorityQueue.enqueue(b);
+            for (Edge b : getEdges(a)) {
+                int distFromA = srcDistances.get(a) + b.weight;
+                if (distFromA < srcDistances.get(b.dst)) {
+                    priorityQueue.remove(b.dst);
+                    srcDistances.put(b.dst, distFromA);
+                    parents.get(start).put(b.dst, a);
+                    priorityQueue.enqueue(b.dst);
                 }
             }
         }
@@ -191,7 +191,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
         return path;
     }
 
-    public FIFOQueue<Key> KruskalMST(){
+    /*public FIFOQueue<Key> KruskalMST(){
         FIFOQueue<Key> mst = new FIFOQueue<Key>();
         MinPQX pq = new MinPQX();
         for (Key key : adjacencyLists.getKeySet())
@@ -206,26 +206,26 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             mst.enqueue(w);
         }
         return mst;
-    }
+    }*/
 
     class Edge implements Comparable<Edge> {
-        private final Key v; // one vertex
-        private final Key w; // the other vertex
-        private final double weight; // edge weight
-        public Edge(Key v, Key w, double weight) {
-            this.v = v;
-            this.w = w;
+        private final Key src; // one vertex
+        private final Key dst; // the other vertex
+        private final int weight; // edge weight
+        public Edge(Key src, Key dst, int weight) {
+            this.src = src;
+            this.dst = dst;
             this.weight = weight;
         }
         public double weight() {
             return weight;
         }
         public Key either() {
-            return v;
+            return src;
         }
         public Key other(Key vertex) {
-            if (vertex == v) return w;
-            else if (vertex == w) return v;
+            if (vertex == src) return dst;
+            else if (vertex == dst) return src;
             else throw new RuntimeException("Inconsistent edge");
         }
         public int compareTo(Edge that) {
@@ -236,13 +236,13 @@ public abstract class GraphX<Key extends Comparable<Key>> {
 
         @Override
         public boolean equals(Object edge){
-            return ((Edge)edge).v.compareTo(v)==0 && ((Edge)edge).w.compareTo(w)==0;
+            return ((Edge)edge).src.compareTo(src)==0 && ((Edge)edge).dst.compareTo(dst)==0 && ((Edge)edge).compareTo(this)==0;
         }
         public String toString() {
-            return String.format("%d-%d %.2f", v, w, weight);
+            return String.format("%d-%d %.2f", src, dst, weight);
         }
     }
-
+    /*
     class MinPQX implements Iterable<Key> {
         private Key[] pq;                    // store items at indices 1 to n
         private int n;                       // number of items on priority queue
@@ -294,12 +294,6 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             assert isMinHeap();
         }
 
-        /**
-         * Removes and returns a smallest key on this priority queue.
-         *
-         * @return a smallest key on this priority queue
-         * @throws NoSuchElementException if this priority queue is empty
-         */
         public Edge delMin() {
             if (isEmpty()) throw new NoSuchElementException("Priority queue underflow");
             Key min = pq[1];
@@ -310,10 +304,6 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             assert isMinHeap();
             return min;
         }
-
-        /***************************************************************************
-         * Helper functions to restore the heap invariant.
-         ***************************************************************************/
 
         private void swim(int k) {
             while (k > 1 && more(k/2, k)) {
@@ -332,9 +322,6 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             }
         }
 
-        /***************************************************************************
-         * Helper functions for compares and swaps.
-         ***************************************************************************/
         private boolean more(Comparable v, Comparable w){
             return v.compareTo(w) > 0;
         }
@@ -358,15 +345,6 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             return isMinHeap(left) && isMinHeap(right);
         }
 
-
-        /**
-         * Returns an iterator that iterates over the keys on this priority queue
-         * in ascending order.
-         * <p>
-         * The iterator doesn't implement {@code remove()} since it's optional.
-         *
-         * @return an iterator that iterates over the keys in ascending order
-         */
         public Iterator<Key> iterator() {
             return new HeapIterator();
         }
@@ -392,7 +370,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             }
         }
     }
-
+*/
     class WeightedQuickUnionUF {
         private int[] id; // parent link (site indexed)
         private int[] sz; // size of component for roots (site indexed)
@@ -441,7 +419,7 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
     @Override
     public void addEdge(Key src, Key dst) {
         super.addEdge(src, dst);
-        this.adjacencyLists.get(dst).put(src, E);
+        this.adjacencyLists.get(dst).enqueue(new Edge(dst, src, E));
     }
 }
 
