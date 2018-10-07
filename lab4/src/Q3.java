@@ -12,7 +12,7 @@ public class Q3 {
     public static void main(String[] args) throws FileNotFoundException {
         System.out.println("--------------------\nQ3\n--------------------");
 
-        GraphX<String> grX = new UnDiGraph<>();
+        UnDiGraph<String> grX = new UnDiGraph<>();
         String src; String dst;
         try(Scanner sc = new Scanner(new File("contiguous-usa.txt"))) {
             while(sc.hasNext()){
@@ -63,8 +63,8 @@ public class Q3 {
     Shortest Distance: 0
     Shortest Path: [NY]
     |NY->FL|
-    Shortest Distance: 366
-    Shortest Path: [NY]-[NJ]-[DE]-[MD]-[DC]-[VA]-[NC]-[GA]-[FL]
+    Shortest Distance: 318
+    Shortest Path: [NY]-[NJ]-[DE]-[MD]-[DC]-[VA]-[TN]-[AL]-[FL]
     |NY->DXB|
     Disconnected src & dst
      */

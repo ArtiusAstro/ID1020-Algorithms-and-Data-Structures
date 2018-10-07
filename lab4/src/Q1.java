@@ -12,7 +12,7 @@ public class Q1 {
     public static void main(String[] args) throws FileNotFoundException {
         System.out.println("--------------------\nQ1\n--------------------");
 
-        GraphX<String> grX = new UnDiGraph<>();
+        UnDiGraph<String> grX = new UnDiGraph<>();
         String src; String dst;
         try(Scanner sc = new Scanner(new File("contiguous-usa.txt"))) {
             while(sc.hasNext()){

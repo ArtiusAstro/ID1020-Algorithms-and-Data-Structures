@@ -12,7 +12,7 @@ public class Q2 {
     public static void main(String[] args) throws FileNotFoundException {
         System.out.println("--------------------\nQ2\n--------------------");
 
-        GraphX<String> grX = new UnDiGraph<>();
+        UnDiGraph<String> grX = new UnDiGraph<>();
         String src; String dst;
         try(Scanner sc = new Scanner(new File("contiguous-usa.txt"))) {
             while(sc.hasNext()){
@@ -34,16 +34,15 @@ public class Q2 {
         System.out.println("E: "+grX.getE()+"\n");
 
         //Symmetry
-        System.out.println(grX.BFShortsetNoWeight("OH","NY").UnDiPath());
         System.out.println(grX.BFShortsetNoWeight("NY","OH").UnDiPath());
+        System.out.println(grX.BFShortsetNoWeight("OH","NY").UnDiPath());
         //Empty path
-        System.out.println(grX.BFShortsetNoWeight("CA","CA").UnDiPath());
+        System.out.println(grX.BFShortsetNoWeight("NY","NY").UnDiPath());
         //Long path
-        System.out.println(grX.BFShortsetNoWeight("CA","FL").UnDiPath());
+        System.out.println(grX.BFShortsetNoWeight("NY","FL").UnDiPath());
         //Disconnected src & dst
-        System.out.println(grX.BFShortsetNoWeight("CA","DXB").UnDiPath());
+        System.out.println(grX.BFShortsetNoWeight("NY","DXB").UnDiPath());
     }
-
     /*
     --------------------
     Q2
@@ -51,19 +50,19 @@ public class Q2 {
     N: 49
     E: 107
 
-    |OH->NY|
-    Shortest Distance: 2
-    Shortest Path: [OH]-[PA]-[NY]
     |NY->OH|
     Shortest Distance: 2
     Shortest Path: [NY]-[PA]-[OH]
-    |CA->CA|
+    |OH->NY|
+    Shortest Distance: 2
+    Shortest Path: [OH]-[PA]-[NY]
+    |NY->NY|
     Shortest Distance: 0
-    Shortest Path: [CA]
-    |CA->FL|
-    Shortest Distance: 7
-    Shortest Path: [CA]-[AZ]-[NM]-[OK]-[AR]-[MS]-[AL]-[FL]
-    |CA->DXB|
+    Shortest Path: [NY]
+    |NY->FL|
+    Shortest Distance: 6
+    Shortest Path: [NY]-[PA]-[WV]-[VA]-[TN]-[GA]-[FL]
+    |NY->DXB|
     Disconnected src & dst
      */
 }

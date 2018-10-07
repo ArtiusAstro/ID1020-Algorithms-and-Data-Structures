@@ -1,12 +1,14 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public abstract class GraphX<Key extends Comparable<Key>> {
     int N;
     int E;
-    HashMapX<Key, FIFOQueue<Edge>> adjacencyLists = new HashMapX<>();
+    HashMapX<Key, Bag<Edge>> adjacencyLists = new HashMapX<>();
     HashMapX<Key, HashMapX<Key, Integer>> shortestDistance = new HashMapX<>();
     HashMapX<Key, HashMapX<Key, Key>> parents = new HashMapX<>(); // for disjkrtas shortest path
+    LIFOQueue<Edge> edgeSet = new LIFOQueue<>();
 
     class Edge implements Comparable<Edge> {
         private final Key src; // one vertex
@@ -17,9 +19,9 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             this.dst = dst;
             this.weight = weight;
         }
-        public double weight() {
-            return weight;
-        }
+        public Key getDst() { return dst; }
+        public Key getSrc() { return src; }
+        public int getWeight() { return weight; }
         public Key either() {
             return src;
         }
@@ -28,18 +30,21 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             else if (vertex == dst) return src;
             else throw new RuntimeException("Inconsistent edge");
         }
-        public int compareTo(Edge that) {
-            if (this.weight() < that.weight()) return -1;
-            else if (this.weight() > that.weight()) return +1;
-            else return 0;
-        }
 
         @Override
-        public boolean equals(Object edge){
-            return ((Edge)edge).src.compareTo(src)==0 && ((Edge)edge).dst.compareTo(dst)==0 && ((Edge)edge).compareTo(this)==0;
+        public int compareTo(Edge that) {
+            if (this.getWeight() < that.getWeight()) return -1;
+            else if (this.getWeight() > that.getWeight()) return +1;
+            else return 0;
         }
+        @Override
+        public boolean equals(Object edge){
+            return ((Edge)edge).compareTo(this)==0 && ((Edge)edge).src.compareTo(src)==0
+                    && ((Edge)edge).dst.compareTo(dst)==0;
+        }
+        @Override
         public String toString() {
-            return String.format("%d-%d %.2f", src, dst, weight);
+            return new StringBuilder().append(src).append("-"+dst+": ").append(weight).toString();
         }
     }
 
@@ -52,7 +57,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
     public int getE() {
         return E;
     }
-    public FIFOQueue<Edge> getEdges(Key state) {
+    public Bag<Edge> getEdges(Key state) {
         return this.adjacencyLists.get(state);
     }
     public void addVertex(Key state) {
@@ -60,7 +65,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             return;
         shortestDistance.put(state, new HashMapX<>());
         parents.put(state, new HashMapX<>());
-        this.adjacencyLists.put(state, new FIFOQueue<>());
+        this.adjacencyLists.put(state, new Bag<>());
         N++;
     }
     public void addEdge(Key src, Key dst) {
@@ -69,7 +74,8 @@ public abstract class GraphX<Key extends Comparable<Key>> {
         if (isEdge(src, dst))
             return;
         E++;
-        this.adjacencyLists.get(src).enqueue(new Edge(src, dst, E));
+        edgeSet.push(new Edge(src, dst, E));
+        this.adjacencyLists.get(src).add(edgeSet.peek());
     }
     public boolean isEdge(Key src, Key dst) {
         if (!this.adjacencyLists.containsKey(src) || !this.adjacencyLists.containsKey(dst))
@@ -84,6 +90,32 @@ public abstract class GraphX<Key extends Comparable<Key>> {
                 System.out.print(edge.dst+" "+edge.weight+'\n');
             System.out.println();
         }
+    }
+}
+
+class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
+    DiGraphX(){
+        super();
+    }
+}
+
+class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
+    public UnDiGraph(){
+        super();
+    }
+
+    @Override
+    public void addEdge(Key src, Key dst) {
+        super.addEdge(src, dst);
+        edgeSet.push(new Edge(dst, src, E));
+        this.adjacencyLists.get(dst).add(edgeSet.peek());
+    }
+
+    @Override
+    public boolean isEdge(Key src, Key dst) {
+        if (!this.adjacencyLists.containsKey(src) || !this.adjacencyLists.containsKey(dst))
+            throw new NoSuchElementException();
+        return this.adjacencyLists.get(src).contains(new Edge(src, dst, 0)) || this.adjacencyLists.get(dst).contains(new Edge(dst, src, 0));
     }
 
     public LIFOQueue<Key> DFShortsetNoWeight(Key start, Key goal){
@@ -101,8 +133,8 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             }
 
             for (Edge edge : getEdges(start)) {
-                if (!visited.contains(edge.dst))
-                    stack.push(edge.dst);
+                if (!visited.contains(edge.getDst()))
+                    stack.push(edge.getDst());
             }
         }
         return null;
@@ -128,11 +160,11 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             //System.out.println("visit #"+(++i)+": "+start);
             try {
                 for (Edge edge : getEdges(start))
-                    if (!visited.contains(edge.dst)) {
-                        toDoList.enqueue(edge.dst);
-                        visited.add(edge.dst);
-                        pre.put(edge.dst, start);
-                        distance.put(edge.dst,distance.get(start)+1);
+                    if (!visited.contains(edge.getDst())) {
+                        toDoList.enqueue(edge.getDst());
+                        visited.add(edge.getDst());
+                        pre.put(edge.getDst(), start);
+                        distance.put(edge.getDst(),distance.get(start)+1);
                     }
             } catch (NullPointerException e) { break; }
 
@@ -173,12 +205,12 @@ public abstract class GraphX<Key extends Comparable<Key>> {
                 priorityQueue.sort();
                 Key a = priorityQueue.dequeue();
                 for (Edge b : getEdges(a)) {
-                    int distFromA = srcDistances.get(a) + b.weight;
-                    if (distFromA < srcDistances.get(b.dst)) {
-                        priorityQueue.remove(b.dst);
-                        srcDistances.put(b.dst, distFromA);
-                        parents.get(start).put(b.dst, a);
-                        priorityQueue.enqueue(b.dst);
+                    int distFromA = srcDistances.get(a) + b.getWeight();
+                    if (distFromA < srcDistances.get(b.getDst())) {
+                        priorityQueue.remove(b.getDst());
+                        srcDistances.put(b.getDst(), distFromA);
+                        parents.get(start).put(b.getDst(), a);
+                        priorityQueue.enqueue(b.getDst());
                     }
                 }
             }
@@ -200,12 +232,12 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             priorityQueue.sort();
             Key a = priorityQueue.dequeue();
             for (Edge b : getEdges(a)) {
-                int distFromA = srcDistances.get(a) + b.weight;
-                if (distFromA < srcDistances.get(b.dst)) {
-                    priorityQueue.remove(b.dst);
-                    srcDistances.put(b.dst, distFromA);
-                    parents.get(start).put(b.dst, a);
-                    priorityQueue.enqueue(b.dst);
+                int distFromA = srcDistances.get(a) + b.getWeight();
+                if (distFromA < srcDistances.get(b.getDst())) {
+                    priorityQueue.remove(b.getDst());
+                    srcDistances.put(b.getDst(), distFromA);
+                    parents.get(start).put(b.getDst(), a);
+                    priorityQueue.enqueue(b.getDst());
                 }
             }
         }
@@ -226,200 +258,95 @@ public abstract class GraphX<Key extends Comparable<Key>> {
         return path;
     }
 
-    public FIFOQueue<Key> kruskalMST(){
-        FIFOQueue<Key> mst = new FIFOQueue<Key>();
-        MinPQX pq = new MinPQX();
-        for (Key key : adjacencyLists.getKeySet())
-            pq.insert(key);
-        WeightedQuickUnionUF uf = new WeightedQuickUnionUF(N);
-        while (!pq.isEmpty() && mst.size() < N-1) {
-            Edge e = pq.delMin(); // Get min weight edge on pq
+    public FIFOQueue<Edge> kruskalMST(){
+        FIFOQueue<Edge> mst = new FIFOQueue<>();
+        WQUF wquf = new WQUF(adjacencyLists.getKeySet().toArray());
+        MinPQX<Edge> pq = new MinPQX<>(N);
+
+        int i=0;
+        for (Edge edge : edgeSet)
+            if(i++%2==1)
+                pq.insert(edge);
+
+        Edge tmp = pq.delMin();
+        while (!pq.isEmpty()) {
+            Edge e = pq.delMin();
             Key v = e.either(), w = e.other(v);
-            if (uf.connected(v, w)) continue; // Ignore ineligible edges.
-            uf.union(v, w); // Merge components.
-            mst.enqueue(v); // Add edge to mst.
-            mst.enqueue(w);
+            if (wquf.connected(v, w)){
+                System.out.println("continued "+e); continue;
+            }
+            wquf.union(v, w);
+            System.out.println("added "+e); mst.enqueue(e);
         }
+        Key v = tmp.either(), w = tmp.other(v);
+        if (wquf.connected(v, w)){
+            System.out.println("continued "+tmp); return mst;
+        }
+        System.out.println("added "+tmp); mst.enqueue(tmp);
+
         return mst;
     }
 
-    class MinPQX implements Iterable<Edge> {
-        private Key[] pq;                    // store items at indices 1 to n
-        private int n;                       // number of items on priority queue
+    class WQUF {
+        private final HashMapX<Key, Key> components = new HashMapX<>();
+        private final HashMapX<Key, Integer> treeSizes = new HashMapX<>();
 
-        public MinPQX(int size) {
-            pq = (Key[]) new Object[size + 1];
-            n = 0;
-        }
-
-        public MinPQX() {
-            Key[] keys =  adjacencyLists.getKeySet().toArray();
-            n = keys.length;
-            pq = (Key[]) new Object[n + 1];
-            for (int i = 0; i < n; i++)
-                pq[i+1] = keys[i];
-            for (int k = n/2; k >= 1; k--)
-                sink(k);
-            assert isMinHeap();
-        }
-
-        public boolean isEmpty() {
-            return n == 0;
-        }
-
-        public int size() {
-            return n;
-        }
-
-        public Key min() {
-            if (isEmpty()) throw new NoSuchElementException("Priority queue underflow");
-            return pq[1];
-        }
-
-        private void xSize(int newSize){
-            Key[] temp = (Key[]) new Object[newSize];
-            for (int i = 1; i <= n; i++) {
-                temp[i] = pq[i];
-            }
-            pq = temp;
-        }
-
-        public void insert(Key x) {
-            // double size of array if necessary
-            if (n == pq.length - 1) xSize(2 * pq.length);
-
-            // add x, and percolate it up to maintain heap invariant
-            pq[++n] = x;
-            swim(n);
-            assert isMinHeap();
-        }
-
-        public Edge delMin() {
-            if (isEmpty()) throw new NoSuchElementException("Priority queue underflow");
-            Key min = pq[1];
-            exch(pq, 1, n--);
-            sink(1);
-            pq[n+1] = null;     // to avoid loiterig and help with garbage collection
-            if ((n > 0) && (n == (pq.length - 1) / 4)) xSize(pq.length / 2);
-            assert isMinHeap();
-            return (Edge) min;
-        }
-
-        private void swim(int k) {
-            while (k > 1 && more(k/2, k)) {
-                exch(pq, k, k/2);
-                k = k/2;
+        public WQUF(Key[] components) {
+            for (Key component : components) {
+                this.components.put(component, component);
+                this.treeSizes.put(component, 1);
             }
         }
 
-        private void sink(int k) {
-            while (2*k <= n) {
-                int j = 2*k;
-                if (j < n && more(j, j+1)) j++;
-                if (!more(k, j)) break;
-                exch(pq, k, j);
-                k = j;
+        private int getTreeSize(Key component) {
+            return treeSizes.get(component);
+        }
+
+        public void union(Key leftComponent, Key rightComponent) {
+            Objects.requireNonNull(leftComponent);
+            Objects.requireNonNull(rightComponent);
+
+            Key leftComponentTree = find(leftComponent);
+            Key rightComponentTree = find(rightComponent);
+
+            if (leftComponentTree == rightComponentTree)
+                return;     // Already connected
+
+            int leftTreeSize = getTreeSize(leftComponentTree);
+            int rightTreeSize = getTreeSize(rightComponentTree);
+            if (leftTreeSize < rightTreeSize) {
+                components.put(leftComponentTree, rightComponentTree);
+                treeSizes.put(rightComponentTree, leftTreeSize + rightTreeSize);
+            } else {
+                components.put(rightComponentTree, leftComponentTree);
+                treeSizes.put(leftComponentTree, leftTreeSize + rightTreeSize);
             }
         }
 
-        private boolean more(Comparable v, Comparable w){
-            return v.compareTo(w) > 0;
-        }
-
-        private void exch(Comparable[] a, int i, int j){
-            Comparable t = a[i]; a[i] = a[j]; a[j] = t;
-        }
-
-        // is pq[1..N] a min heap?
-        private boolean isMinHeap() {
-            return isMinHeap(1);
-        }
-
-        // is subtree of pq[1..n] rooted at k a min heap?
-        private boolean isMinHeap(int k) {
-            if (k > n) return true;
-            int left = 2*k;
-            int right = 2*k + 1;
-            if (left  <= n && more(k, left))  return false;
-            if (right <= n && more(k, right)) return false;
-            return isMinHeap(left) && isMinHeap(right);
-        }
-
-        public Iterator<Edge> iterator() {
-            return new HeapIterator();
-        }
-
-        private class HeapIterator implements Iterator<Edge> {
-            // create a new pq
-            private MinPQX copy;
-
-            // add all items to copy of heap
-            // takes linear time since already in heap order so no keys move
-            public HeapIterator() {
-                copy = new MinPQX(size());
-                for (int i = 1; i <= n; i++)
-                    copy.insert(pq[i]);
+        private Key find(Key c) {
+            // Lookup with path compression
+            for (Key parent, grandparent; (parent = components.get(c)) != c; c = grandparent) {
+                components.put(c, grandparent = components.get(parent));
             }
-
-            public boolean hasNext()  { return !copy.isEmpty();                     }
-            public void remove()      { throw new UnsupportedOperationException();  }
-
-            public Edge next() {
-                if (!hasNext()) throw new NoSuchElementException();
-                return copy.delMin();
-            }
+            return c;
         }
-    }
 
-    class WeightedQuickUnionUF {
-        private int[] id; // parent link (site indexed)
-        private int[] sz; // size of component for roots (site indexed)
-        private int count; // number of components
-        public WeightedQuickUnionUF(int N) {
-            count = N;
-            id = new int[N];
-            for (int i = 0; i < N; i++) id[i] = i;
-            sz = new int[N];
-            for (int i = 0; i < N; i++) sz[i] = 1;
+        /*
+       private Key find(Key component) {
+           while (!component.equals(components.get(component))) {
+               components.put(component, components.get(components.get(component))); // Path compression
+               component = components.get(component);
+           }
+           return component;
+       }
+       */
+        public boolean connected(Key leftComponent, Key rightComponent) {
+            Objects.requireNonNull(leftComponent);
+            Objects.requireNonNull(rightComponent);
+            return find(leftComponent).equals(find(rightComponent));
         }
-        public int count() {
-            return count;
-        }
-        public boolean connected(Key p, Key q) {
-            return find(p) == find(q);
-        }
-        private int find(int p) {
-            // Follow links to find a root.
-            while (p != id[p]) p = id[p];
-            return p;
-        }
-        public void union(Key p, Key q) {
-            int i = find(p);
-            int j = find(q);
-            if (i == j) return;
-            // Make smaller root point to larger one.
-            if (sz[i] < sz[j]) { id[i] = j; sz[j] += sz[i]; }
-            else { id[j] = i; sz[i] += sz[j]; }
-            count--;
-        }
-    }
-}
+        // */
 
-class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
-    DiGraphX(){
-        super();
-    }
-}
-
-class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
-    public UnDiGraph(){
-        super();
-    }
-
-    @Override
-    public void addEdge(Key src, Key dst) {
-        super.addEdge(src, dst);
-        this.adjacencyLists.get(dst).enqueue(new Edge(dst, src, E));
     }
 }
 
@@ -652,9 +579,17 @@ class LIFOQueue<Item> implements Iterable<Item> {
      * @return the item most recently added
      * @throws NoSuchElementException if this stack is empty
      */
-    public Item getTop() {
+    public Item peek() {
         if (isEmpty()) throw new NoSuchElementException("Stack underflow");
         return top.item;
+    }
+
+    public Item[] toArray(){
+        Item[] proxy = (Item[]) new Comparable[size];
+        Node current = top;
+        for (int i=0;i<size;current=current.next)
+            proxy[i++] = current.item;
+        return proxy;
     }
 
     /**
@@ -834,10 +769,9 @@ class FIFOQueue<Item extends Comparable<Item>> implements Iterable<Item> {
 
     public Item[] toArray(){
         Item[] proxy = (Item[]) new Comparable[size];
-        for (int i=0;i<size;i++) {
-            proxy[i] = dequeue();
-            enqueue(proxy[i]);
-        }
+        Node current = head;
+        for (int i=0;i<size;current=current.next)
+            proxy[i++] = current.item;
         return proxy;
     }
 
@@ -958,5 +892,140 @@ class FIFOQueue<Item extends Comparable<Item>> implements Iterable<Item> {
             }
         }
         return s.toString();
+    }
+
+    public String tree() {
+        StringBuilder s = new StringBuilder();
+        for (Item item : this) {
+            s.append(item).append('\n');
+        }
+        return s.toString();
+    }
+}
+
+class MinPQX<T extends Comparable> implements Iterable<T> {
+    private T[] pq;                    // store items at indices 1 to n
+    private int n;                       // number of items on priority queue
+
+    public MinPQX(int size) {
+        pq = (T[]) new Comparable[size + 1];
+        n = 0;
+    }
+
+    public MinPQX(T[] t) {
+        n = t.length;
+        pq = (T[]) new Comparable[n + 1];
+        for (int i = 0; i < n; i++)
+            pq[i+1] = t[i];
+        for (int k = n/2; k >= 1; k--)
+            sink(k);
+        assert isMinHeap();
+    }
+
+    public boolean isEmpty() {
+        return n == 0;
+    }
+
+    public int size() {
+        return n;
+    }
+
+    public T min() {
+        if (isEmpty()) throw new NoSuchElementException("Priority queue underflow");
+        return pq[1];
+    }
+
+    private void xSize(int newSize){
+        T[] temp = (T[]) new Comparable[newSize];
+        for (int i = 1; i <= n; i++) {
+            temp[i] = pq[i];
+        }
+        pq = temp;
+    }
+
+    public void insert(T x) {
+        // double size of array if necessary
+        if (n == pq.length - 1) xSize(2 * pq.length);
+
+        // add x, and percolate it up to maintain heap invariant
+        pq[++n] = x;
+        swim(n);
+        assert isMinHeap();
+    }
+
+    public T delMin() {
+        if (isEmpty()) throw new NoSuchElementException("Priority queue underflow");
+        T min = pq[1];
+        exch(pq, 1, n--);
+        sink(1);
+        pq[n+1] = null;     // to avoid loitering and help with garbage collection
+        if ((n > 0) && (n == (pq.length - 1) / 4)) xSize(pq.length / 2);
+        assert isMinHeap();
+        return min;
+    }
+
+    private void swim(int k) {
+        while (k > 1 && more(k/2, k)) {
+            exch(pq, k, k/2);
+            k = k/2;
+        }
+    }
+
+    private void sink(int k) {
+        while (2*k <= n) {
+            int j = 2*k;
+            if (j < n && more(j, j+1)) j++;
+            if (!more(k, j)) break;
+            exch(pq, k, j);
+            k = j;
+        }
+    }
+
+    private boolean more(Comparable v, Comparable w){
+        return v.compareTo(w) > 0;
+    }
+
+    private void exch(Comparable[] a, int i, int j){
+        Comparable t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+
+    // is pq[1..N] a min heap?
+    private boolean isMinHeap() {
+        return isMinHeap(1);
+    }
+
+    // is subtree of pq[1..n] rooted at k a min heap?
+    private boolean isMinHeap(int k) {
+        if (k > n) return true;
+        int left = 2*k;
+        int right = 2*k + 1;
+        if (left  <= n && more(k, left))  return false;
+        if (right <= n && more(k, right)) return false;
+        return isMinHeap(left) && isMinHeap(right);
+    }
+
+    public Iterator<T> iterator() {
+        return new HeapIterator();
+    }
+
+    private class HeapIterator implements Iterator<T> {
+        // create a new pq
+        private MinPQX<T> copy;
+
+        // add all items to copy of heap
+        // takes linear time since already in heap order so no keys move
+        public HeapIterator() {
+            copy = new MinPQX<T>(size());
+            for (int i = 1; i <= n; i++)
+                copy.insert(pq[i]);
+        }
+
+        public boolean hasNext()  { return !copy.isEmpty();                     }
+        public void remove()      { throw new UnsupportedOperationException();  }
+
+        public T next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            return copy.delMin();
+        }
     }
 }
