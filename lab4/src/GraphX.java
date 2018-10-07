@@ -8,6 +8,41 @@ public abstract class GraphX<Key extends Comparable<Key>> {
     HashMapX<Key, HashMapX<Key, Integer>> shortestDistance = new HashMapX<>();
     HashMapX<Key, HashMapX<Key, Key>> parents = new HashMapX<>(); // for disjkrtas shortest path
 
+    class Edge implements Comparable<Edge> {
+        private final Key src; // one vertex
+        private final Key dst; // the other vertex
+        private final int weight; // edge weight
+        public Edge(Key src, Key dst, int weight) {
+            this.src = src;
+            this.dst = dst;
+            this.weight = weight;
+        }
+        public double weight() {
+            return weight;
+        }
+        public Key either() {
+            return src;
+        }
+        public Key other(Key vertex) {
+            if (vertex == src) return dst;
+            else if (vertex == dst) return src;
+            else throw new RuntimeException("Inconsistent edge");
+        }
+        public int compareTo(Edge that) {
+            if (this.weight() < that.weight()) return -1;
+            else if (this.weight() > that.weight()) return +1;
+            else return 0;
+        }
+
+        @Override
+        public boolean equals(Object edge){
+            return ((Edge)edge).src.compareTo(src)==0 && ((Edge)edge).dst.compareTo(dst)==0 && ((Edge)edge).compareTo(this)==0;
+        }
+        public String toString() {
+            return String.format("%d-%d %.2f", src, dst, weight);
+        }
+    }
+
     GraphX(){
         N=E=0;
     }
@@ -122,7 +157,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
         }
     }
 
-    public void setShortest() {
+    public void disjkstra() {
         System.out.println("Multi source Dijkstra activated");
         for(Key start : adjacencyLists.getKeySet()) {
 
@@ -150,7 +185,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
         }
     }
 
-    public void setShortest(Key start) {
+    public void disjkstra(Key start) {
         System.out.println("Single source Dijkstra activated");
 
         for (Key key : adjacencyLists.getKeySet())
@@ -191,59 +226,24 @@ public abstract class GraphX<Key extends Comparable<Key>> {
         return path;
     }
 
-    /*public FIFOQueue<Key> KruskalMST(){
+    public FIFOQueue<Key> kruskalMST(){
         FIFOQueue<Key> mst = new FIFOQueue<Key>();
         MinPQX pq = new MinPQX();
         for (Key key : adjacencyLists.getKeySet())
             pq.insert(key);
         WeightedQuickUnionUF uf = new WeightedQuickUnionUF(N);
         while (!pq.isEmpty() && mst.size() < N-1) {
-            Key v = pq.delMinSrc();
-            Key w = pq.delMinDst();
+            Edge e = pq.delMin(); // Get min weight edge on pq
+            Key v = e.either(), w = e.other(v);
             if (uf.connected(v, w)) continue; // Ignore ineligible edges.
             uf.union(v, w); // Merge components.
             mst.enqueue(v); // Add edge to mst.
             mst.enqueue(w);
         }
         return mst;
-    }*/
-
-    class Edge implements Comparable<Edge> {
-        private final Key src; // one vertex
-        private final Key dst; // the other vertex
-        private final int weight; // edge weight
-        public Edge(Key src, Key dst, int weight) {
-            this.src = src;
-            this.dst = dst;
-            this.weight = weight;
-        }
-        public double weight() {
-            return weight;
-        }
-        public Key either() {
-            return src;
-        }
-        public Key other(Key vertex) {
-            if (vertex == src) return dst;
-            else if (vertex == dst) return src;
-            else throw new RuntimeException("Inconsistent edge");
-        }
-        public int compareTo(Edge that) {
-            if (this.weight() < that.weight()) return -1;
-            else if (this.weight() > that.weight()) return +1;
-            else return 0;
-        }
-
-        @Override
-        public boolean equals(Object edge){
-            return ((Edge)edge).src.compareTo(src)==0 && ((Edge)edge).dst.compareTo(dst)==0 && ((Edge)edge).compareTo(this)==0;
-        }
-        public String toString() {
-            return String.format("%d-%d %.2f", src, dst, weight);
-        }
     }
-    /*
-    class MinPQX implements Iterable<Key> {
+
+    class MinPQX implements Iterable<Edge> {
         private Key[] pq;                    // store items at indices 1 to n
         private int n;                       // number of items on priority queue
 
@@ -302,7 +302,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             pq[n+1] = null;     // to avoid loiterig and help with garbage collection
             if ((n > 0) && (n == (pq.length - 1) / 4)) xSize(pq.length / 2);
             assert isMinHeap();
-            return min;
+            return (Edge) min;
         }
 
         private void swim(int k) {
@@ -345,11 +345,11 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             return isMinHeap(left) && isMinHeap(right);
         }
 
-        public Iterator<Key> iterator() {
+        public Iterator<Edge> iterator() {
             return new HeapIterator();
         }
 
-        private class HeapIterator implements Iterator<Key> {
+        private class HeapIterator implements Iterator<Edge> {
             // create a new pq
             private MinPQX copy;
 
@@ -364,13 +364,13 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             public boolean hasNext()  { return !copy.isEmpty();                     }
             public void remove()      { throw new UnsupportedOperationException();  }
 
-            public Key next() {
+            public Edge next() {
                 if (!hasNext()) throw new NoSuchElementException();
                 return copy.delMin();
             }
         }
     }
-*/
+
     class WeightedQuickUnionUF {
         private int[] id; // parent link (site indexed)
         private int[] sz; // size of component for roots (site indexed)
@@ -385,7 +385,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
         public int count() {
             return count;
         }
-        public boolean connected(int p, int q) {
+        public boolean connected(Key p, Key q) {
             return find(p) == find(q);
         }
         private int find(int p) {
@@ -393,7 +393,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
             while (p != id[p]) p = id[p];
             return p;
         }
-        public void union(int p, int q) {
+        public void union(Key p, Key q) {
             int i = find(p);
             int j = find(q);
             if (i == j) return;
@@ -921,6 +921,40 @@ class FIFOQueue<Item extends Comparable<Item>> implements Iterable<Item> {
             s.append('[').append(item).append(']');
             if (i-- > 0) {
                 s.append(", ");
+            }
+        }
+        return s.toString();
+    }
+
+    /**
+     * Returns a string representation of this stack.
+     *
+     * @return the sequence of items in this stack in LIFO order
+     */
+    public String UnDiPath() {
+        StringBuilder s = new StringBuilder();
+        int i = this.size() - 1;
+        for (Item item : this) {
+            s.append('[').append(item).append(']');
+            if (i-- > 0) {
+                s.append("-");
+            }
+        }
+        return s.toString();
+    }
+
+    /**
+     * Returns a string representation of this stack.
+     *
+     * @return the sequence of items in this stack in LIFO order
+     */
+    public String DiPath() {
+        StringBuilder s = new StringBuilder();
+        int i = this.size() - 1;
+        for (Item item : this) {
+            s.append('[').append(item).append(']');
+            if (i-- > 0) {
+                s.append("->");
             }
         }
         return s.toString();

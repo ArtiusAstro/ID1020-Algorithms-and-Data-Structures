@@ -33,16 +33,17 @@ public class Q3 {
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
-        grX.setShortest(); // find shortest paths from each vertex to each vertex
+        grX.disjkstra(); // find shortest paths from each vertex to each vertex
+        //grX.setShortest("NY");
         //Symmetry
-        System.out.println(grX.getShortestPath("OH","NY").UnDiPath());
         System.out.println(grX.getShortestPath("NY","OH").UnDiPath());
+        System.out.println(grX.getShortestPath("OH","NY").UnDiPath());
         //Empty path
-        System.out.println(grX.getShortestPath("CA","CA").UnDiPath());
+        System.out.println(grX.getShortestPath("NY","NY").UnDiPath());
         //Long path
-        System.out.println(grX.getShortestPath("CA","FL").UnDiPath());
+        System.out.println(grX.getShortestPath("NY","FL").UnDiPath());
         //Disconnected src & dst
-        System.out.println(grX.getShortestPath("CA","DXB").UnDiPath());
+        System.out.println(grX.getShortestPath("NY","DXB").UnDiPath());
     }
     /*
     --------------------
@@ -51,20 +52,20 @@ public class Q3 {
     N: 49
     E: 107
 
-    Dijkstra activated
-    |OH->NY|
-    Shortest Distance: 196
-    Shortest Path: [OH]-[PA]-[NY]
+    Multi source Dijkstra activated
     |NY->OH|
     Shortest Distance: 196
     Shortest Path: [NY]-[PA]-[OH]
-    |CA->CA|
+    |OH->NY|
+    Shortest Distance: 196
+    Shortest Path: [OH]-[PA]-[NY]
+    |NY->NY|
     Shortest Distance: 0
-    Shortest Path: [CA]
-    |CA->FL|
-    Shortest Distance: 81
-    Shortest Path: [CA]-[AZ]-[NM]-[CO]-[OK]-[AR]-[MS]-[AL]-[FL]
-    |CA->DXB|
+    Shortest Path: [NY]
+    |NY->FL|
+    Shortest Distance: 366
+    Shortest Path: [NY]-[NJ]-[DE]-[MD]-[DC]-[VA]-[NC]-[GA]-[FL]
+    |NY->DXB|
     Disconnected src & dst
      */
 }

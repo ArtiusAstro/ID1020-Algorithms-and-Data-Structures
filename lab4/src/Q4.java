@@ -33,7 +33,7 @@ public class Q4 {
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
-        //System.out.println(grX.minSpanningTree("OH","NY").UnDiPath());
+        System.out.println(grX.kruskalMST().UnDiPath());
     }
     /*
     --------------------
