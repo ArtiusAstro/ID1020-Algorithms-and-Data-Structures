@@ -4,13 +4,13 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
- * Find shortest path between two unweighted graph vertices using DFS
+ * Find a minimum spanning tree for the largest connected component in a weighted graph
  *
  * @author Ayub Atif
  */
-public class Q1 {
+public class Q4 {
     public static void main(String[] args) throws FileNotFoundException {
-        System.out.println("--------------------\nQ1\n--------------------");
+        System.out.println("--------------------\nQ3\n--------------------");
 
         GraphX<String> grX = new UnDiGraph<>();
         String src; String dst;
@@ -29,11 +29,33 @@ public class Q1 {
             e.printStackTrace();
         }
 
-        grX.printGraph();
+        //grX.printGraph();
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
-        grX.DFShortsetNoWeight("CA","NY");
+        //System.out.println(grX.minSpanningTree("OH","NY").UnDiPath());
     }
-}
+    /*
+    --------------------
+    Q3
+    --------------------
+    N: 49
+    E: 107
 
+    Dijkstra activated
+    |OH->NY|
+    Shortest Distance: 196
+    Shortest Path: [OH]-[PA]-[NY]
+    |NY->OH|
+    Shortest Distance: 196
+    Shortest Path: [NY]-[PA]-[OH]
+    |CA->CA|
+    Shortest Distance: 0
+    Shortest Path: [CA]
+    |CA->FL|
+    Shortest Distance: 81
+    Shortest Path: [CA]-[AZ]-[NM]-[CO]-[OK]-[AR]-[MS]-[AL]-[FL]
+    |CA->DXB|
+    Disconnected src & dst
+     */
+}
