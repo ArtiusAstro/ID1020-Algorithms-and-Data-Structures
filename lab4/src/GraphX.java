@@ -2,7 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-abstract class GraphX<Key extends Comparable<Key>> {
+public abstract class GraphX<Key extends Comparable<Key>> {
     int N;
     int E;
     final HashMapX<Key, Bag<Edge>> adjacencyLists = new HashMapX<>();
@@ -52,6 +52,9 @@ abstract class GraphX<Key extends Comparable<Key>> {
     }
     public int getE() {
         return E;
+    }
+    public FIFOQueue<Key> keySet(){
+        return adjacencyLists.getKeySet();
     }
     Bag<Edge> getEdges(Key state) {
         return this.adjacencyLists.get(state);
@@ -111,6 +114,36 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
     DiGraphX(){
         super();
     }
+
+    public boolean checkForConnection(Key start, Key goal) {
+        return this.new DirectedDFS(this, start).marked(goal);
+    }
+    
+    public class DirectedDFS {
+        private HashMapX<Key, Boolean> marked;
+
+        public DirectedDFS(DiGraphX G, Key s) {
+            marked = new HashMapX<>();
+            for (Key key : keySet())
+                marked.put(key,false);
+            dfs(G, s);
+        }
+        public DirectedDFS(DiGraphX G, Iterable<Key> sources) {
+            marked = new HashMapX<>();
+            for (Key key : keySet())
+                marked.put(key,false);
+            for (Key s : sources)
+                if (!marked.get(s)) dfs(G, s);
+        }
+        private void dfs(DiGraphX G, Key v) {
+            marked.put(v, true);
+            Bag<Edge> edges = G.getEdges(v);
+            for (Edge w : edges)
+                if (!marked.get(w.getDst()))
+                    dfs(G, w.getDst());
+        }
+        public boolean marked(Key v) { return marked.get(v); }
+    }
 }
 
 class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
@@ -137,24 +170,23 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
         boolean connected = false;
         Bag<Key> visited = new Bag<>();
         LIFOQueue<Key> stack = new LIFOQueue<>();
-        HashMapX<Key, Integer> distance = new HashMapX<>();
-        for (Key key : adjacencyLists.getKeySet())
+        HashMapX<Key, Integer> distance = shortestDistance.get(start);
+        for (Key key : keySet())
             distance.put(key, Integer.MAX_VALUE);
-        
-        stack.push(start);
+        HashMapX<Key, Key> pre = new HashMapX<>();
         int i=0;
 
-        while (!stack.isEmpty() && !start.equals(goal)){
-            if((start = stack.pop()).equals(goal))
-                connected = true;
-            if(!visited.contains(start)) {
-                System.out.println("visit #"+(++i)+": "+start);
-                visited.add(start);
-            }
+        stack.push(start);
+        visited.add(start);
+        System.out.println("visit #"+(++i)+": "+start);
 
+        while (!stack.isEmpty() && !start.equals(goal)){
             for (Edge edge : getEdges(start)) {
-                if (!visited.contains(edge.getDst()))
+                if (!visited.contains(edge.getDst())) {
                     stack.push(edge.getDst());
+                    visited.add(edge.getDst());
+                    System.out.println("visit #" + (++i) + ": " + start);
+                }
             }
         }
         if(connected) {
@@ -178,8 +210,8 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
         boolean connected = false;
         FIFOQueue<Key> toDoList = new FIFOQueue<>();
         Bag<Key> visited = new Bag<>();
-        HashMapX<Key, Integer> distance = new HashMapX<>();
-        for (Key key : adjacencyLists.getKeySet())
+        HashMapX<Key, Integer> distance = shortestDistance.get(start);
+        for (Key key : keySet())
             distance.put(key, Integer.MAX_VALUE);
         HashMapX<Key, Key> pre = new HashMapX<>();
 
@@ -190,12 +222,12 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
 
         while(!toDoList.isEmpty()){
             start = toDoList.dequeue();
-            //System.out.println("visit #"+(++i)+": "+start);
             try {
                 for (Edge edge : getEdges(start))
                     if (!visited.contains(edge.getDst())) {
                         toDoList.enqueue(edge.getDst());
                         visited.add(edge.getDst());
+                        //System.out.println("visit #"+(++i)+": "+edge.getDst();
                         pre.put(edge.getDst(), start);
                         distance.put(edge.getDst(),distance.get(start)+1);
                     }
@@ -224,9 +256,9 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
 
     public void disjkstra() {
         System.out.println("Multi source Dijkstra activated");
-        for(Key start : adjacencyLists.getKeySet()) {
+        for(Key start : keySet()) {
 
-            for (Key key : adjacencyLists.getKeySet())
+            for (Key key : keySet())
                 shortestDistance.get(start).put(key, Integer.MAX_VALUE);
             FIFOQueue<Key> priorityQueue = new FIFOQueue<>(); //implemented priority queue
             HashMapX<Key, Integer> srcDistances = shortestDistance.get(start);
@@ -253,7 +285,7 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
     public void disjkstra(Key start) {
         System.out.println("Single source Dijkstra activated");
 
-        for (Key key : adjacencyLists.getKeySet())
+        for (Key key : keySet())
             shortestDistance.get(start).put(key, Integer.MAX_VALUE);
         FIFOQueue<Key> priorityQueue = new FIFOQueue<>(); //FIFOQueue implemented priority queue
         HashMapX<Key, Integer> srcDistances = shortestDistance.get(start);
@@ -293,7 +325,7 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
 
     public FIFOQueue<Edge> kruskalMST(){
         FIFOQueue<Edge> mst = new FIFOQueue<>();
-        WQUF wquf = new WQUF(adjacencyLists.getKeySet().toArray());
+        WQUF wquf = new WQUF(keySet().toArray());
         MinPQX<Edge> pq = new MinPQX<>(N);
 
         int i=0;

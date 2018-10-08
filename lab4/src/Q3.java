@@ -12,7 +12,7 @@ class Q3 {
         UnDiGraph<String> grX = new UnDiGraph<>();
         grX.fillGraph("contiguous-usa.txt");
 
-        //grX.printGraph();
+        grX.printGraph();
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
