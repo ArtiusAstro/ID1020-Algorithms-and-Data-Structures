@@ -1,7 +1,7 @@
 import java.io.FileNotFoundException;
 
 /**
- * Find a minimum spanning tree for the largest connected component in a weighted graph
+ * Find directed cycles in the graph (if none exist, add non-trivial edges to test)
  *
  * @author Ayub Atif
  */
@@ -11,12 +11,16 @@ class Q6 {
 
         DiGraphX<String> grX = new DiGraphX<>();
         grX.fillGraph("contiguous-usa.txt");
+        grX.addEdge("WY","CA");
 
         //grX.printGraph();
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
-
+        Iterable<String> cycles = grX.DirectedCycles();
+        System.out.println("print cycle");
+        for(String s : cycles)
+            System.out.print(s+"->");
     }
     /*
 
