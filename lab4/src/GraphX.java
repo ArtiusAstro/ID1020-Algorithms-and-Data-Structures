@@ -339,15 +339,15 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
 
     public LIFOQueue DFShortestPath(Key start, Key goal) {
         return (keySet().contains(start) && keySet().contains(goal)) ?
-                new DFShortest(this, start, goal).shortestPath() : new LIFOQueue<>("Disconnected src & dst");
+                new DFSMinPQ(this, start, goal).shortestPath() : new LIFOQueue<>("Disconnected src & dst");
     }
 
-    private class DFShortest {
+    private class DFSMinPQ {
         private Key goal;
         LIFOQueue<Key> visited = new LIFOQueue<>();
         MinPQX<LIFOQueue<Key>> paths;
 
-        public DFShortest(UnDiGraph<Key> G, Key start, Key goal) {
+        public DFSMinPQ(UnDiGraph<Key> G, Key start, Key goal) {
             paths = new MinPQX<>(G.getN()/10);
             this.goal = goal;
             visited.push(start);
@@ -357,18 +357,17 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
         private void depthFirst(UnDiGraph<Key> G) {
             Bag<Edge> edges = G.getEdges(visited.peek()); // examine adjacent nodes
             for (Edge w : edges) {
-                if (visited.contains(w.getDst()))
-                    continue;
+                if (visited.contains(w.getDst())) continue;
                 if (w.getDst().equals(goal)) {
                     visited.push(w.getDst());
                     addPath();
+                    System.out.println(visited);
                     visited.pop();
                     break;
                 }
             }
             for (Edge w : edges) {
-                if (visited.contains(w.getDst()) || w.getDst().equals(goal))
-                    continue;
+                if (visited.contains(w.getDst()) || w.getDst().equals(goal)) continue;
                 visited.push(w.getDst());
                 depthFirst(G);
                 visited.pop();

@@ -26,7 +26,7 @@ class Q1 {
         //Disconnected src & dst
         System.out.println(grX.DFSPath("NY","DXB"));
 
-        System.out.println(grX.DFShortestPath("NY", "OH"));
+        System.out.println(grX.DFShortestPath("NY", "OH")+"\n");
     }
     /*
     --------------------
