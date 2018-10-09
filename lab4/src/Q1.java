@@ -12,23 +12,25 @@ class Q1 {
         UnDiGraph<String> grX = new UnDiGraph<>();
         grX.fillGraph("contiguous-usa.txt");
 
-        grX.printGraph();
+        //grX.printGraph();
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
         //Symmetry
-        System.out.println(grX.DFShortsetNoWeight("NY","OH"));
-        System.out.println(grX.DFShortsetNoWeight("OH","NY"));
+        System.out.println(grX.DFSPath("NY","OH"));
+        System.out.println(grX.DFSPath("OH","NY"));
         //Empty path
-        System.out.println(grX.DFShortsetNoWeight("NY","NY"));
+        System.out.println(grX.DFSPath("NY","NY"));
         //Long path
-        System.out.println(grX.DFShortsetNoWeight("NY","FL"));
+        System.out.println(grX.DFSPath("NY","FL"));
         //Disconnected src & dst
-        System.out.println(grX.DFShortsetNoWeight("NY","DXB"));
+        System.out.println(grX.DFSPath("NY","DXB"));
+
+        System.out.println(grX.DFShortestPath("NY", "OH"));
     }
     /*
     --------------------
-    Q2
+    Q1
     --------------------
     N: 49
     E: 107
@@ -37,7 +39,7 @@ class Q1 {
     [OH], [WV], [VA], [MD], [PA], [NY]
     [NY]
     [NY], [PA], [WV], [VA], [TN], [NC], [SC], [GA], [FL]
-    [Disconnected src & dst]
+    [Disconnected src/dst]
      */
 }
 
