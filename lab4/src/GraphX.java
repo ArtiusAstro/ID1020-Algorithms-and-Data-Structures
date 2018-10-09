@@ -120,6 +120,25 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
         return this.new DirectedDFS(this, start).marked(goal);
     }
 
+    public LIFOQueue<Key>directedCycles(){
+        DirectedCycle cycle = this.new DirectedCycle(this);
+        return (cycle.hasCycle()) ? cycle.cycle() : new LIFOQueue("Acyclic");
+    }
+
+    public Iterable<Key> topologicalSort(){
+        Topological top = this.new Topological(this);
+        return (top.isDAG()) ? top.order : () -> new Iterator<>() {
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+            @Override
+            public Key next() {
+                return null;
+            }
+        };
+    }
+
     private class DirectedDFS {
         private HashMapX<Key, Boolean> marked;
 
@@ -144,11 +163,6 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
                     dfs(G, w.getDst());
         }
         public boolean marked(Key v) { return marked.get(v); }
-    }
-
-    public LIFOQueue<Key>directedCycles(){
-        DirectedCycle cycle = this.new DirectedCycle(this);
-        return (cycle.hasCycle()) ? cycle.cycle() : new LIFOQueue<>((Key)"Acyclic");
     }
 
     private class DirectedCycle {
@@ -203,65 +217,58 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
         public boolean hasCycle() { return cycle != null; }
         public LIFOQueue<Key> cycle() { return cycle; }
     }
-    /*
-    class DepthFirstOrder {
-        private boolean[] marked;
-        private Queue<Integer> pre; // vertices in preorder
-        private Queue<Integer> post; // vertices in postorder
-        private Stack<Integer> reversePost; // vertices in reverse postorder
-        public DepthFirstOrder(Digraph G)
-        {
-            pre = new Queue<Integer>();
-            post = new Queue<Integer>();
-            reversePost = new Stack<Integer>();
-            marked = new boolean[G.V()];
-            for (int v = 0; v < G.V(); v++)
-                if (!marked[v]) dfs(G, v);
-        }
-        private void dfs(Digraph G, int v)
-        {
-            pre.enqueue(v);
-            marked[v] = true;
-            for (int w : G.adj(v))
-                if (!marked[w])
-                    dfs(G, w);
-            post.enqueue(v);
-            reversePost.push(v);
-        }
-        public Iterable<Integer> pre()
-        { return pre; }
-        public Iterable<Integer> post()
-        { return post; }
-        public Iterable<Integer> reversePost()
-        { return reversePost; }
-    }
 
-    class Topological {
-        private Iterable<Integer> order; // topological order
-        public Topological(Digraph G)
-        {
+    private class Topological {
+        private Iterable<Key> order; // topological order
+        public Topological(DiGraphX<Key> G) {
             DirectedCycle cyclefinder = new DirectedCycle(G);
-            if (!cyclefinder.hasCycle())
-            {
+            if (!cyclefinder.hasCycle()) {
                 DepthFirstOrder dfs = new DepthFirstOrder(G);
                 order = dfs.reversePost();
             }
         }
-        public Iterable<Integer> order()
-        { return order; }
-        public boolean isDAG()
-        { return order == null; }
-        public static void main(String[] args)
-        {
-            String filename = args[0];
-            String separator = args[1];
-            SymbolDigraph sg = new SymbolDigraph(filename, separator);
-            Topological top = new Topological(sg.G());
-            for (int v : top.order())
-                StdOut.println(sg.name(v));
+        public Iterable<Key> order() {
+            return order;
+        }
+        public boolean isDAG() {
+            return order != null;
+        }
+
+        private class DepthFirstOrder {
+            private HashMapX<Key,Boolean> marked;
+            private FIFOQueue<Key> pre; // vertices in preorder
+            private FIFOQueue<Key> post; // vertices in postorder
+            private LIFOQueue<Key> reversePost; // vertices in reverse postorder
+            public DepthFirstOrder(DiGraphX<Key> G) {
+                pre = new FIFOQueue<>();
+                post = new FIFOQueue<>();
+                reversePost = new LIFOQueue<>();
+                marked = new HashMapX<>();
+                for (Key key : G.keySet())
+                    marked.put(key,false);
+                for (Key key : G.keySet())
+                    if (!marked.get(key)) dfs(G, key);
+            }
+            private void dfs(DiGraphX<Key> G, Key v) {
+                pre.enqueue(v);
+                marked.put(v, true);
+                for (Edge w : G.getEdges(v))
+                    if (!marked.get(w.getDst()))
+                        dfs(G, w.getDst());
+                post.enqueue(v);
+                reversePost.push(v);
+            }
+            public Iterable<Key> pre() {
+                return pre;
+            }
+            public Iterable<Key> post() {
+                return post;
+            }
+            public Iterable<Key> reversePost() {
+                return reversePost;
+            }
         }
     }
-    */
 }
 
 class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
