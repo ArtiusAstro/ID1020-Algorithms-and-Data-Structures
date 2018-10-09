@@ -19,14 +19,14 @@ class Q3 {
         grX.disjkstra(); // find shortest paths from each vertex to each vertex
         //grX.setShortest("NY");
         //Symmetry
-        System.out.println(grX.getShortestPath("NY","OH").UnDiPath());
-        System.out.println(grX.getShortestPath("OH","NY").UnDiPath());
+        System.out.println(grX.diskjtraShortestPath("NY","OH").UnDiPath());
+        System.out.println(grX.diskjtraShortestPath("OH","NY").UnDiPath());
         //Empty path
-        System.out.println(grX.getShortestPath("NY","NY").UnDiPath());
+        System.out.println(grX.diskjtraShortestPath("NY","NY").UnDiPath());
         //Long path
-        System.out.println(grX.getShortestPath("AL","GA").UnDiPath());
+        System.out.println(grX.diskjtraShortestPath("AL","GA").UnDiPath());
         //Disconnected src & dst
-        System.out.println(grX.getShortestPath("NY","DXB").UnDiPath());
+        System.out.println(grX.diskjtraShortestPath("NY","DXB").UnDiPath());
     }
     /*
     --------------------
