@@ -16,17 +16,7 @@ class Q1 {
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
-        //Symmetry
-        System.out.println(grX.DFSPath("NY","OH").UnDiPath());
-        System.out.println(grX.DFSPath("OH","NY").UnDiPath());
-        //Empty path
-        System.out.println(grX.DFSPath("NY","NY").UnDiPath());
-        //Long path
-        System.out.println(grX.DFSPath("NY","FL").UnDiPath());
-        //Disconnected src & dst
-        System.out.println(grX.DFSPath("NY","DXB").UnDiPath());
-
-        System.out.println("Is:   "+grX.DFShortestPath("NY", "OH").UnDiPath());
+        System.out.println(grX.DFSPath("NY", "OH"));
     }
     /*
     --------------------
