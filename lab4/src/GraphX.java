@@ -294,49 +294,6 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
         parents.put(state, new HashMapX<>());
     }
 
-    public LIFOQueue<Key> DFSPath(Key start, Key goal) {
-        return (keySet().contains(start) && keySet().contains(goal)) ?
-                new DepthFirstPath(this, start).pathTo(goal) : new LIFOQueue("Disconnected src/dst");
-    }
-
-    private class DepthFirstPath {
-        private HashMapX<Key, Boolean> marked; // Has dfs() been called for this vertex?
-        private final Key s; // source
-
-        public DepthFirstPath(UnDiGraph<Key> G, Key s) {
-            marked = new HashMapX<>();
-            for (Key key : G.keySet())
-                marked.put(key, false);
-            parents = new HashMapX<>();
-            parents.put(s, new HashMapX<>());
-            this.s = s;
-            dfs(G, s);
-        }
-
-        private void dfs(UnDiGraph<Key> G, Key v) {
-            marked.put(v, true);
-            for (Edge w : G.getEdges(v))
-                if (!marked.get(w.getDst())) {
-                    parents.get(s).put(w.getDst(), v);
-                    dfs(G, w.getDst());
-                }
-        }
-
-        public boolean hasPathTo(Key v) {
-            return marked.get(v);
-        }
-
-        public LIFOQueue<Key> pathTo(Key v) {
-            if (!hasPathTo(v)) return null;
-            LIFOQueue<Key> path = new LIFOQueue<>();
-            for (Key x = v; x != s; x = parents.get(s).get(x))
-                path.push(x);
-            path.push(s);
-            return path;
-        }
-
-    }
-
     public LIFOQueue DFShortestPath(Key start, Key goal) {
         return (keySet().contains(start) && keySet().contains(goal)) ?
                 new DFSMinPQ(this, start, goal).shortestPath() : new LIFOQueue<>("Disconnected src & dst");
@@ -345,6 +302,7 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
     private class DFSMinPQ {
         private Key goal;
         LIFOQueue<Key> visited = new LIFOQueue<>();
+        LIFOQueue<Key> min = new LIFOQueue<>();
         MinPQX<LIFOQueue<Key>> paths;
 
         public DFSMinPQ(UnDiGraph<Key> G, Key start, Key goal) {
@@ -360,8 +318,9 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
                 if (visited.contains(w.getDst())) continue;
                 if (w.getDst().equals(goal)) {
                     visited.push(w.getDst());
-                    addPath();
-                    System.out.println(visited);
+                    addPath(visited);
+                    paths.insert(visited);
+                    System.out.println('A');
                     visited.pop();
                     break;
                 }
@@ -369,22 +328,18 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
             for (Edge w : edges) {
                 if (visited.contains(w.getDst()) || w.getDst().equals(goal)) continue;
                 visited.push(w.getDst());
+                if(paths.size()>2) return;
                 depthFirst(G);
                 visited.pop();
             }
         }
 
-        private void addPath() {
-            paths.insert(visited);
-        }
-
-        public MinPQX<LIFOQueue<Key>> getPaths(){
-            return paths;
+        private void addPath(LIFOQueue<Key> visited) {
+            if (visited.size()<min.size())
+                min=visited;
         }
 
         public LIFOQueue<Key> shortestPath(){
-            LIFOQueue<Key> min = paths.delMin();
-            paths.insert(min);
             return min;
         }
     }
@@ -550,6 +505,49 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
         }
 
     }
+
+    public LIFOQueue<Key> DFSPath(Key start, Key goal) {
+        return (keySet().contains(start) && keySet().contains(goal)) ?
+                new DepthFirstPath(this, start).pathTo(goal) : new LIFOQueue("Disconnected src/dst");
+    }
+
+    private class DepthFirstPath {
+        private HashMapX<Key, Boolean> marked; // Has dfs() been called for this vertex?
+        private final Key s; // source
+
+        public DepthFirstPath(UnDiGraph<Key> G, Key s) {
+            marked = new HashMapX<>();
+            for (Key key : G.keySet())
+                marked.put(key, false);
+            parents = new HashMapX<>();
+            parents.put(s, new HashMapX<>());
+            this.s = s;
+            dfs(G, s);
+        }
+
+        private void dfs(UnDiGraph<Key> G, Key v) {
+            marked.put(v, true);
+            for (Edge w : G.getEdges(v))
+                if (!marked.get(w.getDst())) {
+                    parents.get(s).put(w.getDst(), v);
+                    dfs(G, w.getDst());
+                }
+        }
+
+        public boolean hasPathTo(Key v) {
+            return marked.get(v);
+        }
+
+        public LIFOQueue<Key> pathTo(Key v) {
+            if (!hasPathTo(v)) return null;
+            LIFOQueue<Key> path = new LIFOQueue<>();
+            for (Key x = v; x != s; x = parents.get(s).get(x))
+                path.push(x);
+            path.push(s);
+            return path;
+        }
+
+    }
 }
 
 class HashMapX<Key extends Comparable<Key>, Value> {
@@ -709,7 +707,7 @@ class LIFOQueue<Item> implements Iterable<Item>, Comparable {
 
     @Override
     public int compareTo(Object other) {
-        return Integer.compare(this.size,((LIFOQueue)other).size);
+        return Integer.compare(this.size(),((LIFOQueue)other).size());
     }
 
     /**
@@ -1096,7 +1094,7 @@ class MinPQX<T extends Comparable> implements Iterable<T> {
         return n == 0;
     }
 
-    private int size() {
+    public int size() {
         return n;
     }
 
@@ -1147,6 +1145,13 @@ class MinPQX<T extends Comparable> implements Iterable<T> {
             exch(pq, k, j);
             k = j;
         }
+    }
+
+    public boolean contains(T dst){
+        for (T item : this)
+        if(item.equals(dst))
+            return true;
+        return false;
     }
 
     private boolean more(Comparable v, Comparable w){
