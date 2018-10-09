@@ -146,17 +146,18 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
         public boolean marked(Key v) { return marked.get(v); }
     }
 
-    public Iterable<Key>DirectedCycles(){
+    public LIFOQueue<Key>directedCycles(){
         DirectedCycle cycle = this.new DirectedCycle(this);
-        System.out.println(cycle.hasCycle());
-        return (cycle.hasCycle()) ? cycle.cycle() : new Stack<>();
+        return (cycle.hasCycle()) ? cycle.cycle() : new LIFOQueue<>((Key)"Acyclic");
     }
 
     private class DirectedCycle {
         private HashMapX<Key, Boolean> marked;
         private HashMapX<Key, Key> edgeTo;
-        private Stack<Key> cycle; // vertices on a cycle (if one exists)
+        private LIFOQueue<Key> cycle; // vertices on a cycle (if one exists)
         private HashMapX<Key, Boolean> onStack; // vertices on recursive call stack
+        private Bag<Edge> edges;
+        Key dst;
         public DirectedCycle(DiGraphX G) {
             onStack = new HashMapX<>();
             edgeTo = new HashMapX<>();
@@ -167,31 +168,40 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
                 onStack.put(key, false);
             }
             for (Key key : keys)
-                if (!marked.get(key)) dfs(G, key);
+                if (!marked.get(key))
+                    dfs(G, key);
         }
         private void dfs(DiGraphX G, Key v) {
+            //System.out.println("Key:"+v);
             onStack.put(v,true);
             marked.put(v,true);
-            Bag<Edge> edges = G.getEdges(v);
+            edges = G.getEdges(v);
             for (Edge w : edges) {
+                dst = w.getDst();
                 if (hasCycle()) return;
-                else if (!marked.get(w.getDst())) {
-                    edgeTo.put(w.getDst(), v);
+                else if (!marked.get(dst)) {
+                    //System.out.println(dst+" is not marked");
+                    edgeTo.put(dst, v);
                     dfs(G, w.getDst());
-                } else if (onStack.get(w.getDst())) {
-                    cycle = new Stack<>();
-                    System.out.println(v);
-                    System.out.println(w.getDst());
-                    for (Key x = v; x != w.getDst() && x!=null; x = edgeTo.get(x))
+                } else if (onStack.get(dst)) {
+                    //System.out.println(dst+" is on the stack");
+                    cycle = new LIFOQueue<>();
+
+                    edgeTo.put(dst, v);
+                    cycle.push(dst);
+                    int exit=0;
+                    for (Key x = v; exit<1; x=edgeTo.get(x)) {
+                        if (x.equals(dst)) exit++;
                         cycle.push(x);
-                    cycle.push(w.getDst());
-                    cycle.push(v);
+                    }
                 }
+                //System.out.println(dst+" is already marked");
             }
+            //System.out.println(v+" is off stack");
             onStack.put(v, false);
         }
         public boolean hasCycle() { return cycle != null; }
-        public Iterable<Key> cycle() { return cycle; }
+        public LIFOQueue<Key> cycle() { return cycle; }
     }
     /*
     class DepthFirstOrder {
@@ -681,6 +691,12 @@ class LIFOQueue<Item> implements Iterable<Item> {
     public LIFOQueue() {
         top = null;
         size = 0;
+    }
+
+    public LIFOQueue(Item def) {
+        top = null;
+        size = 0;
+        this.push(def);
     }
 
     /**
