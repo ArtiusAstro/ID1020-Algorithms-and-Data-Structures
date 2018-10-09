@@ -12,7 +12,7 @@ class Q3 {
         UnDiGraph<String> grX = new UnDiGraph<>();
         grX.fillGraph("contiguous-usa.txt");
 
-        grX.printGraph();
+        //grX.printGraph();
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
@@ -24,7 +24,7 @@ class Q3 {
         //Empty path
         System.out.println(grX.getShortestPath("NY","NY").UnDiPath());
         //Long path
-        System.out.println(grX.getShortestPath("NY","FL").UnDiPath());
+        System.out.println(grX.getShortestPath("AL","GA").UnDiPath());
         //Disconnected src & dst
         System.out.println(grX.getShortestPath("NY","DXB").UnDiPath());
     }

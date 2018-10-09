@@ -17,14 +17,15 @@ class Q2 {
         System.out.println("E: "+grX.getE()+"\n");
 
         //Symmetry
-        System.out.println(grX.BFShortsetNoWeight("NY","OH").UnDiPath());
-        System.out.println(grX.BFShortsetNoWeight("OH","NY").UnDiPath());
+        for(String s : grX.BFShortsetNoWeight("NY","OH")) System.out.print(s+"-");
+        for(String s : grX.BFShortsetNoWeight("OH","NY")) System.out.print(s+"-");
         //Empty path
-        System.out.println(grX.BFShortsetNoWeight("NY","NY").UnDiPath());
+        for(String s : grX.BFShortsetNoWeight("NY","NY")) System.out.print(s+"-");
         //Long path
-        System.out.println(grX.BFShortsetNoWeight("NY","FL").UnDiPath());
+        for(String s : grX.BFShortsetNoWeight("NY","FL")) System.out.print(s+"-");
         //Disconnected src & dst
-        System.out.println(grX.BFShortsetNoWeight("NY","DXB").UnDiPath());
+        for(String s : grX.BFShortsetNoWeight("NY","DxB")) System.out.print(s+"-");
+
     }
     /*
     --------------------

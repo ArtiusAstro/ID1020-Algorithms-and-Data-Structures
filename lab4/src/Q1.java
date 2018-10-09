@@ -17,14 +17,27 @@ class Q1 {
         System.out.println("E: "+grX.getE()+"\n");
 
         //Symmetry
-        System.out.println(grX.DFShortsetNoWeight("NY","OH").UnDiPath());
-        System.out.println(grX.DFShortsetNoWeight("OH","NY").UnDiPath());
+        System.out.println(grX.DFShortsetNoWeight("NY","OH"));
+        System.out.println(grX.DFShortsetNoWeight("OH","NY"));
         //Empty path
-        System.out.println(grX.DFShortsetNoWeight("NY","NY").UnDiPath());
+        System.out.println(grX.DFShortsetNoWeight("NY","NY"));
         //Long path
-        System.out.println(grX.DFShortsetNoWeight("NY","FL").UnDiPath());
+        System.out.println(grX.DFShortsetNoWeight("NY","FL"));
         //Disconnected src & dst
-        System.out.println(grX.DFShortsetNoWeight("NY","DXB").UnDiPath());
+        System.out.println(grX.DFShortsetNoWeight("NY","DXB"));
     }
+    /*
+    --------------------
+    Q2
+    --------------------
+    N: 49
+    E: 107
+
+    [NY], [PA], [WV], [VA], [TN], [NC], [SC], [GA], [FL], [AL], [MS], [LA], [TX], [OK], [NM], [CO], [WY], [UT], [NV], [OR], [WA], [ID], [MT], [SD], [NE], [MO], [KY], [OH]
+    [OH], [WV], [VA], [MD], [PA], [NY]
+    [NY]
+    [NY], [PA], [WV], [VA], [TN], [NC], [SC], [GA], [FL]
+    [Disconnected src & dst]
+     */
 }
 

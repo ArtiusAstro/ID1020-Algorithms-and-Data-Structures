@@ -16,7 +16,7 @@ class Q6 {
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
-        LIFOQueue<String> cycles = grX.directedCycles();
+        Iterable<String> cycles = grX.directedCycles();
         System.out.println("Print cycle");
         for(String s : cycles)
             System.out.print(s+"->");

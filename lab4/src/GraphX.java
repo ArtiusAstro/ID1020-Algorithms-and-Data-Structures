@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.security.Key;
 import java.util.*;
 
 public abstract class GraphX<Key extends Comparable<Key>> {
@@ -7,7 +8,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
     int E;
     final HashMapX<Key, Bag<Edge>> adjacencyLists = new HashMapX<>();
     final HashMapX<Key, HashMapX<Key, Integer>> shortestDistance = new HashMapX<>();
-    HashMapX<Key, HashMapX<Key, Key>> parents = new HashMapX<>(); // for disjkrtas shortest path
+
     LIFOQueue<Edge> edgeSet = new LIFOQueue<>();
 
     class Edge implements Comparable<Edge> {
@@ -64,7 +65,6 @@ public abstract class GraphX<Key extends Comparable<Key>> {
         if (this.adjacencyLists.containsKey(state))
             return;
         shortestDistance.put(state, new HashMapX<>());
-        parents.put(state, new HashMapX<>());
         this.adjacencyLists.put(state, new Bag<>());
         N++;
     }
@@ -120,7 +120,7 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
         return this.new DirectedDFS(this, start).marked(goal);
     }
 
-    public LIFOQueue<Key>directedCycles(){
+    public Iterable<Key>directedCycles(){
         DirectedCycle cycle = this.new DirectedCycle(this);
         return (cycle.hasCycle()) ? cycle.cycle() : new LIFOQueue("Acyclic");
     }
@@ -170,27 +170,24 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
         private HashMapX<Key, Key> edgeTo;
         private LIFOQueue<Key> cycle; // vertices on a cycle (if one exists)
         private HashMapX<Key, Boolean> onStack; // vertices on recursive call stack
-        private Bag<Edge> edges;
-        Key dst;
-        public DirectedCycle(DiGraphX G) {
+        private Key dst;
+        public DirectedCycle(DiGraphX<Key> G) {
             onStack = new HashMapX<>();
             edgeTo = new HashMapX<>();
             marked = new HashMapX<>();
-            FIFOQueue<Key> keys = G.keySet();
-            for (Key key : keys) {
+            for (Key key : G.keySet()) {
                 marked.put(key, false);
                 onStack.put(key, false);
             }
-            for (Key key : keys)
+            for (Key key : G.keySet())
                 if (!marked.get(key))
                     dfs(G, key);
         }
-        private void dfs(DiGraphX G, Key v) {
+        private void dfs(DiGraphX<Key> G, Key v) {
             //System.out.println("Key:"+v);
             onStack.put(v,true);
             marked.put(v,true);
-            edges = G.getEdges(v);
-            for (Edge w : edges) {
+            for (Edge w : G.getEdges(v)) {
                 dst = w.getDst();
                 if (hasCycle()) return;
                 else if (!marked.get(dst)) {
@@ -272,6 +269,8 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
 }
 
 class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
+    private HashMapX<Key, HashMapX<Key, Key>> parents = new HashMapX<>(); // parents for pathing
+
     public UnDiGraph(){
         super();
     }
@@ -290,55 +289,80 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
         return this.adjacencyLists.get(src).contains(new Edge(src, dst, 0)) || this.adjacencyLists.get(dst).contains(new Edge(dst, src, 0));
     }
 
-    public LIFOQueue<Key> DFShortsetNoWeight(Key start, Key goal){
-        System.out.println("|"+start+"->"+goal+"|");
-        boolean connected = false;
-        Bag<Key> visited = new Bag<>();
-        LIFOQueue<Key> stack = new LIFOQueue<>();
-        HashMapX<Key, Integer> distance = shortestDistance.get(start);
-        for (Key key : keySet())
-            distance.put(key, Integer.MAX_VALUE);
-        HashMapX<Key, Key> pre = new HashMapX<>();
-        int i=0;
+    @Override
+    void addVertex(Key state) {
+        super.addVertex(state);
+        parents.put(state, new HashMapX<>());
+    }
 
-        stack.push(start);
-        visited.add(start);
-        System.out.println("visit #"+(++i)+": "+start);
+    public LIFOQueue<Key> DFShortsetNoWeight(Key start, Key goal) {
+        if(!keySet().contains(start) || !keySet().contains(goal))
+            return new LIFOQueue("Disconnected src & dst");
+        int z=0;
+        LIFOQueue<Key> path = (LIFOQueue<Key>) this.new DepthFirstPaths(this, start, z++).pathTo(goal);
+        LIFOQueue<Key> min = path;
+        /*
+        Bag<Iterable> pathBag = new Bag<>();
+        while (!pathBag.contains(path)){
+            pathBag.add(path);
+            System.out.println(min);
+            path = (LIFOQueue<Key>) this.new DepthFirstPaths(this, start, z++).pathTo(goal);
+            System.out.println(path);
+            if (path.size()<min.size()) min=path;
+        }
+        */
+        return (keySet().contains(start) && keySet().contains(goal)) ?
+        min : new LIFOQueue("Invalid src/dst");
+    }
 
-        while (!stack.isEmpty() && !start.equals(goal)){
-            for (Edge edge : getEdges(start)) {
-                if (!visited.contains(edge.getDst())) {
-                    stack.push(edge.getDst());
-                    visited.add(edge.getDst());
-                    System.out.println("visit #" + (++i) + ": " + start);
+    private class DepthFirstPaths {
+        private HashMapX<Key, Boolean> marked; // Has dfs() been called for this vertex?
+        private final Key s; // source
+        int x=0; // search hit counter
+        int z;
+        public DepthFirstPaths(UnDiGraph<Key> G, Key s, int z) {
+            marked = new HashMapX<>();
+            for (Key key : G.keySet())
+                marked.put(key, false);
+            parents = new HashMapX<>();
+            parents.put(s, new HashMapX<>());
+            this.s = s;
+            this.z=z;
+            dfs(G, s);
+        }
+        private void dfs(UnDiGraph<Key> G, Key v) {
+            marked.put(v, true);
+            for (Edge w : G.getEdges(v))
+                if (!marked.get(w.getDst())) {
+                    parents.get(s).put(w.getDst(), v);
+                    dfs(G, w.getDst());
                 }
-            }
+                if (x++<z) {
+                    parents.put(s, new HashMapX<>());
+                    System.out.println(x+"->"+z);
+                    dfs(G, s);
+                }
         }
-        if(connected) {
-            System.out.print("Shortest Distance: "+distance.get(goal)+"\nShortest Path: ");
+        public boolean hasPathTo(Key v) { return marked.get(v); }
+        public Iterable<Key> pathTo(Key v) {
+            if (!hasPathTo(v)) return null;
             LIFOQueue<Key> path = new LIFOQueue<>();
-            path.push(goal);
-            while (pre.get(goal) != null) {
-                path.push(pre.get(goal));
-                goal = pre.get(goal);
-            }
+            for (Key x = v; x != s; x = parents.get(s).get(x))
+                path.push(x);
+            path.push(s);
             return path;
-        }
-        else {
-            System.out.println("Disconnected src & dst");
-            return new LIFOQueue<>();
         }
     }
 
     public LIFOQueue<Key> BFShortsetNoWeight(Key start, Key goal){
         System.out.println("|"+start+"->"+goal+"|");
-        boolean connected = false;
         FIFOQueue<Key> toDoList = new FIFOQueue<>();
         Bag<Key> visited = new Bag<>();
         HashMapX<Key, Integer> distance = shortestDistance.get(start);
         for (Key key : keySet())
             distance.put(key, Integer.MAX_VALUE);
-        HashMapX<Key, Key> pre = new HashMapX<>();
+        parents.put(start, new HashMapX<>());
+        HashMapX<Key, Key> pre = parents.get(start);
 
         toDoList.enqueue(start);
         visited.add(start);
@@ -359,56 +383,28 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
             } catch (NullPointerException e) { break; }
 
             if(start.equals(goal)){
-                connected=true;
-                break;
+                System.out.print("Shortest Distance: "+distance.get(goal)+"\nShortest Path: ");
+                LIFOQueue<Key> path = new LIFOQueue<>();
+                path.push(goal);
+                while (pre.get(goal) != null) {
+                    path.push(pre.get(goal));
+                    goal = pre.get(goal);
+                }
+                return path;
             }
         }
-        if(connected) {
-            System.out.print("Shortest Distance: "+distance.get(goal)+"\nShortest Path: ");
-            LIFOQueue<Key> path = new LIFOQueue<>();
-            path.push(goal);
-            while (pre.get(goal) != null) {
-                path.push(pre.get(goal));
-                goal = pre.get(goal);
-            }
-            return path;
-        }
-        else {
-            System.out.println("Disconnected src & dst");
-            return new LIFOQueue<>();
-        }
+        System.out.println("Disconnected src & dst");
+        return new LIFOQueue<>();
     }
 
     public void disjkstra() {
         System.out.println("Multi source Dijkstra activated");
-        for(Key start : keySet()) {
-
-            for (Key key : keySet())
-                shortestDistance.get(start).put(key, Integer.MAX_VALUE);
-            FIFOQueue<Key> priorityQueue = new FIFOQueue<>(); //implemented priority queue
-            HashMapX<Key, Integer> srcDistances = shortestDistance.get(start);
-
-            priorityQueue.enqueue(start);
-            srcDistances.put(start, 0);
-
-            while (!priorityQueue.isEmpty()) {
-                priorityQueue.sort();
-                Key a = priorityQueue.dequeue();
-                for (Edge b : getEdges(a)) {
-                    int distFromA = srcDistances.get(a) + b.getWeight();
-                    if (distFromA < srcDistances.get(b.getDst())) {
-                        priorityQueue.remove(b.getDst());
-                        srcDistances.put(b.getDst(), distFromA);
-                        parents.get(start).put(b.getDst(), a);
-                        priorityQueue.enqueue(b.getDst());
-                    }
-                }
-            }
-        }
+        for(Key start : keySet())
+            disjkstra(start);
     }
 
     public void disjkstra(Key start) {
-        System.out.println("Single source Dijkstra activated");
+        if(!keySet().contains(start)) return;
 
         for (Key key : keySet())
             shortestDistance.get(start).put(key, Integer.MAX_VALUE);
@@ -441,10 +437,8 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
         }
         System.out.print("Shortest Distance: "+shortestDistance.get(start).get(goal)+"\nShortest Path: ");
         LIFOQueue<Key> path = new LIFOQueue<>();
-        for(Key end = goal; end!=null; end = parents.get(start).get(end)){
+        for(Key end = goal; end!=null; end = parents.get(start).get(end))
             path.push(end);
-        }
-
         return path;
     }
 
@@ -477,7 +471,7 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
         return mst;
     }
 
-    class WQUF {
+    private class WQUF {
         private final HashMapX<Key, Key> components = new HashMapX<>();
         private final HashMapX<Key, Integer> treeSizes = new HashMapX<>();
 
@@ -687,7 +681,7 @@ class LIFOQueue<Item> implements Iterable<Item> {
         private final Item item;
         private Node next;
 
-        Node(Item item){
+        Node(Item item) {
             this.item = item;
         }
     }
@@ -732,7 +726,7 @@ class LIFOQueue<Item> implements Iterable<Item> {
     public void push(Item item) {
         Node tmp = top;
         top = new Node(item);
-        if(!isEmpty())
+        if (!isEmpty())
             top.next = tmp;
         size++;
     }
@@ -763,10 +757,10 @@ class LIFOQueue<Item> implements Iterable<Item> {
         return top.item;
     }
 
-    public Item[] toArray(){
+    public Item[] toArray() {
         Item[] proxy = (Item[]) new Comparable[size];
         Node current = top;
-        for (int i=0;i<size;current=current.next)
+        for (int i = 0; i < size; current = current.next)
             proxy[i++] = current.item;
         return proxy;
     }
@@ -776,7 +770,9 @@ class LIFOQueue<Item> implements Iterable<Item> {
      *
      * @return an iterator that LIFO iterates
      */
-    public Iterator<Item> iterator()  { return new ListIterator();  }
+    public Iterator<Item> iterator() {
+        return new ListIterator();
+    }
 
     private class ListIterator implements Iterator<Item> {
         private Node current = top;
@@ -801,10 +797,10 @@ class LIFOQueue<Item> implements Iterable<Item> {
      */
     public String toString() {
         StringBuilder s = new StringBuilder();
-        int i = this.size()-1;
+        int i = this.size() - 1;
         for (Item item : this) {
             s.append('[').append(item).append(']');
-            if(i-- > 0) {
+            if (i-- > 0) {
                 s.append(", ");
             }
         }
@@ -812,7 +808,7 @@ class LIFOQueue<Item> implements Iterable<Item> {
     }
 
     /**
-     * Returns a string representation of this stack.
+     * Returns a undirected vertex path representation of this stack.
      *
      * @return the sequence of items in this stack in LIFO order
      */
@@ -823,23 +819,6 @@ class LIFOQueue<Item> implements Iterable<Item> {
             s.append('[').append(item).append(']');
             if (i-- > 0) {
                 s.append("-");
-            }
-        }
-        return s.toString();
-    }
-
-    /**
-     * Returns a string representation of this stack.
-     *
-     * @return the sequence of items in this stack in LIFO order
-     */
-    public String DiPath() {
-        StringBuilder s = new StringBuilder();
-        int i = this.size() - 1;
-        for (Item item : this) {
-            s.append('[').append(item).append(']');
-            if (i-- > 0) {
-                s.append("->");
             }
         }
         return s.toString();
@@ -1034,40 +1013,6 @@ class FIFOQueue<Item extends Comparable<Item>> implements Iterable<Item> {
             s.append('[').append(item).append(']');
             if (i-- > 0) {
                 s.append(", ");
-            }
-        }
-        return s.toString();
-    }
-
-    /**
-     * Returns a string representation of this stack.
-     *
-     * @return the sequence of items in this stack in LIFO order
-     */
-    public String UnDiPath() {
-        StringBuilder s = new StringBuilder();
-        int i = this.size() - 1;
-        for (Item item : this) {
-            s.append('[').append(item).append(']');
-            if (i-- > 0) {
-                s.append("-");
-            }
-        }
-        return s.toString();
-    }
-
-    /**
-     * Returns a string representation of this stack.
-     *
-     * @return the sequence of items in this stack in LIFO order
-     */
-    public String DiPath() {
-        StringBuilder s = new StringBuilder();
-        int i = this.size() - 1;
-        for (Item item : this) {
-            s.append('[').append(item).append(']');
-            if (i-- > 0) {
-                s.append("->");
             }
         }
         return s.toString();
