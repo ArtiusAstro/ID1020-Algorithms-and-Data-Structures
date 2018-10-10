@@ -24,7 +24,7 @@ class Q3 {
         //Empty path
         System.out.println(grX.diskjtraShortestPath("NY","NY").UnDiPath());
         //Long path
-        System.out.println(grX.diskjtraShortestPath("AL","GA").UnDiPath());
+        System.out.println(grX.diskjtraShortestPath("UT","WY").UnDiPath());
         //Disconnected src & dst
         System.out.println(grX.diskjtraShortestPath("NY","DXB").UnDiPath());
     }
@@ -45,9 +45,9 @@ class Q3 {
     |NY->NY|
     Shortest Distance: 0
     Shortest Path: [NY]
-    |NY->FL|
-    Shortest Distance: 318
-    Shortest Path: [NY]-[NJ]-[DE]-[MD]-[DC]-[VA]-[TN]-[AL]-[FL]
+    |UT->WY|
+    Shortest Distance: 43
+    Shortest Path: [UT]-[CO]-[WY]
     |NY->DXB|
     Disconnected src & dst
      */

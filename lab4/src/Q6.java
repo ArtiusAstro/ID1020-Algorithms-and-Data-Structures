@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.util.List;
 
 /**
  * Find directed cycles in the graph (if none exist, add non-trivial edges to test)
@@ -16,19 +17,21 @@ class Q6 {
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
+
+
         Iterable<String> cycles = grX.directedCycles();
         System.out.println("Print cycle");
         for(String s : cycles)
             System.out.print(s+"->");
+        System.out.println("done");
 
-        grX.addEdge("WY","CA");
-        System.out.println("\n\ngrX.addEdge(\"WY\",\"CA\");");
-        System.out.println("N: "+grX.getN());
-        System.out.println("E: "+grX.getE()+"\n");
+        grX.addEdge("WY","CA"); System.out.println("\n\ngrX.addEdge(\"WY\",\"CA\");");
+
         cycles = grX.directedCycles();
         System.out.println("Print cycle");
         for(String s : cycles)
             System.out.print(s+"->");
+        System.out.println("done");
     }
     /*
     --------------------
