@@ -258,8 +258,48 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
         }
     }
 
-    public class Kosaraju {
-        
+    public boolean kosarajuCycle(){
+        for (Key key : keySet())
+            if (new Kosaraju(this, key).hasCycle())
+                return true;
+        return false;
+    }
+
+    private class Kosaraju {
+        private HashMapX<Key, Boolean> marked = new HashMapX<>();
+        private HashMapX<Key, Boolean> onStack = new HashMapX<>();
+        private Key s;
+        private boolean hasCycle;
+
+        public Kosaraju(DiGraphX g, Key s) {
+            this.s = s;
+            for(Key goal : keySet()) {
+                marked.put(goal, false);
+                onStack.put(goal, false);
+            }
+            findCycle(g,s);
+        }
+
+        public boolean hasCycle() {
+            return hasCycle;
+        }
+
+        public void findCycle(DiGraphX<Key> g, Key v) {
+
+            marked.put(v, true);
+            marked.put(v, true);
+
+            for (Edge e : g.getEdges(v)) {
+                if(!marked.get(e.getDst())) {
+                    findCycle(g,e.getDst());
+                } else if (onStack.get(e.getDst())) {
+                    hasCycle = true;
+                    return;
+                }
+            }
+
+            onStack.put(v, false);
+        }
     }
 }
 

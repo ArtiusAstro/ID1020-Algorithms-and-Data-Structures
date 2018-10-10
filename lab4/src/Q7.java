@@ -21,7 +21,7 @@ class Q7 {
         for (String v : iterable)
             System.out.print(v+"->");
         System.out.println("done\n\n");
-
+        
     }
     /*
     --------------------

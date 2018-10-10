@@ -17,21 +17,11 @@ class Q6 {
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
-
-
-        Iterable<String> cycles = grX.directedCycles();
-        System.out.println("Print cycle");
-        for(String s : cycles)
-            System.out.print(s+"->");
-        System.out.println("done");
+        System.out.println("Cycle presence: "+grX.kosarajuCycle());
 
         grX.addEdge("WY","CA"); System.out.println("\n\ngrX.addEdge(\"WY\",\"CA\");");
 
-        cycles = grX.directedCycles();
-        System.out.println("Print cycle");
-        for(String s : cycles)
-            System.out.print(s+"->");
-        System.out.println("done");
+        System.out.println("Cycle presence: "+grX.kosarajuCycle());
     }
     /*
     --------------------
