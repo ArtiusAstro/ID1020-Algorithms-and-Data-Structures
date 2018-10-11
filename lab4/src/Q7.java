@@ -31,7 +31,7 @@ class Q7 {
     E: 12
 
     Print Topological Sort
-    TJ->TK->TL->TM->TI->TH->TG->TD->TC->TA->TB->TF->TE->
+    TJ->TK->TL->TM->TI->TH->TG->TD->TC->TA->TB->TF->TE->done
 
     TA:
     TF 2

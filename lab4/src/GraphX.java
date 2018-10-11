@@ -196,7 +196,7 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
 
     public Iterable<Key> topologicalSort(){
         Topological top = this.new Topological(this);
-        return (top.isDAG()) ? top.order : () -> new Iterator<>() {
+        return (top.isDAG()) ? top.order() : () -> new Iterator<>() {
             @Override
             public boolean hasNext() {
                 return false;
@@ -213,7 +213,7 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
         public Topological(DiGraphX<Key> G) {
             if (kosarajuCycleChecker()) return;
             DepthFirstOrder dfs = new DepthFirstOrder(G);
-            order = dfs.reversePost();
+            order = dfs.stack();
         }
         public Iterable<Key> order() {
             return order;
@@ -224,13 +224,9 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
 
         private class DepthFirstOrder {
             private final HashMapX<Key,Boolean> marked;
-            private final FIFOQueue<Key> pre; // vertices in preorder
-            private final FIFOQueue<Key> post; // vertices in postorder
-            private final LIFOQueue<Key> reversePost; // vertices in reverse postorder
+            private final LIFOQueue<Key> stack; // vertices in their topo order
             public DepthFirstOrder(DiGraphX<Key> G) {
-                pre = new FIFOQueue<>();
-                post = new FIFOQueue<>();
-                reversePost = new LIFOQueue<>();
+                stack = new LIFOQueue<>();
                 marked = new HashMapX<>();
                 for (Key key : G.keySet())
                     marked.put(key,false);
@@ -239,22 +235,14 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
             }
 
             private void dfs(DiGraphX<Key> G, Key v) {
-                pre.enqueue(v);
                 marked.put(v, true);
                 for (Edge w : G.getEdges(v))
                     if (!marked.get(w.getDst()))
                         dfs(G, w.getDst());
-                post.enqueue(v);
-                reversePost.push(v);
+                    stack.push(v);
             }
-            public Iterable<Key> pre() {
-                return pre;
-            }
-            public Iterable<Key> post() {
-                return post;
-            }
-            public Iterable<Key> reversePost() {
-                return reversePost;
+            public LIFOQueue<Key> stack() {
+                return stack;
             }
         }
     }
