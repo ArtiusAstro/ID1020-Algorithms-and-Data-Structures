@@ -1,5 +1,3 @@
-import javafx.scene.input.KeyCode;
-
 import java.io.FileNotFoundException;
 
 /**

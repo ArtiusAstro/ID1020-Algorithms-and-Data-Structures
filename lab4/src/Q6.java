@@ -1,5 +1,4 @@
 import java.io.FileNotFoundException;
-import java.util.List;
 
 /**
  * Find directed cycles in the graph (if none exist, add non-trivial edges to test)
@@ -17,11 +16,11 @@ class Q6 {
         System.out.println("N: "+grX.getN());
         System.out.println("E: "+grX.getE()+"\n");
 
-        System.out.println("Cycle presence: "+grX.kosarajuCycle());
+        System.out.println("Cycle presence: "+grX.kosarajuCycleChecker());
 
-        grX.addEdge("WY","CA"); System.out.println("\n\ngrX.addEdge(\"WY\",\"CA\");");
+        grX.addEdge("WY","CA"); System.out.println("\ngrX.addEdge(\"WY\",\"CA\");");
 
-        System.out.println("Cycle presence: "+grX.kosarajuCycle());
+        System.out.println("Cycle presence: "+grX.kosarajuCycleChecker());
     }
     /*
     --------------------
@@ -30,14 +29,9 @@ class Q6 {
     N: 49
     E: 107
 
-    Print cycle
-    Acyclic->
+    Cycle presence: false
 
     grX.addEdge("WY","CA");
-    N: 49
-    E: 108
-
-    Print cycle
-    WY->CA->NV->UT->WY->
+    Cycle presence: true
      */
 }

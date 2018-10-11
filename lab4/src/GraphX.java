@@ -1,7 +1,5 @@
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.*;
 
 public abstract class GraphX<Key extends Comparable<Key>> {
@@ -10,7 +8,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
     final HashMapX<Key, Bag<Edge>> adjacencyLists = new HashMapX<>();
     final HashMapX<Key, HashMapX<Key, Integer>> shortestDistance = new HashMapX<>();
 
-    LIFOQueue<Edge> edgeSet = new LIFOQueue<>();
+    final LIFOQueue<Edge> edgeSet = new LIFOQueue<>();
 
     class Edge implements Comparable<Edge> {
         private final Key src; // one vertex
@@ -105,7 +103,7 @@ public abstract class GraphX<Key extends Comparable<Key>> {
 }
 
 class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
-    private HashMapX<Key, HashMapX<Key, Boolean>> connected = new HashMapX<>();
+    private final HashMapX<Key, HashMapX<Key, Boolean>> connected = new HashMapX<>();
 
     DiGraphX(){
         super();
@@ -117,25 +115,6 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
 
     public boolean checkForConnection(Key start, Key goal) {
         return connected.get(start).get(goal);
-    }
-
-    public Iterable<Key>directedCycles(){
-        DirectedCycle cycle = this.new DirectedCycle(this);
-        return (cycle.hasCycle()) ? cycle.cycle() : new LIFOQueue("Acyclic");
-    }
-
-    public Iterable<Key> topologicalSort(){
-        Topological top = this.new Topological(this);
-        return (top.isDAG()) ? top.order : () -> new Iterator<>() {
-            @Override
-            public boolean hasNext() {
-                return false;
-            }
-            @Override
-            public Key next() {
-                return null;
-            }
-        };
     }
 
     private class DirectedDFS {
@@ -159,59 +138,80 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
         }
     }
 
-    private class DirectedCycle {
-        private HashMapX<Key, Boolean> marked;
-        private HashMapX<Key, Key> edgeTo;
-        private LIFOQueue<Key> cycle; // vertices on a cycle (if one exists)
-        private HashMapX<Key, Boolean> onStack; // vertices on recursive call stack
-        private Key dst;
-        public DirectedCycle(DiGraphX<Key> G) {
+    public boolean kosarajuCycleChecker(){
+        return new Kosaraju(this).hasCycle();
+    }
+
+    private class Kosaraju {
+        final HashMapX<Key, Boolean> visited;
+        final HashMapX<Key, Boolean> onStack;
+        Boolean hasCycle;
+
+        // Check DFS trees for cycle
+        public Kosaraju(DiGraphX<Key> graphX){
+            visited = new HashMapX<>();
             onStack = new HashMapX<>();
-            edgeTo = new HashMapX<>();
-            marked = new HashMapX<>();
-            for (Key key : G.keySet()) {
-                marked.put(key, false);
+            hasCycle = false;
+
+            for (Key key : graphX.keySet()){
+                visited.put(key, false);
                 onStack.put(key, false);
             }
-            for (Key key : G.keySet())
-                if (!marked.get(key))
-                    dfs(G, key);
-        }
-        private void dfs(DiGraphX<Key> G, Key v) {
-            //System.out.println("Key:"+v);
-            onStack.put(v,true);
-            marked.put(v,true);
-            for (Edge w : G.getEdges(v)) {
-                dst = w.getDst();
-                if (hasCycle()) return;
-                else if (!marked.get(dst)) {
-                    //System.out.println(dst+" is not marked");
-                    edgeTo.put(dst, v);
-                    dfs(G, w.getDst());
-                } else if (onStack.get(dst)) {
-                    //System.out.println(dst+" is on the stack");
-                    cycle = new LIFOQueue<>();
 
-                    edgeTo.put(dst, v);
-                    cycle.push(dst);
-                    int exit=0;
-                    for (Key x = v; exit<1; x=edgeTo.get(x)) {
-                        if (x.equals(dst)) exit++;
-                        cycle.push(x);
-                    }
+            for (Key key : graphX.keySet())
+                if (kosarajuHelper(graphX, key)) {
+                    hasCycle = true;
+                    return;
                 }
-                //System.out.println(dst+" is already marked");
-            }
-            //System.out.println(v+" is off stack");
-            onStack.put(v, false);
+
+            hasCycle = false;
         }
-        public boolean hasCycle() { return cycle != null; }
-        public LIFOQueue<Key> cycle() { return cycle; }
+
+        private boolean kosarajuHelper(DiGraphX<Key> graphX, Key v) {
+
+            // Mark the current node as visited and on stack
+
+            if (onStack.get(v)) {
+                return true;
+            }
+            if (visited.get(v)) {
+                return false;
+            }
+
+            visited.put(v, true);
+            onStack.put(v, true);
+
+            for (Edge edge: graphX.getEdges(v))
+                if (kosarajuHelper(graphX, edge.getDst()))
+                    return true;
+
+            onStack.put(v, false);
+            return false;
+        }
+
+        public boolean hasCycle() {
+            return hasCycle;
+        }
+    }
+
+    public Iterable<Key> topologicalSort(){
+        Topological top = this.new Topological(this);
+        return (top.isDAG()) ? top.order : () -> new Iterator<>() {
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+            @Override
+            public Key next() {
+                return null;
+            }
+        };
     }
 
     private class Topological {
         private Iterable<Key> order; // topological order
         public Topological(DiGraphX<Key> G) {
+            if (kosarajuCycleChecker()) return;
             DepthFirstOrder dfs = new DepthFirstOrder(G);
             order = dfs.reversePost();
         }
@@ -223,10 +223,10 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
         }
 
         private class DepthFirstOrder {
-            private HashMapX<Key,Boolean> marked;
-            private FIFOQueue<Key> pre; // vertices in preorder
-            private FIFOQueue<Key> post; // vertices in postorder
-            private LIFOQueue<Key> reversePost; // vertices in reverse postorder
+            private final HashMapX<Key,Boolean> marked;
+            private final FIFOQueue<Key> pre; // vertices in preorder
+            private final FIFOQueue<Key> post; // vertices in postorder
+            private final LIFOQueue<Key> reversePost; // vertices in reverse postorder
             public DepthFirstOrder(DiGraphX<Key> G) {
                 pre = new FIFOQueue<>();
                 post = new FIFOQueue<>();
@@ -237,6 +237,7 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
                 for (Key key : G.keySet())
                     if (!marked.get(key)) dfs(G, key);
             }
+
             private void dfs(DiGraphX<Key> G, Key v) {
                 pre.enqueue(v);
                 marked.put(v, true);
@@ -257,54 +258,10 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
             }
         }
     }
-
-    public boolean kosarajuCycle(){
-        for (Key key : keySet())
-            if (new Kosaraju(this, key).hasCycle())
-                return true;
-        return false;
-    }
-
-    private class Kosaraju {
-        private HashMapX<Key, Boolean> marked = new HashMapX<>();
-        private HashMapX<Key, Boolean> onStack = new HashMapX<>();
-        private Key s;
-        private boolean hasCycle;
-
-        public Kosaraju(DiGraphX g, Key s) {
-            this.s = s;
-            for(Key goal : keySet()) {
-                marked.put(goal, false);
-                onStack.put(goal, false);
-            }
-            findCycle(g,s);
-        }
-
-        public boolean hasCycle() {
-            return hasCycle;
-        }
-
-        public void findCycle(DiGraphX<Key> g, Key v) {
-
-            marked.put(v, true);
-            marked.put(v, true);
-
-            for (Edge e : g.getEdges(v)) {
-                if(!marked.get(e.getDst())) {
-                    findCycle(g,e.getDst());
-                } else if (onStack.get(e.getDst())) {
-                    hasCycle = true;
-                    return;
-                }
-            }
-
-            onStack.put(v, false);
-        }
-    }
 }
 
 class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
-    private HashMapX<Key, HashMapX<Key, Key>> parents = new HashMapX<>(); // parents for pathing
+    private final HashMapX<Key, HashMapX<Key, Key>> parents = new HashMapX<>(); // parents for pathing
 
     public UnDiGraph() {
         super();
@@ -335,7 +292,7 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
                 new DFS(this, start).pathTo(goal) : new LIFOQueue("Disconnected src & dst");
     }
     private class DFS {
-        private HashMapX<Key, Boolean> marked;
+        private final HashMapX<Key, Boolean> marked;
         private final Key s; // source
         public DFS(UnDiGraph<Key> G, Key s) {
             marked = new HashMapX<>();
@@ -389,7 +346,10 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
 
             while (!toDoList.isEmpty()) {
                 start = toDoList.dequeue();
-                if (start.equals(goal)) done = true;
+                if (start.equals(goal)) {
+                    done = true;
+                    break;
+                }
                 try {
                     for (Edge edge : getEdges(start))
                         if (!visited.contains(edge.getDst())) {
@@ -484,10 +444,7 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
             System.out.println("added "+e); mst.enqueue(e);
         }
         Key v = tmp.getSrc(), w = tmp.getDst();
-        if (wquf.connected(v, w)){
-            System.out.println("skipped "+tmp); return mst;
-        }
-        System.out.println("added "+tmp); mst.enqueue(tmp);
+        if (wquf.connected(v, w)) return mst;
 
         return mst;
     }
@@ -503,18 +460,14 @@ class UnDiGraph<Key extends Comparable<Key>> extends GraphX<Key> {
             }
         }
 
-        private int getTreeSize(Key comp) {
-            return treeSizes.get(comp);
-        }
-
         void union(Key leftComp, Key rightComp) {
             Key leftCompTree = find(leftComp);
             Key rightCompTree = find(rightComp);
 
             if (leftCompTree == rightCompTree) return;
 
-            int leftTreeSize = getTreeSize(leftCompTree);
-            int rightTreeSize = getTreeSize(rightCompTree);
+            int leftTreeSize = treeSizes.get(leftCompTree);
+            int rightTreeSize = treeSizes.get(rightCompTree);
 
             if (leftTreeSize < rightTreeSize) {
                 comps.put(leftCompTree, rightCompTree);

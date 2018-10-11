@@ -20,7 +20,7 @@ class Q7 {
         System.out.println("Print Topological Sort");
         for (String v : iterable)
             System.out.print(v+"->");
-        System.out.println("done\n\n");
+        System.out.println("done");
         
     }
     /*
@@ -69,6 +69,6 @@ class Q7 {
     TL:
     TM 12
 
-    TM
+    TM:
      */
 }
