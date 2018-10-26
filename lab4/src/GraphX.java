@@ -119,7 +119,7 @@ class DiGraphX<Key extends Comparable<Key>> extends GraphX<Key> {
 
     private class DirectedDFS {
         HashMapX<Key, Boolean> marked;
-
+        
         public DirectedDFS(DiGraphX G) {
             for (Key start : keySet()){
                 marked = new HashMapX<>();
