@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
- * Compare the runtime of seperate chaining to lienar probing for hash tables
+ * Compare the runtime of seperate chaining to linear probing for hash tables
  *
  * @author Ayub Atif
  */
